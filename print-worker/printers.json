@@ -1,1 +1,16 @@
-printers.json
+[
+  {
+    "name": "Printer A",
+    "port": {
+      "serialNumber": "CZPX2617X003XK25033"
+    },
+    "TERM_SESSION_ID": "w0t4p4:FE372421-3648-40BE-8C5A-5581ADC49DA4"
+  },
+  {
+    "name": "Printer B",
+    "port": {
+      "serialNumber": "CZPX2617X003XK24826"
+    },
+    "TERM_SESSION_ID": "w0t4p5:0101EC89-775C-4799-9192-A47166A807FE"
+  }
+]

@@ -20,6 +20,7 @@ module.exports = class Printer {
       z: false,
       b: false,
     }
+    this.message = ''
   }
 
   parse(data) {
@@ -67,7 +68,9 @@ module.exports = class Printer {
       }
       await this[cmd]()
       return
-    } 
+    } else if (gcode.startsWith('M117')) {
+      this.message = gcode.replace('M117 ', '')
+    }
 
     await this.channel.execute(gcode)
   }
@@ -88,6 +91,10 @@ module.exports = class Printer {
     await this.command(`M117 ${string}`)
   }
 
+  async beep(time = 50) {
+    await this.command(`M300 S2000 P${time}`)
+  }
+
   async homeAll() { 
     await this.homeW()
     await this.meshBedLevel()
@@ -103,15 +110,21 @@ module.exports = class Printer {
   async homeZ(){ await this.home(['Z']) }
   async homeW(){ await this.home(['W']) }
   
-  async waitForButtonPress(){
-    this.display("Press Extrud Button")
+  async waitForButtonPress(msg = '    Press Button    '){
+    this.display(msg)
     
+    let t = 1
+
     do {
       await this.readSwitches()
       await sleep(50)
+
+      if (t++ % 30 == 0) await this.beep(20);
     } while(!this.switch.b)
 
-    this.display("Ok! Beginning")
+    await this.beep()
+
+    // this.display("Ok! Beginning")
   }
   
   async softwareHome(axis) {

@@ -1,3 +1,4 @@
+const path = require('path')
 const chalk = require('chalk')
 const mongoose = require('mongoose')
 
@@ -11,11 +12,11 @@ async function main() {
   await mongoose.connect('mongodb://localhost/vending3d')
 
   // Create task
-  for (let k = 0; k < 10; k++) {
+  for (let k = 0; k < 1; k++) {
     await Task.create({
       namespace: 'print',
       payload: {
-        file: 'test/file.txt',
+        file: path.join(__dirname, '../objects/A.gcode'),
         name: 'Test File',
         description: 'Ivan Seidel',
       }
@@ -31,6 +32,7 @@ process.on('uncaughtException', handleError)
 
 function handleError(e) {
   console.error('Fatal Error')
+  console.error(String(e))
   console.error(e.stack)
 
   console.error('Exiting.')

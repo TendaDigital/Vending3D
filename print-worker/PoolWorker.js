@@ -5,9 +5,9 @@ module.exports = class SocketConnection {
     this.iam = iam
     this.socket = io(opts.url, opts)
 
-    this.socket.on('connect', () => {
-      this.socket.emit('iam', iam)
-    })
+    // this.socket.on('connect', () => {
+    //   this.socket.emit('iam', iam)
+    // })
   }
 
   connect() {
@@ -23,9 +23,11 @@ module.exports = class SocketConnection {
 
   pool() {
     let resolved = false
+    this.socket.off('job')
     return new Promise((resolve, reject) => {
       this.socket.once('job', (data) => {
         if (resolved) return;
+        resolved = true;
 
         if (!data) return resolve(null);
 
@@ -37,7 +39,7 @@ module.exports = class SocketConnection {
 
         resolved = true
         resolve(null)
-      }, 100)
+      }, 1000)
 
       this.socket.emit('pool')
     })

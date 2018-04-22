@@ -13,6 +13,7 @@
     "forever": "^0.15.3",
     "lodash": "^4.17.5",
     "mongoose": "^5.0.15",
+    "mongoose-timestamp": "^0.6.0",
     "socket.io": "^2.1.0"
   }
 }

@@ -114,6 +114,11 @@ module.exports = class MarlinServer extends EventEmitter{
 
     // Check for start packet
     if (data.startsWith('start')) {
+      if (this._started) {
+        throw new Error('Printer restarted')
+      }
+
+      this._started = true
       this.resetQueue()
       return this._ready.resolve()
     }

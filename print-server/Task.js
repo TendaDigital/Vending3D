@@ -41,4 +41,7 @@ var Model = new Schema({
 //   this.running = ['queued', 'running'].includes(thhis.status)
 // })
 
+const PluginTimestamp = require('mongoose-timestamp')
+Model.plugin(PluginTimestamp)
+
 module.exports = require('mongoose').model('Task', Model);
