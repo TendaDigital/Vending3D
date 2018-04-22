@@ -1,0 +1,20 @@
+{
+  "name": "print-worker",
+  "version": "1.0.0",
+  "main": "worker.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "forever --minUptime=5000 --spinSleepTime=5000 ./worker.js --colors",
+    "start:watch": "forever --watch --watchFolder ./ ./worker.js --colors"
+  },
+  "dependencies": {
+    "chalk": "^2.4.0",
+    "dotenv": "^5.0.1",
+    "draftlog": "^1.0.12",
+    "forever": "^0.15.3",
+    "lodash": "^4.17.5",
+    "serialport": "^6.2.0",
+    "socket.io-client": "^2.1.0",
+    "string-template": "^1.0.0"
+  }
+}
