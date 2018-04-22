@@ -1,41 +1,44 @@
 <template>
-    <div class="row">
-    <el-form ref="form" :model="form" label-width="120px">
-         <el-form-item label="">
-            <el-input placeholder="Qual seu nome?" v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="">
-            <el-input placeholder="E seu e-mail?" v-model="form.email"></el-input>
-        </el-form-item>
-        <el-form-item label="">
-            <el-input placeholder="DDD+Telefone" v-model="form.phone"></el-input>
-        </el-form-item>
-        <el-form-item label="">
-            <el-select v-model="form.roleOptions.value" placeholder="Você é...">
-                <el-option
-                v-for="item in form.roleOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-                </el-option>
-            </el-select>
-        </el-form-item>
-        <el-form-item label="">
-           <el-input placeholder="Qual o nome da sua escola?" v-model="form.school"></el-input> 
-        </el-form-item>
-        <el-form-item label="">
-            <el-select v-model="form.studentsNumberOptions.value" placeholder="Quantos alunos tem sua escola?">
-                <el-option
-                v-for="item in form.studentsNumberOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-                </el-option>
-            </el-select>
-        </el-form-item>
-       
-    </el-form>
-    </div>
+
+  <el-row>
+        <el-col :span="12">
+            <el-form ref="form" :model="form" label-width="120px">
+                <el-form-item label="">
+                    <el-input placeholder="Qual seu nome?" v-model="form.name"></el-input>
+                </el-form-item>
+                <el-form-item label="">
+                    <el-input placeholder="E seu e-mail?" v-model="form.email"></el-input>
+                </el-form-item>
+                <el-form-item label="">
+                    <el-input placeholder="DDD+Telefone" v-model="form.phone"></el-input>
+                </el-form-item>
+                <el-form-item label="">
+                    <el-select v-model="form.roleOptions.value" placeholder="Você é...">
+                        <el-option
+                        v-for="item in form.roleOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="">
+                <el-input placeholder="Qual o nome da sua escola?" v-model="form.school"></el-input> 
+                </el-form-item>
+                <el-form-item label="">
+                    <el-select v-model="form.studentsNumberOptions.value" placeholder="Quantos alunos tem sua escola?">
+                        <el-option
+                        v-for="item in form.studentsNumberOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+        </el-col>
+    </el-row>
+  
 </template>
 
 <script>
@@ -88,4 +91,8 @@ export default {
 </script>
 
 <style scoped>
+
+  .el-row {
+    margin-top: 100px;
+    }
 </style>

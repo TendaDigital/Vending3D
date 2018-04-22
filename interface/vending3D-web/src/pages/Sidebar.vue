@@ -1,6 +1,5 @@
 <template>
     <div class="sidebar">
-     
         <!-- <img src="../assets/logo.png" width="380px" height="271px"/> -->
         <p>logo</p>
     </div>

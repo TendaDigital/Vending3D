@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import Content from './components/Content'
-import Sidebar from './components/Sidebar'
+import Content from './pages/Content'
+import Sidebar from './pages/Sidebar'
 
 export default {
   name: 'App',
