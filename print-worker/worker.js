@@ -5,7 +5,7 @@ const SerialPort = require('serialport')
 
 const draftlog = require('draftlog').into(console).addLineListener(process.stdin)
 
-const Printer = require('./prusa/Printer')
+const Printer = process.env.MOCK ? require('./prusa/PrinterMock') : require('./prusa/Printer')
 const GcodeParser = require('./prusa/GcodeParser')
 
 const sleep = require('./sleep')
@@ -16,6 +16,16 @@ let printerInfo = null
 async function loadPrinterInfo() {
   let printers = require('./printers')
   
+  if (process.env.MOCK) {
+    let name = process.env.PRINTER || 'Mocked Printer'
+    return {
+      name,
+      port: {
+        serialNumber: 'MOCKED:' +  name
+      }
+    }
+  }
+
   if (process.env.PRINTER) {
     // try finding it
     let printer = _.find(printers, {name: process.env.PRINTER})
