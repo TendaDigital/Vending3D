@@ -14,21 +14,31 @@ var Model = new Schema({
   pingAt: {
     type: Date,
     default: Date.now,
-  }
+  },
+
+  message: {
+    type: String,
+    default: ''
+  },
 })
 
 Model.virtual('active').get(function () {
-  return Date.now() - this.pingAt < 5000
+  return this.connected && (Date.now() - this.pingAt < 5000)
 })
 
 Model.virtual('status').get(function () {
-  return this.active && this.connected ? 'connected' : 'disconnected'
+  return this.active ? this.message : 'disconnected'
 })
 
-Model.static('ping', async function (name, connected = true) {
+Model.static('ping', async function (name, connected = true, message = undefined) {
   let printer = await this.findOrCreate(name)
   printer.pingAt = new Date()
   printer.connected = connected
+
+  if (message) {
+    printer.message = message
+  }
+
   await printer.save()
 })
 

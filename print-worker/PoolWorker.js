@@ -44,6 +44,10 @@ module.exports = class SocketConnection {
       this.socket.emit('pool')
     })
   }
+
+  setPrinterStatus(status) {
+    this.socket.emit('printerStatus', status)
+  }
 }
 
 class Job {

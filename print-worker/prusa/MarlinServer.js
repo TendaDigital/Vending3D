@@ -71,7 +71,8 @@ module.exports = class MarlinServer extends EventEmitter{
         lineBuffer.on('data', (data) => this.dataReceived(data))
         // Every time it opens/closes, reset the current queue
         this.port.on('open', () => this.resetQueue())
-        this.port.on('close', () => this.resetQueue())
+        // this.port.on('close', () => this.resetQueue())
+        this.port.on('close', () => {throw new Error('Printer Disconnected')})
         this.port.on('error', (err) => {
           reject(err)
         })

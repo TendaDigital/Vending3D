@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const path = require('path')
+const cors = require('cors')
 const http = require('http')
 const chalk = require('chalk')
 const mongodb = require('mongodb')
@@ -56,6 +57,7 @@ async function main() {
 
 function startRESTServer(app) {
   const TaskFields = [
+    'id',
     'namespace',
     'status',
     'owner',
@@ -70,8 +72,11 @@ function startRESTServer(app) {
     'name',
     'status',
     'active',
+    'message',
     'pingAt'
   ]
+
+  app.use(cors())
 
   app.get('/tasks', async (req, res, next) => {
     console.log('tasks')
@@ -83,12 +88,51 @@ function startRESTServer(app) {
     res.send(tasks.map(p => _.pick(p, TaskFields)))
   })
 
+  app.get('/tasks/print/:file', async (req, res, next) => {
+    console.log('new print')
+    let file = req.params.file
+    let payload = {
+      file: path.join(__dirname, `../objects/${file}.gcode`),
+      name: file,
+      description: req.query.description,
+    }
+
+    let task = await Task.create({
+      namespace: 'print',
+      payload,
+    })
+    
+    res.send(task)
+  })
+
   app.get('/printers', async (req, res, next) => {
     let printers = await Printer
         .find({})
         .sort({ createdAt: 1 })
 
     res.send(printers.map(p => _.pick(p, PrinterFields)))
+  })
+
+  app.get('/objects', async (req, res, next) => {
+    let dir = path.join(__dirname, '../objects')
+    let files = require('fs').readdirSync(dir)
+
+    let objects = []
+
+    for (file of files) {
+      let ext = file.replace(/.+\./, '')
+      let name = file.replace(/\..+/, '')
+      let info = objects.find(obj => obj.name == name)
+
+      if (!info) {
+        info = {name, files: {}}
+        objects.push(info)
+      }
+      
+      info.files[ext] = path.join('/objects/files', file)
+    }
+
+    res.send(objects)
   })
 
 }
@@ -130,6 +174,11 @@ async function startWorker(socket, pooler) {
 
     // console.log(chalk.yellow(' . debug message'))
     socket.emit('job', job)
+  })
+
+  socket.on('printerStatus', async (status) => {
+    // console.log('printerStatus', status)
+    Printer.ping(iam, true, status)
   })
 
   /* 

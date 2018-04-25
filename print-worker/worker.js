@@ -159,6 +159,12 @@ async function main() {
 
   console.log(chalk.yellow(' . Ready'))
 
+  // Global printer status flag
+  let printerStatus = 'idle'
+  setInterval(() => {
+    master.setPrinterStatus(printerStatus)
+  }, 250)
+
   while (1) {
     console.log()
     let pooling = draftLoading(chalk.yellow(' # Waiting for a new job'))
@@ -168,6 +174,7 @@ async function main() {
 
     // Keep pooling
     while(1) {
+      printerStatus = 'idle'
       // Attempt getting a new job
       pooling()
       job = await master.pool()
@@ -180,6 +187,8 @@ async function main() {
         break;
       }
     }
+
+    printerStatus = 'printing'
 
     // Beep twice
     await printer.beep(500)
@@ -205,6 +214,7 @@ async function main() {
 
     // Wait printer to be ok
     // console.log()
+    printerStatus = 'waiting'
     console.log(chalk.yellow(' # Completed! Waiting for button press'))
     await printer.waitForButtonPress('[press] ' + _.get(job, 'data.payload.description'))
   }
