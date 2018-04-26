@@ -1,7 +1,7 @@
 <template>
 
-  <el-row>
-        <el-col :span="12">
+  <div>
+      
             <el-form ref="form" :model="form" label-width="120px">
                 <el-form-item label="">
                     <el-input placeholder="Qual seu nome?" v-model="form.name"></el-input>
@@ -36,8 +36,7 @@
                     </el-select>
                 </el-form-item>
             </el-form>
-        </el-col>
-    </el-row>
+    </div>
   
 </template>
 

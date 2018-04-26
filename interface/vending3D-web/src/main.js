@@ -4,8 +4,12 @@ import Vue from 'vue'
 import App from './App'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import Vuetify from 'vuetify'
+import 'vuetify/dist/vuetify.min.css'
+import Axios from 'axios'
 
 Vue.use(ElementUI)
+Vue.use(Vuetify)
 
 Vue.config.productionTip = false
 

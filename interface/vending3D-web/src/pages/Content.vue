@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <Form/>
+    <!-- <Form/> -->
   </div>
 </template>
 
