@@ -79,18 +79,31 @@ function startRESTServer(app) {
   app.use(cors())
 
   app.get('/tasks', async (req, res, next) => {
-    console.log('tasks')
     let tasks = await Task
         .find({ active: true })
-        .sort({ createdAt: -1 })
+        .sort({ queuedAt: -1 })
         .limit(100)
   
     res.send(tasks.map(p => _.pick(p, TaskFields)))
   })
 
+  app.get('/tasks/:taskId', async (req, res, next) => {
+    let taskId = req.params.taskId
+    console.log('tasks')
+
+    let task = await Task.findById(taskId)
+    
+    if (!task) {
+      return res.status(404).send('Task não encontrada: ' + taskId)
+    }
+    
+    res.send(_.pick(task, TaskFields))
+  })
+
   app.get('/tasks/print/:file', async (req, res, next) => {
-    console.log('new print')
     let file = req.params.file
+    console.log('new print', file)
+
     let payload = {
       file: path.join(__dirname, `../objects/${file}.gcode`),
       name: file,
@@ -102,8 +115,75 @@ function startRESTServer(app) {
       payload,
     })
     
-    res.send(task)
+    res.send(_.pick(task, TaskFields))
   })
+
+  app.get('/tasks/:taskId/repeat', async (req, res, next) => {
+    let taskId = req.params.taskId
+    console.log('repeat print', taskId)
+    
+    let task = await Task.findById(taskId)
+
+    if (!task) {
+      return res.status(404).send('Task não encontrada: ' + taskId)
+    }
+
+    let BlockRestartStatuses = ['queued', 'running']
+    if (BlockRestartStatuses.includes(task.status)) {
+      return res.status(400).send(`Não pode reiniciar task com status '${task.status}'`)
+    }
+
+    // Reset task back to queue
+    task.reset()
+
+    // Save task
+    await task.save()
+    
+    res.send(_.pick(task, TaskFields))
+  })
+
+  app.get('/tasks/:taskId/archive', async (req, res, next) => {
+    let taskId = req.params.taskId
+    console.log('archive print', taskId)
+    
+    let task = await Task.findById(taskId)
+
+    if (!task) {
+      return res.status(404).send('Task não encontrada: ' + taskId)
+    }
+
+    let BlockRestartStatuses = ['queued', 'running']
+    if (BlockRestartStatuses.includes(task.status)) {
+      return res.status(400).send(`Não pode arquivar task com status '${task.status}'`)
+    }
+
+    task.active = false
+    await task.save()
+
+    res.send(_.pick(task, TaskFields))
+  })
+
+  app.get('/tasks/:taskId/cancel', async (req, res, next) => {
+    let taskId = req.params.taskId
+    console.log('archive print', taskId)
+    
+    let task = await Task.findById(taskId)
+
+    if (!task) {
+      return res.status(404).send('Task não encontrada: ' + taskId)
+    }
+
+    let AllowedStatuses = ['queued', 'running']
+    if (!AllowedStatuses.includes(task.status)) {
+      return res.status(400).send(`Não pode cancelar task com status '${task.status}'`)
+    }
+
+    task.status = 'canceled'
+    await task.save()
+
+    res.send(_.pick(task, TaskFields))
+  })
+
 
   app.get('/printers', async (req, res, next) => {
     let printers = await Printer

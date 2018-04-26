@@ -251,7 +251,10 @@ async function runJob(printer, job) {
     let lastPercentageUpdate = -1
     while(true) {
       if (job.stopped) {
-        throw new Error('Cancelado')
+        // throw new Error('Cancelado')
+        console.log(chalk.red(' # Job cancelado pelo servidor'))
+        job.setStatus('canceled', 'Cancelado pelo servidor')
+        return
       }
 
       // Run next 

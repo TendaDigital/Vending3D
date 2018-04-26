@@ -21,6 +21,11 @@ var Model = new Schema({
     type: String,
   },
 
+  queuedAt: {
+    type: Date,
+    default: Date.now,
+  },
+
   lockedAt: {
     type: Date,
     default: null,
@@ -35,6 +40,30 @@ var Model = new Schema({
   message: String,
 
   payload: Object,
+
+  restarts: {
+    type: Number,
+    default: 1,
+  },
+})
+
+Model.pre('save', function () {
+  if (this.isModified('status') && this.status == 'queued') {
+    this.queuedAt = Date.now()
+  }
+})
+
+Model.method('reset', function () {
+  this.set({
+    active: true,
+    status: 'queued',
+    owner: null,
+    pingAt: null,
+    lockedAt: null,
+    progress: null,
+    message: 0,
+    restarts: (this.restarts + 1) || 2
+  })
 })
 
 // Model.pre('save', () => {
@@ -43,5 +72,6 @@ var Model = new Schema({
 
 const PluginTimestamp = require('mongoose-timestamp')
 Model.plugin(PluginTimestamp)
+
 
 module.exports = require('mongoose').model('Task', Model);
