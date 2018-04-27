@@ -2,13 +2,18 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
+
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
-import 'material-design-icons-iconfont/dist/material-design-icons.css'
-import Axios from 'axios'
 
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
+
+import Axios from 'axios'
+Axios.defaults.baseURL = 'http://192.168.0.29:9077'
+// Axios.defaults.baseURL = 'http://localhost:9077'
 
 import VueTimers from '@/helpers/VueTimers'
 Vue.mixin(VueTimers)

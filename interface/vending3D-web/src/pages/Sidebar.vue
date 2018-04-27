@@ -1,22 +1,36 @@
 <template>
-    <div class="sidebar">
-      <div class="header">
+    <div class="sidebar column">
+      <div class="header no-flex">
         <span class="text">FILA DE IMPRESSÃO</span>
       </div>
-        <Card
-            class="ma-3 elevate-2"
+      <div class="flex column scroll-y" style="background: #F0F0F0;">
+        <!-- <div style="position: relative; height: 60px; flex-shrink: 0;"> style="position: absolute; width: 100%; height: 100%;" -->
+        <!-- <transition name="trans-lr" mode="out-in">
+          <Card v-if="selectedTask" :key="selectedTask.id" :task="selectedTask" ></Card>
+        </transition> -->
+        <!-- </div> -->
+        <!-- <div class="flex scroll-y"> -->
+        <transition-group tag="div" class="" style="position: relative; display: block;" mode="out-in" name="trans-lr">
+          <div class="trans-lr px-3 pt-2 "
             v-for="task in tasks"
-            :task="task"
-            :key="task.id"
-        ></Card>
+            :key="task.id">
+            <Card
+                class="elevate-2"
+                :task="task"
+                @click="selectedTask = task"
+            ></Card>
+          </div>
+        </transition-group>
+        <!-- </div> -->
+      </div>
+      <div class="footer no-flex">
+      </div>
     </div>
 </template>
 
 <script>
-const getTest = 'http://192.168.0.29:9077/tasks'
-
 import Card from '../components/Card'
-import axios from 'axios';
+import axios from 'axios'
 
 
 export default {
@@ -26,18 +40,19 @@ export default {
   },
   data () {
     return {
-      tasks:null
+      tasks:null,
+      selectedTask: null,
     }
   },
   created() {
     this.fetchTasks()
-    this.$setInterval(this.fetchTasks, 10)
+    this.$setInterval(this.fetchTasks, 500)
   },
   methods: {
     fetchTasks: function () {
       
-      axios.get(getTest).then((response) => {
-        console.log(response.data)
+      axios.get('tasks').then((response) => {
+        //console.log(response.data)
         this.tasks = response.data
       })
       .catch(function (error) {
@@ -57,6 +72,10 @@ export default {
   background-color: #7a49ff;
 }
 
+.footer {
+  height: 48px;
+}
+
 .text {
   font-family: Ubuntu;
   font-size: 16px;
@@ -69,11 +88,53 @@ export default {
   color: #ffffff;
 }
 
-.sidebar {
+.sidebar {  
+  display: flex;
   height: 100%;
   background-color: #fafafa;
-  box-shadow: 2px 0 12px 0 rgba(0, 0, 0, 0.21);
-  
+  box-shadow: 2px 0 12px 0 rgba(0, 0, 0, 0.21); 
 }
+
+.trans-lr {
+  transition: all 0.3s;
+  /* display: block; */
+  width: 100%;
+}
+/* .trans-lr-enter-active, .trans-lr-leave-active {
+  position: absolute;
+} */
+
+.trans-lr-enter {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
+.trans-lr-leave-to {
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+.trans-lr-enter-active {
+  /* position: absolute !important; */
+}
+
+.trans-lr-leave-active {
+  position: absolute !important;
+  width: 100%;
+  /* z-index: 3; */
+}
+
+/* .trans-lr-enter {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+
+.trans-lr-leave-to {
+  opacity: 0;
+  transform: translateX(100%);
+} */
+
+
+
 
 </style>
