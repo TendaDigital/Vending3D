@@ -4,6 +4,7 @@
         <span class="text">FILA DE IMPRESSÃO</span>
       </div>
         <Card
+            class="ma-3 elevate-2"
             v-for="task in tasks"
             :task="task"
             :key="task.id"
@@ -12,7 +13,7 @@
 </template>
 
 <script>
-const getTest = 'http://localhost:9077/tasks'
+const getTest = 'http://192.168.0.29:9077/tasks'
 
 import Card from '../components/Card'
 import axios from 'axios';
@@ -30,6 +31,7 @@ export default {
   },
   created() {
     this.fetchTasks()
+    this.$setInterval(this.fetchTasks, 10)
   },
   methods: {
     fetchTasks: function () {
@@ -51,8 +53,7 @@ export default {
 <style scoped>
 .header {
   padding: 14px;
-  width: 300px;
-  height: 18px;
+  height: 48px;
   background-color: #7a49ff;
 }
 
@@ -70,7 +71,6 @@ export default {
 
 .sidebar {
   height: 100%;
-  width: 300px;
   background-color: #fafafa;
   box-shadow: 2px 0 12px 0 rgba(0, 0, 0, 0.21);
   

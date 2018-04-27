@@ -1,7 +1,7 @@
 <template>
-  <div class="app">
-    <Content/>
-    <Sidebar/>
+  <div class="row" style="height: 100%;">
+    <Sidebar style="width: 350px;"/>
+    <Content class="flex"/>
   </div>
 </template>
 
@@ -26,23 +26,40 @@ body {
   padding: 0;
   margin: 0;
   height: 100%;
-  width: 100%;
- 
+}
+html {
+  overflow-y: initial;
 }
 
-.app {
-  display: flex;
-  justify-content: center; 
-  align-items: center;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  border: solid 1px black;
+html, body {
+  height: 100%;
+  min-height: 100%;
+  position: relative;
+  widows: 100%;
 }
 
+/* 
+  Webkit Scrollbar 
+*/
+*::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+  overflow: hidden;
+  background: transparent;
+}
+
+.native.win32 *::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2)
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.08)
+}
 
 
 </style>
