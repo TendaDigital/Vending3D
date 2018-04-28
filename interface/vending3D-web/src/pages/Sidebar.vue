@@ -14,39 +14,56 @@
           <div class="trans-lr px-3 pt-2 "
             v-for="task in tasks"
             :key="task.id">
-            <Card
+            <TaskStatus
                 class="elevate-2"
                 :task="task"
                 @click="selectedTask = task"
-            ></Card>
+            ></TaskStatus>
           </div>
         </transition-group>
         <!-- </div> -->
       </div>
-      <div class="footer no-flex">
+      <div class="column px-2 grey darken-3 no-flex" v-if="printers">
+
+        <transition-group name="trans-lr">
+          <PrinterStatus
+            v-for="printer in printers"
+            class="my-2 trans-lr"
+            :key="printer.name"
+            :printer="printer"
+          ></PrinterStatus>
+        </transition-group>
+
       </div>
     </div>
 </template>
 
 <script>
-import Card from '../components/Card'
 import axios from 'axios'
 
+import TaskStatus from '../components/TaskStatus'
+import PrinterStatus from '../components/PrinterStatus'
 
 export default {
   name: 'Sidebar',
-   components: {
-    Card
+
+  components: {
+    TaskStatus,
+    PrinterStatus,
   },
+
   data () {
     return {
-      tasks:null,
+      tasks: null,
+      printers: null,
       selectedTask: null,
     }
   },
   created() {
     this.fetchTasks()
+    this.fetchPrinters()
     this.$setInterval(this.fetchTasks, 500)
+    this.$setInterval(this.fetchPrinters, 500)
   },
   methods: {
     fetchTasks: function () {
@@ -55,11 +72,18 @@ export default {
         //console.log(response.data)
         this.tasks = response.data
       })
-      .catch(function (error) {
-        console.log(error)
+      .catch(function (e) {
+        console.error(e)
       });
+    },
 
-    }
+    fetchPrinters() {
+      axios.get('printers').then((res) => {
+        this.printers = res.data
+      }).catch(function (e) {
+        console.error(e)
+      });
+    },
   }
 }
 
@@ -70,10 +94,6 @@ export default {
   padding: 14px;
   height: 48px;
   background-color: #7a49ff;
-}
-
-.footer {
-  height: 48px;
 }
 
 .text {

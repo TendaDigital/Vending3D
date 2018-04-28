@@ -20,6 +20,11 @@ var Model = new Schema({
     type: String,
     default: ''
   },
+
+  state: {
+    type: Object,
+    default: {},
+  }
 })
 
 Model.virtual('active').get(function () {
@@ -30,15 +35,32 @@ Model.virtual('status').get(function () {
   return this.active ? this.message : 'disconnected'
 })
 
-Model.static('ping', async function (name, connected = true, message = undefined) {
-  let printer = await this.findOrCreate(name)
-  printer.pingAt = new Date()
-  printer.connected = connected
+Model.virtual('task', {
+  ref: 'Task',
+  localField: 'name',
+  foreignField: 'owner',
+  justOne: true,
+  default: null,
+})
+
+Model.method('ping', function (message = undefined) {
+  this.pingAt = new Date()
+  this.connected = true
 
   if (message) {
-    printer.message = message
+    this.message = message
   }
+})
 
+Model.static('ping', async function (name, message = undefined) {
+  let printer = await this.findOrCreate(name)
+  printer.ping()
+  await printer.save()
+})
+
+Model.static('disconnected', async function (name) {
+  let printer = await this.findOrCreate(name)
+  printer.connected = false
   await printer.save()
 })
 

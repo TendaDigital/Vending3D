@@ -26,6 +26,16 @@ var Model = new Schema({
     default: Date.now,
   },
 
+  startedAt: {
+    type: Date,
+    default: null,
+  },
+
+  completedAt: {
+    type: Date,
+    default: null,
+  },
+
   lockedAt: {
     type: Date,
     default: null,
@@ -48,9 +58,26 @@ var Model = new Schema({
 })
 
 Model.pre('save', function () {
-  if (this.isModified('status') && this.status == 'queued') {
-    this.queuedAt = Date.now()
-  }
+  if (this.isModified('status')) {
+    if (this.status == 'queued') {
+      this.queuedAt = Date.now()
+    } else if (this.status == 'running') {
+      this.startedAt = Date.now()
+    } else if (this.status == 'failed') {
+      this.completedAt = Date.now()
+    } else if (this.status == 'success') {
+      this.completedAt = Date.now()
+    } else if (this.status == 'canceled') {
+      this.completedAt = Date.now()
+    }
+  } 
+})
+
+Model.virtual('duration').get(function () {
+  if (this.status != 'success')
+    return null;
+  
+  return this.startedAt && this.completedAt ? this.completedAt - this.startedAt : null
 })
 
 Model.method('reset', function () {

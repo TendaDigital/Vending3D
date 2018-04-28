@@ -5,7 +5,7 @@ const SerialPort = require('serialport')
 
 const draftlog = require('draftlog').into(console).addLineListener(process.stdin)
 
-const Printer = process.env.MOCK ? require('./prusa/PrinterMock') : require('./prusa/Printer')
+const Printer = process.env.MOCK ? require('./prusa/PrinterMock') : require('./prusa/PrinterPrusa')
 const GcodeParser = require('./prusa/GcodeParser')
 
 const sleep = require('./sleep')
@@ -172,8 +172,18 @@ async function main() {
   // Global printer status flag
   let printerStatus = 'idle'
   setInterval(() => {
-    master.setPrinterStatus(printerStatus)
+    master.setPrinterStatus(printerStatus, printer.state)
   }, 250)
+
+  async function readTemperature() {
+    try {
+      await printer.readTemperature()
+    } catch (e) {}
+
+    setTimeout(readTemperature, 2000)
+  }
+  
+  readTemperature()
 
   while (1) {
     console.log()

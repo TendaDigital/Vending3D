@@ -1,35 +1,26 @@
 <template>
     <div v-if="this.status != 'errorHandled'" class="queue-card pa-3" @click="$emit('click')">
-      
       <!--Progress Bar-->
-      <div  v-if="task.status == 'running'" class="progress-bar" v-bind:style="{ width: task.progress + '%' }"></div>
+      <div v-if="task.status == 'running'" class="progress-bar" :style="{ width: task.progress + '%' }"></div>
 
       <!--First row, contains user name (task.payload.description) and printer id (task.owner)-->
-      <div  class="ontop row">
+      <div class="ontop row">
         <!--User name (task.payload.description)-->
         <v-chip label color="grey" text-color="grey darken-2" outline small class="ma-0">
           <v-icon small>perm_identity</v-icon> <span>{{task.payload.description}}</span>
           <span class="ml-1">- {{task.payload.name}}.gcode</span>
         </v-chip>
         
-        <!-- <v-chip v-else-if="task.status == 'failed'" label color="red" text-color="white" small><v-icon small>perm_identity</v-icon> <span>{{task.payload.description}}</span></v-chip>
-        <v-chip v-else-if="task.status == 'running'" label color="light-blue" text-color="white" small><v-icon small>perm_identity</v-icon> <span>{{task.payload.description}}</span></v-chip>
-        <v-chip v-else-if="task.status == 'success'" label color="teal" text-color="white" small><v-icon small>perm_identity</v-icon> <span>{{task.payload.description}}</span></v-chip>
-         -->
         <!--Fill space-->
         <div class="flex"></div>
         <!--Printer id (task.owner)-->
        
         <v-chip label :color="statusColor" text-color="white" small class="ma-0">
-          <span v-if="task.status !='queued'">{{task.owner}}</span>
-          <span v-else class="mr-2"> 
-            <span>Aguardando</span>
-            <!-- <v-progress-circular indeterminate :color="statusColor" :size="16" :width="2"></v-progress-circular> -->
-          </span>
+          <template v-if="task.status !='queued'">{{task.owner}}</template>
+          <template v-else>Aguardando</template>
         </v-chip>
-        
-       
       </div>
+      
       <!--Second row, contains task status (task.message), task progress in percentage (task.progress) and payload name/gcode file (task.payload.name)-->
       <div class="ontop row align-center pt-2">
         <!--Task status-->
@@ -40,36 +31,25 @@
 
         <!-- Waiting bar -->
         <v-progress-linear v-else :indeterminate="true" height="3" color="amber darken-2" class="flex mr-3"></v-progress-linear> 
-          
-        <!-- <div v-if="task.status != 'failed'" class="grey--text payload-name">
-         
-        </div> -->
 
         <!--Payload name/gcode file (task.payload.name)-->
-        <div><el-button v-on:click="rePostTask()" size="mini">Re-enviar</el-button></div>
-        <!-- <div v-else-if="task.status == 'failed'" class="error-message">
-          <span>{{task.message}}</span>
-        </div>
-        <div v-else-if="task.status == 'success'" class="success-message">
-          <span>{{task.message}}</span>
-        </div>
-        <div v-else>
-          <span>{{task.message}}</span> - <span class="progress">{{task.progress}}</span>%
-        </div> -->
-        
-        
+        <el-button v-if="task.status == 'failed' || task.status == 'canceled'"
+          @click="retryTask()" type="warning" plain size="mini">Re-enviar</el-button>
+        <el-button v-else-if="task.status == 'running' || task.status == 'queued'"
+          @click="cancelTask()" type="danger" plain size="mini">cancelar</el-button>
+        <el-button v-else-if="task.status == 'success'"
+          @click="archiveTask()" type="primary" plain size="mini">arquivar</el-button>
       </div>
 
     </div>
 </template>
 
 <script>
-const postTask = 'http://192.168.0.29:9077/tasks/'
 
 import axios from 'axios'
 
 export default {
-  name: 'Card',
+  name: 'TaskStatus',
   props: {
       task: {
         type: Object,
@@ -105,19 +85,17 @@ export default {
   },
 
   methods: {
-    rePostTask: function () {
-      
-      axios.get(postTask + this.task.id + '/repeat').then((response) => {
-        console.log(response.data)
-        //this.status = 'errorHandled'
-         //this.tasks = response.data
-       })
-       .catch(function (error) {
-         console.log(error)
-      });
-      console.log('repost')
+    retryTask: function () {
+      axios.get('tasks/' + this.task.id + '/repeat')
+    },
 
-    }
+    cancelTask: function () {
+      axios.get('tasks/' + this.task.id + '/cancel')
+    },
+
+    archiveTask: function () {
+      axios.get('tasks/' + this.task.id + '/archive')
+    },
   }
 }
 </script>

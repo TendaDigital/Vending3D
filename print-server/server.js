@@ -61,19 +61,26 @@ function startRESTServer(app) {
     'namespace',
     'status',
     'owner',
-    'lockedAt',
     'pingAt',
+    'lockedAt',
+    'startedAt',
+    'completedAt',
+    'duration',
     'progress',
+    'restarts',
     'message',
-    'payload'
+    'payload',
   ]
 
   const PrinterFields = [
+    'id',
     'name',
     'status',
     'active',
     'message',
-    'pingAt'
+    'pingAt',
+    'state',
+    'task',
   ]
 
   app.use(cors())
@@ -188,9 +195,36 @@ function startRESTServer(app) {
   app.get('/printers', async (req, res, next) => {
     let printers = await Printer
         .find({})
-        .sort({ createdAt: 1 })
+        .sort({ name: 1 })
+        .populate({
+          path: 'task',
+          match: {
+            status: 'running',
+          }
+        })
 
-    res.send(printers.map(p => _.pick(p, PrinterFields)))
+    // Sort printers acordingly
+    let weights = {disconnected: 2, idle: 1, printing: 0}
+    printers = _.sortBy(printers, (p) => weights[p.status] || 0)
+
+    printers = printers.map(p => _.pick(p, PrinterFields))
+    printers.forEach(p => p.task = p.task ? _.pick(p.task, TaskFields) : null)
+
+    res.send(printers)
+  })
+
+  app.get('/printers/:printerId/remove', async (req, res, next) => {
+    let printerId = req.params.printerId
+
+    let printer = await Printer.findById(printerId)
+
+    if (!printer) {
+      return res.status(404).send('Impressora não encontrada: ' + printerId) 
+    }
+
+    await printer.remove()
+
+    res.send()
   })
 
   app.get('/objects', async (req, res, next) => {
@@ -235,7 +269,7 @@ async function startWorker(socket, pooler) {
   }
 
   console.log(chalk.green(' + connection'), iam)
-  await Printer.ping(iam, true)
+  await Printer.ping(iam)
 
   socket.on('pool', async () => {
     if (!iam) {
@@ -250,15 +284,18 @@ async function startWorker(socket, pooler) {
       currentJob = job
     }
 
-    Printer.ping(iam, true)
+    Printer.ping(iam)
 
     // console.log(chalk.yellow(' . debug message'))
     socket.emit('job', job)
   })
 
-  socket.on('printerStatus', async (status) => {
+  socket.on('printerStatus', async (data) => {
     // console.log('printerStatus', status)
-    Printer.ping(iam, true, status)
+    let printer = await Printer.findOrCreate(iam)
+    printer.ping(data.status)
+    printer.set({state: data.payload || {}})
+    await printer.save()
   })
 
   /* 
@@ -279,7 +316,7 @@ async function startWorker(socket, pooler) {
       }
     }
 
-    Printer.ping(iam, true)
+    Printer.ping(iam)
 
     socket.emit('job:'+job._id, job)
   })
@@ -291,7 +328,7 @@ async function startWorker(socket, pooler) {
     }
 
     console.log(chalk.red(' - disconnect'), iam)
-    Printer.ping(iam, false)
+    await Printer.disconnected(iam)
   })
 }
 

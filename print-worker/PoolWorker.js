@@ -45,8 +45,8 @@ module.exports = class SocketConnection {
     })
   }
 
-  setPrinterStatus(status) {
-    this.socket.emit('printerStatus', status)
+  setPrinterStatus(status, payload) {
+    this.socket.emit('printerStatus', {status, payload})
   }
 }
 

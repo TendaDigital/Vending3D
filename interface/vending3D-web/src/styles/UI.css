@@ -18,3 +18,33 @@
 .elevate-3 {
   box-shadow: 0px 5px 26px -4px rgba(0, 0, 0, 0.2) !important;
 }
+
+/*
+ * Use "hover-parent" on an element, and "hover-show" on it's child to let the child appear
+ * only when "hover-parent" is hovered
+ */
+.hover-parent .hover-show-translucid {
+  opacity: 0.1;
+  transition: opacity 0.2s;
+}
+
+.hover-parent .hover-show {
+  opacity: 0.0;
+  transition: opacity 0.2s;
+}
+
+.hover-parent:hover .hover-show,
+.hover-parent:hover .hover-show-translucid {
+  opacity: 1;
+  transition-duration: 0.4s;
+}
+
+.hover-parent .hover-hide {
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+
+.hover-parent:hover .hover-hide {
+  opacity: 0;
+  transition-duration: 0.4s;
+}

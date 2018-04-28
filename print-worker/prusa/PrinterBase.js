@@ -1,52 +1,41 @@
 const _ = require('lodash')
-const fs = require('fs')
-const {promisify} = require('util');
-
-const fsReadFile = promisify(fs.readFile)
-// const Bot = require('./Bot')
-const MarlinServer = require('./MarlinServer')
+const fsReadFile = require('util').promisify(require('fs').readFile)
 
 const sleep = ms => new Promise(res => setTimeout(res, ms))
-
 
 module.exports = class Printer {
   constructor (options) {
     this.options = options
-    this.channel = new MarlinServer(options)
-    this.channel.on('data', this.parse.bind(this))
+    
     this.switch = {
       x: false,
       y: false,
       z: false,
       b: false,
     }
+
+    this.state = {
+      temp_bed: null,
+      temp_bed_target: null,
+      temp_extruder: null,
+      temp_extruder_target: null,
+    }
+
     this.message = ''
   }
 
-  parse(data) {
-    if (data.startsWith('x_min:')) {
-      this.switch.x = data.includes('TRIGGERED')
-    } else if (data.startsWith('y_min:')) {
-      this.switch.y = data.includes('TRIGGERED')
-    } else if (data.startsWith('z_min:')) {
-      this.switch.z = data.includes('TRIGGERED')
-    } else if (data.startsWith('x_max:')){
-      this.switch.b = data.includes('TRIGGERED')
-    }
-  }
+  parse(data) {}
 
   get name () {
-    return this.options.name || this.channel.name
+    return this.options.name
   }
 
   // Resolves promise once connected
-  ready() {
-    return this.channel.ready()
-  }
+  ready() {}
 
-  connect() {
-    return this.channel.connect()
-  }
+  connect() {}
+
+  async sendCommand(command) {}
 
   async command(gcode) {
     let original = gcode
@@ -66,13 +55,16 @@ module.exports = class Printer {
       if (this.options.debug) {
         console.log('> SOFT', cmd)
       }
-      await this[cmd]()
-      return
+      return await this[cmd]()
     } else if (gcode.startsWith('M117')) {
       this.message = gcode.replace('M117 ', '')
+    } else if (gcode.startsWith('M104')) {
+      this.state.temp_extruder_target = parseFloat(gcode.replace('M104 S', ''))
+    } else if (gcode.startsWith('M140')) {
+      this.state.temp_bed_target = parseFloat(gcode.replace('M140 S', ''))
     }
 
-    await this.channel.execute(gcode)
+    return await this.sendCommand(gcode)
   }
 
   async commands(gcodes) {
@@ -102,7 +94,7 @@ module.exports = class Printer {
   async home(axes){
     axes = _.intersection(axes, ['X', 'Y', 'Z', 'W'])
     let cmd = 'G28 ' + axes.join(' ')
-    await this.channel.execute(cmd)
+    await this.command(cmd)
   }
 
   async homeX(){ await this.home(['X']) }
@@ -123,8 +115,6 @@ module.exports = class Printer {
     } while(!this.switch.b)
 
     await this.beep()
-
-    // this.display("Ok! Beginning")
   }
   
   async softwareHome(axis) {
@@ -169,22 +159,6 @@ module.exports = class Printer {
 
   }
 
-  async checkPrint() {
-    await this.readSwitches()
-    if (this.switch.b){
-      await this.display("Part Found 200 OK")
-    }else {
-      await this.shutdown()
-      await this.command('M300 S2000 P500')
-      await this.command('M300 S0 P20')
-      await this.command('M300 S2000 P500')
-      await this.command('M300 S0 P20')
-      await this.command('M300 S2000 P500')
-      await this.command('M300 S0 P20')
-      throw new Error("Part Not Found 404")
-    }
-  }
-
   async shutdown(){
     await this.command('G1 Z30 F3000.0')
     await this.command('M84')
@@ -212,5 +186,7 @@ module.exports = class Printer {
     await this.command('G80')
   }
 
-
+  async readTemperature() {
+    return await this.command('M105')
+  }
 }
