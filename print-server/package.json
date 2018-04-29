@@ -9,11 +9,13 @@
   },
   "dependencies": {
     "chalk": "^2.4.0",
+    "cors": "^2.8.4",
     "express": "^4.16.3",
     "forever": "^0.15.3",
     "lodash": "^4.17.5",
     "mongoose": "^5.0.15",
     "mongoose-timestamp": "^0.6.0",
+    "node-stl-thumbnailer": "^1.0.1",
     "socket.io": "^2.1.0"
   }
 }

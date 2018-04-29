@@ -16,9 +16,9 @@ async function main() {
     await Task.create({
       namespace: 'print',
       payload: {
-        file: path.join(__dirname, '../objects/A.gcode'),
+        file: path.join(__dirname, '../objects/S.gcode'),
         name: 'Test File',
-        description: 'Ivan Seidel',
+        description: 'Samy',
       }
     })
   }

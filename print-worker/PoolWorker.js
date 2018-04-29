@@ -44,6 +44,10 @@ module.exports = class SocketConnection {
       this.socket.emit('pool')
     })
   }
+
+  setPrinterStatus(status, payload) {
+    this.socket.emit('printerStatus', {status, payload})
+  }
 }
 
 class Job {
@@ -76,7 +80,8 @@ class Job {
     if (!data || data._id != this._id) return;
 
 
-    if (['stopped', 'failed' ,'complete'].includes(data.status)) {
+    // Stop if job is not running or queued
+    if (!['running', 'queued'].includes(data.status)) {
       // Turn off events and set stopped flag
       this.socket.off(this.topic)
       this.stopped = true

@@ -5,7 +5,7 @@ const SerialPort = require('serialport')
 
 const draftlog = require('draftlog').into(console).addLineListener(process.stdin)
 
-const Printer = require('./prusa/Printer')
+const Printer = process.env.MOCK ? require('./prusa/PrinterMock') : require('./prusa/PrinterPrusa')
 const GcodeParser = require('./prusa/GcodeParser')
 
 const sleep = require('./sleep')
@@ -16,6 +16,16 @@ let printerInfo = null
 async function loadPrinterInfo() {
   let printers = require('./printers')
   
+  if (process.env.MOCK) {
+    let name = process.env.PRINTER || 'Mocked Printer'
+    return {
+      name,
+      port: {
+        serialNumber: 'MOCKED:' +  name
+      }
+    }
+  }
+
   if (process.env.PRINTER) {
     // try finding it
     let printer = _.find(printers, {name: process.env.PRINTER})
@@ -146,7 +156,6 @@ async function main() {
   await printer.beep()
 
   // Wait printer to be ok
-  await printer.waitForButtonPress()
   console.log(chalk.yellow(' . Finished'))
 
   // The master interface
@@ -159,15 +168,40 @@ async function main() {
 
   console.log(chalk.yellow(' . Ready'))
 
+  // Global printer status flag
+  let printerStatus = 'waiting'
+  setInterval(() => {
+    master.setPrinterStatus(printerStatus, printer.state)
+  }, 250)
+
+  async function readTemperature() {
+    try {
+      await printer.readTemperature()
+    } catch (e) {}
+
+    setTimeout(readTemperature, 2000)
+  }
+  
+  readTemperature()
+
+  let job
   while (1) {
     console.log()
+    
+    // Wait printer to be ok
+    printerStatus = 'waiting'
+    console.log(chalk.yellow(' # Waiting for button press'))
+    await printer.waitForButtonPress('[press] ' + _.get(job, 'data.payload.description', ''))
+
+    // Start a new job
+    job = null
     let pooling = draftLoading(chalk.yellow(' # Waiting for a new job'))
-    let job = null
 
     await printer.display('  Tenda ' + printerInfo.name)
 
     // Keep pooling
     while(1) {
+      printerStatus = 'idle'
       // Attempt getting a new job
       pooling()
       job = await master.pool()
@@ -180,6 +214,8 @@ async function main() {
         break;
       }
     }
+
+    printerStatus = 'printing'
 
     // Beep twice
     await printer.beep(500)
@@ -203,10 +239,7 @@ async function main() {
     await sleep(50)
     await printer.beep()
 
-    // Wait printer to be ok
-    // console.log()
-    console.log(chalk.yellow(' # Completed! Waiting for button press'))
-    await printer.waitForButtonPress('[press] ' + _.get(job, 'data.payload.description'))
+    console.log(chalk.green(' # Complete'))
   }
 }
 
@@ -231,7 +264,10 @@ async function runJob(printer, job) {
     let lastPercentageUpdate = -1
     while(true) {
       if (job.stopped) {
-        throw new Error('Cancelado')
+        // throw new Error('Cancelado')
+        console.log(chalk.red(' # Job cancelado pelo servidor'))
+        job.setStatus('canceled', 'Cancelado pelo servidor')
+        return
       }
 
       // Run next 

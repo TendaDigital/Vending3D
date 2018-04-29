@@ -12,5 +12,12 @@
       "serialNumber": "CZPX2617X003XK24826"
     },
     "TERM_SESSION_ID": "w0t4p5:0101EC89-775C-4799-9192-A47166A807FE"
+  },
+  {
+    "name": "Printer C",
+    "port": {
+      "serialNumber": "CZPX2617X003XK24982"
+    },
+    "TERM_SESSION_ID": "w0t1p2:7C26EE6E-0C73-421E-A648-07E0C747ED36"
   }
 ]
