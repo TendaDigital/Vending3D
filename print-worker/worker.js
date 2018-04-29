@@ -156,7 +156,6 @@ async function main() {
   await printer.beep()
 
   // Wait printer to be ok
-  await printer.waitForButtonPress()
   console.log(chalk.yellow(' . Finished'))
 
   // The master interface
@@ -170,7 +169,7 @@ async function main() {
   console.log(chalk.yellow(' . Ready'))
 
   // Global printer status flag
-  let printerStatus = 'idle'
+  let printerStatus = 'waiting'
   setInterval(() => {
     master.setPrinterStatus(printerStatus, printer.state)
   }, 250)
@@ -185,10 +184,18 @@ async function main() {
   
   readTemperature()
 
+  let job
   while (1) {
     console.log()
+    
+    // Wait printer to be ok
+    printerStatus = 'waiting'
+    console.log(chalk.yellow(' # Waiting for button press'))
+    await printer.waitForButtonPress('[press] ' + _.get(job, 'data.payload.description', ''))
+
+    // Start a new job
+    job = null
     let pooling = draftLoading(chalk.yellow(' # Waiting for a new job'))
-    let job = null
 
     await printer.display('  Tenda ' + printerInfo.name)
 
@@ -232,11 +239,7 @@ async function main() {
     await sleep(50)
     await printer.beep()
 
-    // Wait printer to be ok
-    // console.log()
-    printerStatus = 'waiting'
-    console.log(chalk.yellow(' # Completed! Waiting for button press'))
-    await printer.waitForButtonPress('[press] ' + _.get(job, 'data.payload.description'))
+    console.log(chalk.green(' # Complete'))
   }
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="row" style="height: 100%;">
+  <div class="row" style="height: 100%; overflow: hidden;">
     <Sidebar style="width: 350px;"/>
     <Content class="flex"/>
   </div>

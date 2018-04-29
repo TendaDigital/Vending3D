@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="422px" height="177px" viewBox="0 0 422 177" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.1 (51147) - http://www.bohemiancoding.com/sketch -->
+    <title>dino</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="02b.-Formulários" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="dino" transform="translate(-404.000000, -299.000000)">
+            <g transform="translate(404.000000, 299.000000)">
+                <path d="M260.304688,177 C331.834827,177 355.304688,170.284271 355.304688,162 C355.304688,153.715729 312.771739,147 260.304688,147 C207.837636,147 165.304688,153.715729 165.304688,162 C165.304688,170.284271 186.013174,177 260.304688,177 Z" id="Oval-5" fill="#E8FCFF"></path>
+                <g id="rabo" transform="translate(0.000000, 35.000000)">
+                    <polygon id="rabo-comeco" fill="#81D985" points="274.071777 0.604980469 117.735352 21.4951172 120.008789 43.3818359 169.444336 53.8017578 237.272461 64.7363281"></polygon>
+                    <polygon id="rabo-final" fill="#A2EDA5" points="120.001221 43.3925781 117.757812 21.5021973 0.61328125 39.3359375 44.9980469 43.3925781"></polygon>
+                </g>
+                <polygon id="Path-14" fill="#60C364" points="352.28418 87.9150391 352.28418 89.6347656 349.322754 101.861328 350.803467 108.505371 357.699707 119.460449 355.583984 121.46875 336.560547 113.804199 341.093262 99.2817383"></polygon>
+                <polygon id="Path-4" fill="#81D985" points="415.941406 46.3837891 421.90625 45.0595703 393.370117 0.0478515625 369.873779 9.52636719"></polygon>
+                <polygon id="Path-5" fill="#BFF8C1" points="421.875488 45.1108398 415.884277 46.2424316 410.958496 58.4101562 416.426025 57.578125"></polygon>
+                <polygon id="Path-8" fill="#BFF8C1" points="372.024902 44.6660156 345.333008 103.273438 337.973633 108.61792 339.418701 97.0375977 366.548828 41.2163086"></polygon>
+                <polygon id="Path" fill="#A2EDA5" points="415.875977 46.3415527 370.168457 9.64916992 369.589844 44.0461426 410.956055 58.5214844"></polygon>
+                <polygon id="Path" fill="#81D985" points="357.085938 11.871582 328.940918 50.8320313 339.160156 99.2133789 368.487305 37.3432617"></polygon>
+                <polygon id="Path" fill="#75CD79" points="370.164795 9.69946289 356.876953 9.34765625 356.876953 35.1499023 369.723145 43.940918"></polygon>
+                <polygon id="Path-3" fill="#75CD79" points="328.948975 50.8657227 274.17627 35.5869141 286.548828 93.9125977 277.789551 112.245605 339.272461 98.8032227"></polygon>
+                <polygon id="Path-6" fill="#A2EDA5" points="287.119141 95.2998047 274.110352 35.4130859 236.132324 60.565918"></polygon>
+                <polygon id="Path-9" fill="#81D985" points="339.338379 98.7081299 310.11731 105.121338 339.338379 134.052734 340.625 133.002441 337.412109 115.163574"></polygon>
+                <polygon id="Path-11" fill="#60C364" points="294.242676 108.683594 293.19873 113.313965 278.955078 125.95752 278.955078 146.879883 275.091309 151.261719 264.604447 151.261719 266.107422 140.006348 264.604447 134.318848 277.119141 110.229492"></polygon>
+                <polygon id="Path-12" fill="#60C364" points="255.055176 161.308105 273.564941 169.847656 270.003906 171.00293 243.139648 171.00293 239.789551 167.922363"></polygon>
+                <polygon id="Path-7" fill="#8AE28E" points="236.252441 60.5993652 235.537598 93.5561523 239.559082 123.42627 233.697754 137.440918 239.559082 168.102539 255.338867 165.772461 254.097168 142.637207 267.097168 132.708008 287.166992 95.2207031"></polygon>
+                <polygon id="Path-13" fill="#4CAF50" points="276.052734 150.144531 293.332031 152.758301 281.632324 154.62207 270.07959 154.62207 265.098633 151.330566"></polygon>
+                <polygon id="Path-15" fill="#5BB65F" points="393.410156 0.323242188 389.079102 0.323242188 356.842041 9.36499023 369.976074 9.74804688"></polygon>
+            </g>
+        </g>
+    </g>
+    <style>
+        #rabo {
+            transform-origin: 238px 42px;
+            animation-name: mexe-rabo;
+            animation-duration: 4s;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes mexe-rabo {
+            0% {
+                transform: translate(13px, 41px) rotateZ(-2deg);
+            }
+            6% {
+                transform: translate(13px, 41px) rotateZ(-9deg);
+            }
+            15% {
+                transform: translate(13px, 41px) rotateZ(-5deg);
+            }
+            23% {
+                transform: translate(13px, 41px) rotateZ(-10deg);
+            }
+
+            29% {
+                transform: translate(13px, 41px) rotateZ(-5deg);
+            }
+
+            100% {
+                transform: translate(13px, 41px) rotateZ(-2deg);
+            }
+        }
+    </style>
+</svg>

@@ -112,7 +112,7 @@ module.exports = class Printer {
       await sleep(50)
 
       if (t++ % 30 == 0) await this.beep(20);
-    } while(!this.switch.b)
+    } while(!this.switch.x)
 
     await this.beep()
   }

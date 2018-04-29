@@ -4,13 +4,7 @@
         <span class="text">FILA DE IMPRESSÃO</span>
       </div>
       <div class="flex column scroll-y" style="background: #F0F0F0;">
-        <!-- <div style="position: relative; height: 60px; flex-shrink: 0;"> style="position: absolute; width: 100%; height: 100%;" -->
-        <!-- <transition name="trans-lr" mode="out-in">
-          <Card v-if="selectedTask" :key="selectedTask.id" :task="selectedTask" ></Card>
-        </transition> -->
-        <!-- </div> -->
-        <!-- <div class="flex scroll-y"> -->
-        <transition-group tag="div" class="" style="position: relative; display: block;" mode="out-in" name="trans-lr">
+        <transition-group tag="div" class="column flex" style="position: relative;" mode="out-in" name="trans-lr">
           <div class="trans-lr px-3 pt-2 "
             v-for="task in tasks"
             :key="task.id">
@@ -20,8 +14,12 @@
                 @click="selectedTask = task"
             ></TaskStatus>
           </div>
+
+          <div v-if="tasks && !tasks.length" class="trans-lr column align-center pa-5 white flex" key="dino">
+            <img src="/static/dino.svg" class="flex" style="width: 100%;">
+            <span class="mt-3 grey--text">Nenhuma impressão na fila</span>
+          </div>
         </transition-group>
-        <!-- </div> -->
       </div>
       <div class="column px-2 grey darken-3 no-flex" v-if="printers">
 

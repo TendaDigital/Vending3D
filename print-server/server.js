@@ -204,8 +204,8 @@ function startRESTServer(app) {
         })
 
     // Sort printers acordingly
-    let weights = {disconnected: 2, idle: 1, printing: 0}
-    printers = _.sortBy(printers, (p) => weights[p.status] || 0)
+    let weights = ['printing', 'idle', 'waiting', 'disconnected']
+    printers = _.sortBy(printers, (p) => weights.indexOf(p.status) || 10)
 
     printers = printers.map(p => _.pick(p, PrinterFields))
     printers.forEach(p => p.task = p.task ? _.pick(p.task, TaskFields) : null)
@@ -246,8 +246,18 @@ function startRESTServer(app) {
       info.files[ext] = path.join('/objects/files', file)
     }
 
+    // Filter invalid files
+    objects = objects.filter(obj => !!obj.files.gcode)
+
     res.send(objects)
   })
+
+  let objectsPath = path.join(__dirname, '../objects')
+  app.use('/objects/files', express.static(objectsPath, {
+    index: false,
+    extensions: ['gcode', 'stl', 'jpg', 'png', 'jpeg', 'txt'],
+    setHeaders: () => {},
+  }))
 
 }
 

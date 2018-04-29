@@ -1,23 +1,21 @@
 <template>
   <div class="content">
-    <!-- <Form/> -->
+    <ObjectListing></ObjectListing>
   </div>
 </template>
 
 <script>
 import Form from '../components/Form'
-
+import ObjectListing from '../components/ObjectListing'
 
 export default {
   name: 'Content',
-   components: {
-    Form
+  components: {
+    Form,
+    ObjectListing,
   },
-  data () {
-    return {
-      
-    }
-  }
+  
+  created() {},
 }
 </script>
 
