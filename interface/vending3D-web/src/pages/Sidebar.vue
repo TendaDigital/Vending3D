@@ -3,8 +3,13 @@
       <div class="header no-flex">
         <span class="text">FILA DE IMPRESSÃO</span>
       </div>
-      <div class="flex column scroll-y" style="background: #F0F0F0;">
-        <transition-group tag="div" class="column flex" style="position: relative;" mode="out-in" name="trans-lr">
+      <div class="flex column scroll-y" style="background: #F0F0F0; display: block">
+        <transition-group
+          tag="div"
+          class="column flex"
+          style="position: relative; min-height: 100%;"
+          mode="out-in"
+          name="trans-lr">
           <div class="trans-lr px-3 pt-2 "
             v-for="task in tasks"
             :key="task.id">
@@ -15,9 +20,14 @@
             ></TaskStatus>
           </div>
 
-          <div v-if="tasks && !tasks.length" class="trans-lr column align-center pa-5 white flex" key="dino">
-            <img src="/static/dino.svg" class="flex" style="width: 100%;">
+          <div
+            v-if="tasks && !tasks.length"
+            class="flex trans-lr column align-center pa-5 white"
+            key="dino">
+            <div class="flex"></div>
+            <img src="/static/dino.svg" style="width: 100%;">
             <span class="mt-3 grey--text">Nenhuma impressão na fila</span>
+            <div class="flex"></div>
           </div>
         </transition-group>
       </div>

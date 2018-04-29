@@ -1,11 +1,13 @@
 <template>
-  <div class="flex row flex-wrap align-center justify-center scroll-y" v-loading="!objects">
-    <ObjectViewer
+  <div class="row flex-wrap align-center justify-center scroll-y" v-loading="!objects">
+    <ObjectCard
       v-for="object in objects"
       :key="object.name"
       :object="object"
-      class="ma-2"
-    ></ObjectViewer>
+      class="ma-2 elevate-2"
+      :selected="selected == object"
+      @click="$emit('select', object)"
+    ></ObjectCard>
   </div>
 </template>
 
@@ -13,13 +15,19 @@
 
 import axios from 'axios'
 
-import ObjectViewer from './ObjectViewer'
+import ObjectCard from './ObjectCard'
 
 export default {
   name: 'ObjectListing',
 
   components: {
-    ObjectViewer,
+    ObjectCard,
+  },
+
+  props: {
+    selected: {
+      type: Object,
+    },
   },
 
   data() {

@@ -15,6 +15,7 @@
     "lodash": "^4.17.5",
     "mongoose": "^5.0.15",
     "mongoose-timestamp": "^0.6.0",
+    "node-stl-thumbnailer": "^1.0.1",
     "socket.io": "^2.1.0"
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="row" style="height: 100%; overflow: hidden;">
-    <Sidebar style="width: 350px;"/>
+    <Sidebar class="no-flex" style="width: 350px; z-index: 2;"/>
     <Content class="flex"/>
   </div>
 </template>

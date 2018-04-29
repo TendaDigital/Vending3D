@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const fs = require('fs')
 const path = require('path')
 const cors = require('cors')
 const http = require('http')
@@ -10,8 +11,8 @@ const SocketIO = require('socket.io')
 
 const Task = require('./Task')
 const Printer = require('./Printer')
-
 const PoolServer = require('./PoolServer')
+const ObjectStore = require('./ObjectStore')
 
 const PORT = process.PORT || 9077
 
@@ -43,7 +44,7 @@ async function main() {
   startPoolServer(io)
 
   console.log(' . start REST server')
-  startRESTServer(app)
+  await startRESTServer(app)
 
   console.log( ' . lift server')
   await server.listen(PORT)
@@ -55,7 +56,7 @@ async function main() {
 //   res.sendfile(__dirname + '/index.html')
 // });
 
-function startRESTServer(app) {
+async function startRESTServer(app) {
   const TaskFields = [
     'id',
     'namespace',
@@ -227,38 +228,23 @@ function startRESTServer(app) {
     res.send()
   })
 
+  /*
+   * Objects api
+   */
+  let objectsPath = path.join(__dirname, '../objects')
   app.get('/objects', async (req, res, next) => {
-    let dir = path.join(__dirname, '../objects')
-    let files = require('fs').readdirSync(dir)
-
-    let objects = []
-
-    for (file of files) {
-      let ext = file.replace(/.+\./, '')
-      let name = file.replace(/\..+/, '')
-      let info = objects.find(obj => obj.name == name)
-
-      if (!info) {
-        info = {name, files: {}}
-        objects.push(info)
-      }
-      
-      info.files[ext] = path.join('/objects/files', file)
-    }
-
-    // Filter invalid files
-    objects = objects.filter(obj => !!obj.files.gcode)
+    let objects = await ObjectStore.read(objectsPath)
 
     res.send(objects)
   })
 
-  let objectsPath = path.join(__dirname, '../objects')
   app.use('/objects/files', express.static(objectsPath, {
     index: false,
     extensions: ['gcode', 'stl', 'jpg', 'png', 'jpeg', 'txt'],
     setHeaders: () => {},
   }))
 
+  await ObjectStore.generateThumbnails(objectsPath)
 }
 
 function startPoolServer(io) {

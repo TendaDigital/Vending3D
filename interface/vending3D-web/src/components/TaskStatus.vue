@@ -5,26 +5,31 @@
 
       <!--First row, contains user name (task.payload.description) and printer id (task.owner)-->
       <div class="ontop row">
-        <!--User name (task.payload.description)-->
-        <v-chip label color="grey" text-color="grey darken-2" outline small class="ma-0">
-          <v-icon small>perm_identity</v-icon> <span>{{task.payload.description}}</span>
-          <span class="ml-1">- {{task.payload.name}}.gcode</span>
+        <!-- Current status -->
+        <v-chip label :color="statusColor" text-color="white" small class="ma-0">
+          <template v-if="task.status !='queued'">{{task.owner}}</template>
+          <template v-else>Aguardando</template>
         </v-chip>
         
         <!--Fill space-->
         <div class="flex"></div>
         <!--Printer id (task.owner)-->
        
-        <v-chip label :color="statusColor" text-color="white" small class="ma-0">
-          <template v-if="task.status !='queued'">{{task.owner}}</template>
-          <template v-else>Aguardando</template>
+        <!--User name (task.payload.description)-->
+        <v-chip label color="grey" text-color="grey darken-2" outline small class="ma-0">
+          <template v-if="task.payload.description">
+            <v-icon small>perm_identity</v-icon>
+            <span class="mr-3">{{task.payload.description}}</span>
+          </template>
+          <v-icon size="12">attach_file</v-icon>
+          <span> {{task.payload.name}}</span>
         </v-chip>
       </div>
       
       <!--Second row, contains task status (task.message), task progress in percentage (task.progress) and payload name/gcode file (task.payload.name)-->
       <div class="ontop row align-center pt-2">
         <!--Task status-->
-        <div v-if="task.status != 'queued'" class="flex grey--text text--darken-2">
+        <div v-if="task.status != 'queued'" class="flex grey--text text--darken-2 ellipsis">
           <span>{{task.message}}</span>
           <span v-if="task.status == 'running'">- {{task.progress}}%</span>
         </div>
@@ -34,11 +39,13 @@
 
         <!--Payload name/gcode file (task.payload.name)-->
         <el-button v-if="task.status == 'failed' || task.status == 'canceled'"
-          @click="retryTask()" type="warning" plain size="mini">Re-enviar</el-button>
+          @click="retryTask()" type="warning" icon="el-icon-refresh" plain size="mini" class="px-2"></el-button>
         <el-button v-else-if="task.status == 'running' || task.status == 'queued'"
-          @click="cancelTask()" type="danger" plain size="mini">cancelar</el-button>
-        <el-button v-else-if="task.status == 'success'"
-          @click="archiveTask()" type="primary" plain size="mini">arquivar</el-button>
+          @click="cancelTask()" type="danger" icon="el-icon-close" plain size="mini" class="px-2"></el-button>
+
+        <el-button v-if="task.status == 'success' || task.status == 'failed' || task.status == 'canceled'"
+          @click="archiveTask()" type="primary" icon="el-icon-check" plain size="mini" class="px-2"></el-button>
+        
       </div>
 
     </div>
