@@ -210,8 +210,6 @@ export default {
           width: stlHolder.offsetWidth,
           height: stlHolder.offsetHeight
         }
-        window.stlHolder = stlHolder
-        console.log('onResize', this.stlSize)
       })
     },
   },

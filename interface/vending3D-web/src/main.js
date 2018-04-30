@@ -12,7 +12,7 @@ import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
 import Axios from 'axios'
-window.SERVER_URL = 'http://localhost:9077'
+window.SERVER_URL = 'http://' + window.location.hostname + ':9077'
 // Axios.defaults.baseURL = 'http://192.168.0.29:9077'
 Axios.defaults.baseURL = window.SERVER_URL
 
