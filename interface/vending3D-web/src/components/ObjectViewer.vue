@@ -1,6 +1,6 @@
 <template>
   <div class="column align-center justify-center" style="position: relative;">
-    <div class="info-panel row align-center px-4" style="height: 240px;">
+    <div class="info-panel row align-center px-4" style="height: 100px;">
       <div class="display-3 align-center row grey--text">
         <v-icon size="48">layers</v-icon>
         <span class="ml-3">{{objectName}}</span>
@@ -10,20 +10,26 @@
       <el-button v-else-if="!printing" type="primary" size="large" @click="print()">Clique para confirmar</el-button>
       <span v-else class="light-green--text" @click="resetPrint()"><v-icon>check</v-icon> enviado para fila de impressão</span>
     </div>
-    <!-- <div class="flex" style="width: 100%;"> -->
-    <ModelStl
-      ref="stl"
+    <div
+      ref="stlHolder"
       v-if="stlPath"
-      v-loading="loading"
-      class="flex"
-      @on-load="onLoad()"
-      @on-mousedown="stopRotating()"
-      :cameraPosition="cameraPosition"
-      :cameraRotation="cameraRotation"
-      :cameraLookAt="cameraLookAt"
-      :cameraUp="cameraUp"
-      :src="stlPath"
-    ></ModelStl>
+      class="stl-holder flex"
+      style="width: 100%;">
+
+      <ModelStl
+        ref="stl"
+        v-loading="loading"
+        class="stl-model"
+        :size="stlSize"
+        @on-load="onLoad()"
+        @on-mousedown="stopRotating()"
+        :cameraPosition="cameraPosition"
+        :cameraRotation="cameraRotation"
+        :cameraLookAt="cameraLookAt"
+        :cameraUp="cameraUp"
+        :src="stlPath"
+      ></ModelStl>
+    </div>
     <img v-else :src="imgPath" class="flex" style="width: 100%;">
 
     <div style="position: absolute; bottom: 16px; right: 16px;">
@@ -79,19 +85,14 @@ export default {
       cameraUp: {
         x: 0, y: 0, z: 1
       },
-      // rotation: {
-      //   x: 0, y: 0, z: 0
-      // },
+
+      stlSize: {
+        width: 10,
+        height: 10,
+      },
 
       wrapper: null,
       body: null,
-      // position: {
-      //   x: 0, y: 0, z: 0
-      // },
-
-      // cameraPosition: {
-      //   x: 
-      // },
     }
   },
 
@@ -117,8 +118,17 @@ export default {
     if (this.stlPath) {
       this.loading = true
       this.rotate()
+
+      window.addEventListener('resize', this.onResize, false)
     }
-    
+  },
+
+  mounted() {
+    this.onResize()
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('resize', this.onResize, false)
   },
 
   methods: {
@@ -191,7 +201,19 @@ export default {
     resetPrint() {
       this.confirming = false
       this.printing = false
-    }
+    },
+
+    onResize() {
+      let stlHolder = this.$refs.stlHolder
+      this.$nextTick( () => {
+        this.stlSize = {
+          width: stlHolder.offsetWidth,
+          height: stlHolder.offsetHeight
+        }
+        window.stlHolder = stlHolder
+        console.log('onResize', this.stlSize)
+      })
+    },
   },
 }
 
@@ -202,5 +224,15 @@ export default {
   height: 100px;
   width: 100%;
   background: #000000CC;
+}
+
+.stl-holder {
+  position: relative;
+}
+
+.stl-model {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 </style>
