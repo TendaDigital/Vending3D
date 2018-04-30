@@ -30,7 +30,7 @@ exports.read = async function read(dir) {
 exports.generateThumbnails = async function generateThumbnails(dir) {
   // Generate object thumbnails
   let missingThumbs = (await exports.read(dir))
-    .filter(obj => !obj.files.png)
+    // .filter(obj => !obj.files.png)
     .filter(obj => obj.files.stl)
 
   if (!missingThumbs.length) {
@@ -49,6 +49,7 @@ exports.generateThumbnails = async function generateThumbnails(dir) {
         lineColor: 0x03a9f4,
         baseColor: 0x03a9f4,
         baseOpacity: 0.3,
+        cameraAngle: [0, -100, 70], 
       }]
     })
 

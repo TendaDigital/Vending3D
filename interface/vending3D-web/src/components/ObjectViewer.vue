@@ -1,6 +1,6 @@
 <template>
-  <div class="column align-center justify-center" v-loading="loading">
-    <div class="info-panel row align-center px-4">
+  <div class="column align-center justify-center" style="position: relative;">
+    <div class="info-panel row align-center px-4" style="height: 240px;">
       <div class="display-3 align-center row grey--text">
         <v-icon size="48">layers</v-icon>
         <span class="ml-3">{{objectName}}</span>
@@ -10,23 +10,36 @@
       <el-button v-else-if="!printing" type="primary" size="large" @click="print()">Clique para confirmar</el-button>
       <span v-else class="light-green--text" @click="resetPrint()"><v-icon>check</v-icon> enviado para fila de impressão</span>
     </div>
+    <!-- <div class="flex" style="width: 100%;"> -->
     <ModelStl
+      ref="stl"
       v-if="stlPath"
+      v-loading="loading"
       class="flex"
       @on-load="onLoad()"
       @on-mousedown="stopRotating()"
-      :position="position"
-      :rotation="rotation"
+      :cameraPosition="cameraPosition"
+      :cameraRotation="cameraRotation"
+      :cameraLookAt="cameraLookAt"
+      :cameraUp="cameraUp"
       :src="stlPath"
     ></ModelStl>
+    <img v-else :src="imgPath" class="flex" style="width: 100%;">
+
+    <div style="position: absolute; bottom: 16px; right: 16px;">
+      <v-btn v-if="!autoRotate" @click="startAutoRotate(true)" outline icon><v-icon>3d_rotation</v-icon></v-btn>
+    </div>
   </div>
 </template>
 
 <script>
 
+import {Matrix4, GridHelper} from 'three'
 import axios from 'axios'
 
 import {ModelStl} from 'vue-3d-model'
+
+import {getSize, getCenter} from '../helpers/Util3D'
 
 export default {
   name: 'ObjectViewer',
@@ -49,21 +62,32 @@ export default {
 
   data() {
     return {
-      loading: true,
+      loading: false,
       objects: null,
       confirming: false,
       printing: false,
       autoRotate: true,
-      rotation: {
-        x: 0,
-        y: 0,
-        z: 0,
+      cameraPosition: {
+        x: 0, y: -50, z: 50
       },
-      position: {
-        x: 0,
-        y: 0,
-        z: -20,
+      cameraRotation: {
+        x: 0, y: 0, z: 0
       },
+      cameraLookAt: {
+        x: 0, y: 0, z: 0
+      },
+      cameraUp: {
+        x: 0, y: 0, z: 1
+      },
+      // rotation: {
+      //   x: 0, y: 0, z: 0
+      // },
+
+      wrapper: null,
+      body: null,
+      // position: {
+      //   x: 0, y: 0, z: 0
+      // },
 
       // cameraPosition: {
       //   x: 
@@ -73,7 +97,11 @@ export default {
 
   computed: {
     stlPath() {
-      return this.object.files.png ? 'http://localhost:9077/objects/files/' + this.object.files.stl : null
+      return this.object.files.stl ? SERVER_URL + '/objects/files/' + this.object.files.stl : null
+    },
+
+    imgPath() {
+      return this.object.files.png ? SERVER_URL + '/objects/files/' + this.object.files.png : null
     },
 
     objectName() {
@@ -86,21 +114,72 @@ export default {
   },
 
   created() {
-    this.rotate()
+    if (this.stlPath) {
+      this.loading = true
+      this.rotate()
+    }
+    
   },
 
   methods: {
     onLoad () {
       this.loading = false
+
+      let stl = this.$refs.stl
+      window.stl = stl
+      // // let object = stl.object
+
+      this.wrapper = stl.wrapper
+      // this.body = stl.object
+
+      // window.lol = stl
+      // // window.Matrix4 = Matrix4
+
+
+      let size = getSize(stl.object)
+      let sizeLength = size.length()
+      let center = getCenter(stl.object).negate()
+
+      let dist = sizeLength * 2
+      this.cameraPosition = {x: 0, y: -dist, z: dist}
+      this.cameraLookAt = {x: 0, y: 0, z: size.z}
+      stl.camera.position.set(0, -dist, dist)
+
+      // setTimeout(() => stl.update(), 0)
+      // console.log({size: size})
+
+      stl.object.position.set(center.x, center.y, center.z + size.z / 2)
+      stl.wrapper.position.set(0, 0, 0)
+
+      new GridHelper( 100, 20)
+
+      let dgrid = new GridHelper( 250, 10, 0x0000ff, 0x808080  )
+      dgrid.rotation.set(Math.PI / 2, 0, 0)
+      stl.wrapper.add(dgrid)
+      // console.log(center, center.negate(), object.position)
+      // object.position.set(center.x, center.y, center.z)
+
     },
     rotate () {
       if (!this.autoRotate) return;
-      this.rotation.y -= 0.01;
+      
+      if (this.wrapper) {
+        this.wrapper.rotation.z += 0.01;
+      }
       requestAnimationFrame( this.rotate );
+    },
+
+    startAutoRotate() {
+      if (this.autoRotate) return;
+
+      this.autoRotate = true
+
+      this.rotate()
     },
 
     stopRotating () {
       this.autoRotate = false
+      this.rotate()
     },
 
     print() {

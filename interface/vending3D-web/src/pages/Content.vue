@@ -6,6 +6,9 @@
       :object="selectedObject"
       :key="selectedObject.name"
     ></ObjectViewer>
+    <div v-else class="flex row align-center justify-center">
+      <span class="grey--text">Selecione algum objeto para visualizar</span>
+    </div>
     
     <ObjectListing
       class="listing elevate-3"

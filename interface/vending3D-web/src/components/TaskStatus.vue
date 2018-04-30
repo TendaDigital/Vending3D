@@ -1,8 +1,11 @@
 <template>
-    <div v-if="this.status != 'errorHandled'" class="queue-card pa-3" @click="$emit('click')">
+    <div
+      v-if="this.status != 'errorHandled'"
+      class="queue-card pa-3"
+      :style="{'background-image': 'url(\'' + fileThumb + '\')'}"
+      @click="$emit('click')">
       <!--Progress Bar-->
       <div v-if="task.status == 'running'" class="progress-bar" :style="{ width: task.progress + '%' }"></div>
-
       <!--First row, contains user name (task.payload.description) and printer id (task.owner)-->
       <div class="ontop row">
         <!-- Current status -->
@@ -89,6 +92,12 @@ export default {
         'success': 'light-green--text text--darken-2',
       }[this.task.status] || 'grey--text'
     },
+
+    fileThumb() {
+      if (!this.task) return;
+
+      return SERVER_URL + '/objects/files/' + this.task.payload.name + '.png'
+    },
   },
 
   methods: {
@@ -116,6 +125,10 @@ export default {
   border-radius: 4px;
   background-color: #fafafa;
   /* background-size: 10px 10px; */
+
+  background-color: #FFF;
+  background-size: contain;
+  background-position: center center;
 }
 
 .error-message{

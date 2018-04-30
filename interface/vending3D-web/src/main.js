@@ -12,8 +12,9 @@ import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
 import Axios from 'axios'
+window.SERVER_URL = 'http://localhost:9077'
 // Axios.defaults.baseURL = 'http://192.168.0.29:9077'
-Axios.defaults.baseURL = 'http://localhost:9077'
+Axios.defaults.baseURL = window.SERVER_URL
 
 import VueTimers from '@/helpers/VueTimers'
 Vue.mixin(VueTimers)

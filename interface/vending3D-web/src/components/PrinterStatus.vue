@@ -14,6 +14,7 @@
         <small>{{printer.task.payload.name}}</small><v-icon size="14">attach_file</v-icon>
       </div>
 
+
       <template v-if="printer.status != 'disconnected'">
         <TemperatureTag
           v-if="printer.state.temp_bed"

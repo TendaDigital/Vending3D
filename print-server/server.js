@@ -205,7 +205,7 @@ async function startRESTServer(app) {
         })
 
     // Sort printers acordingly
-    let weights = ['printing', 'idle', 'waiting', 'disconnected']
+    let weights = ['', 'printing', 'idle', 'waiting', 'disconnected']
     printers = _.sortBy(printers, (p) => weights.indexOf(p.status) || 10)
 
     printers = printers.map(p => _.pick(p, PrinterFields))

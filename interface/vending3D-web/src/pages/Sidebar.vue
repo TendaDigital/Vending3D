@@ -3,20 +3,20 @@
       <div class="header no-flex">
         <span class="text">FILA DE IMPRESSÃO</span>
       </div>
-      <div class="flex column scroll-y" style="background: #F0F0F0; display: block">
+      <div class="flex column scroll-y" style="background: #F0F0F0;">
         <transition-group
           tag="div"
           class="column flex"
-          style="position: relative; min-height: 100%;"
+          style="position: relative; min-height: 100%; display: block;"
           mode="out-in"
           name="trans-lr">
           <div class="trans-lr px-3 pt-2 "
             v-for="task in tasks"
             :key="task.id">
             <TaskStatus
-                class="elevate-2"
-                :task="task"
-                @click="selectedTask = task"
+              class="elevate-2"
+              :task="task"
+              @click="selectedTask = task"
             ></TaskStatus>
           </div>
 
