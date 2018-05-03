@@ -6,7 +6,7 @@
         <span class="ml-3">{{objectName}}</span>
       </div>
       <div class="flex"></div>
-      <el-button v-if="!confirming" type="success" size="large" @click="confirming = true">Imprimir</el-button>
+      <el-button v-if="!confirming" type="success" size="large" @click="confirming = true" style="background:transparent; border:none; color:transparent;">Imprimir</el-button>
       <el-button v-else-if="!printing" type="primary" size="large" @click="print()">Clique para confirmar</el-button>
       <span v-else class="light-green--text" @click="resetPrint()"><v-icon>check</v-icon> enviado para fila de impressão</span>
     </div>

@@ -16,6 +16,8 @@
 
 <script>
 
+import Axios from 'axios'
+
 export default {
   name: 'ObjectCard',
 
@@ -41,7 +43,7 @@ export default {
     },
 
     imgPath() {
-      return 'http://localhost:9077/objects/files/' + this.object.files.png
+      return Axios.defaults.baseURL+'/objects/files/' + this.object.files.png
     },
   },
 
