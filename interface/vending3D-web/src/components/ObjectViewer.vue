@@ -6,8 +6,8 @@
         <span class="ml-3">{{objectName}}</span>
       </div>
       <div class="flex"></div>
-      <el-button v-if="!confirming" type="success" size="large" @click="confirming = true" style="background:transparent; border:none; color:transparent;">Imprimir</el-button>
-      <el-button v-else-if="!printing" type="primary" size="large" @click="print()">Clique para confirmar</el-button>
+      <el-button v-if="stage == 'initial'" type="success" size="large" @click="$emit('confirm')" style="background:transparent; border:none; color:transparent;">Imprimir</el-button>
+      <el-button v-else-if="stage=='print'" type="primary" size="large" @click="print()">Clique para confirmar</el-button>
       <span v-else class="light-green--text" @click="resetPrint()"><v-icon>check</v-icon> enviado para fila de impressão</span>
     </div>
     <div
@@ -64,6 +64,11 @@ export default {
       type: Object,
       default: () => ({}),
     },
+
+    stage: {
+      type: String,
+      required: true,
+    }
   },
 
   data() {
@@ -196,11 +201,15 @@ export default {
       axios.get('tasks/print/' + this.object.name, {params: this.payload}).then(() => {
         this.printing = true  
       })
+
+      this.$emit('finish')
+      
     },
 
     resetPrint() {
-      this.confirming = false
-      this.printing = false
+      // this.confirming = false
+      // this.printing = false
+      this.$emit('clean')
     },
 
     onResize() {

@@ -1,5 +1,5 @@
 // The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+// (runtime-only or standalone) has been se fixt in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
 
@@ -12,8 +12,8 @@ import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
 import Axios from 'axios'
-//window.SERVER_URL = 'http://' + window.location.hostname + ':9077'
-window.SERVER_URL = 'http://192.168.0.29:9077'
+window.SERVER_URL = 'http://' + window.location.hostname + ':9077'
+//window.SERVER_URL = 'http://192.168.0.29:9077'
  //Axios.defaults.baseURL = 'http://192.168.0.29:9077'
 Axios.defaults.baseURL = window.SERVER_URL
 
