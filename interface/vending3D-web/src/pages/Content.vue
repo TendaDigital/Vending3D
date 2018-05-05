@@ -1,33 +1,34 @@
 <template>
 
   <div v-if="this.stage=='form'" class="column">
-      <Form
-         @return="handleReturn()"
-         @print="handlePrint()"
-      ></Form>
-    </div>
-    <div v-else class="column">
-      <ObjectViewer
-        v-if="selectedObject"
-        class="flex"
-        :object="selectedObject"
-        :key="selectedObject.name"
-        :stage="this.stage"
-        @confirm="handleConfirm()"
-        @finish="handleFinish()"
-        @clean="handleClean()"
-      ></ObjectViewer>
-      <div v-else class="flex row align-center justify-center">
-        <span class="grey--text">Selecione algum objeto para visualizar</span>
-      </div>
-      
-      <ObjectListing
-        class="listing elevate-3"
-        :selected="selectedObject"
-        @select="selectedObject = $event"
-      ></ObjectListing>
+    <Form
+        @return="handleReturn"
+        @print="handlePrint"
+    ></Form>
+  </div>
+  <div v-else class="column">
+    <ObjectViewer
+      v-if="selectedObject"
+      class="flex"
+      :object="selectedObject"
+      :key="selectedObject.name"
+      :stage="this.stage"
+      :payload="this.formData"
+      @confirm="handleConfirm"
+      @finish="handleFinish"
+      @clean="handleClean"
+    ></ObjectViewer>
+    <div v-else class="flex row align-center justify-center">
+      <span class="grey--text">Selecione algum objeto para visualizar</span>
     </div>
     
+    <ObjectListing
+      class="listing elevate-3"
+      :selected="selectedObject"
+      @select="handleSelect"
+    ></ObjectListing>
+  </div>
+
 </template>
 
 <script>
@@ -47,28 +48,38 @@ export default {
     return {
       selectedObject: null,
       stage: 'initial',
+      formData: null,
     }
   },
   methods: {
-    handleConfirm () {
+    handleConfirm: function () {
       this.stage = 'form';
     },
 
-    handleReturn () {
+    handleReturn: function () {
       this.stage = 'initial';
     },
 
-    handlePrint () {
+    handlePrint: function (payload) {
+
+      this.formData = payload
+      console.log(this.formData.name)
       this.stage = 'print'
     },
 
-    handleFinish () {
+    handleFinish: function () {
       this.stage = 'finish'
     },
 
-    handleClean () {
+    handleClean: function () {
       this.stage = 'initial'
+    },
+
+    handleSelect: function (payload) {
+      this.handleClean()
+      this.selectedObject = payload
     }
+    
 
   }
 }

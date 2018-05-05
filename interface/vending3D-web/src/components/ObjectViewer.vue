@@ -68,7 +68,7 @@ export default {
     stage: {
       type: String,
       required: true,
-    }
+    },
   },
 
   data() {
@@ -98,6 +98,7 @@ export default {
 
       wrapper: null,
       body: null,
+      printId: null,
     }
   },
 
@@ -198,12 +199,38 @@ export default {
     },
 
     print() {
-      axios.get('tasks/print/' + this.object.name, {params: this.payload}).then(() => {
-        this.printing = true  
-      })
+      axios.get('tasks/print/' + this.object.name + '?description='+ this.payload.name).then((response) => {
+        this.printId = response.data.id
+        console.log('resposta post:' + this.printId)
+        this.postForm()
+        this.printing = true 
+         
+      }).catch(function (e) {
+        console.error(e)
+      });
 
       this.$emit('finish')
       
+    },
+
+    postForm: function () {
+        axios.get('http://script.google.com/macros/s/AKfycbyfPfRhRTRwR4ha-gvRTkGhLy-JHwtuKo273Sv35Qydy8rQxwPr/exec?', {
+            params: {
+             name: this.payload.name,
+             email: this.payload.email,
+             number: this.payload.phone,
+             role: this.payload.role,
+             school: this.payload.school,
+             studentsNumber: this.payload.studentsNumber, 
+             printid: this.printId, 
+             action: 'insert'  
+            }
+        }).then((response) => {
+          console.log("print insert" +  response)
+        })
+        .catch(function (e) {
+            console.error(e)
+        });
     },
 
     resetPrint() {
