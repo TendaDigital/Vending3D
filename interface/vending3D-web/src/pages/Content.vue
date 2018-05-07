@@ -1,33 +1,35 @@
 <template>
 
-  <div v-if="this.stage=='form'" class="column">
-    <Form
-        @return="handleReturn"
-        @print="handlePrint"
-    ></Form>
-  </div>
-  <div v-else class="column">
-    <ObjectViewer
-      v-if="selectedObject"
-      class="flex"
-      :object="selectedObject"
-      :key="selectedObject.name"
-      :stage="this.stage"
-      :payload="this.formData"
-      @confirm="handleConfirm"
-      @finish="handleFinish"
-      @clean="handleClean"
-    ></ObjectViewer>
-    <div v-else class="flex row align-center justify-center">
-      <span class="grey--text">Selecione algum objeto para visualizar</span>
+  <transition name="fade" mode="out-in">
+    <div v-if="this.stage=='form'" class="column" key="form">
+      <Form
+          @return="handleReturn"
+          @print="handlePrint"
+      ></Form>
     </div>
-    
-    <ObjectListing
-      class="listing elevate-3"
-      :selected="selectedObject"
-      @select="handleSelect"
-    ></ObjectListing>
-  </div>
+    <div v-else class="column" key="viewer">
+      <ObjectViewer
+        v-if="selectedObject"
+        class="flex"
+        :object="selectedObject"
+        :key="selectedObject.name"
+        :stage="this.stage"
+        :payload="this.formData"
+        @confirm="handleConfirm"
+        @finish="handleFinish"
+        @clean="handleClean"
+      ></ObjectViewer>
+      <div v-else class="flex row align-center justify-center">
+        <span class="grey--text">Selecione algum objeto para visualizar</span>
+      </div>
+      
+      <ObjectListing
+        class="listing elevate-3"
+        :selected="selectedObject"
+        @select="handleSelect"
+      ></ObjectListing>
+    </div>
+  </transition>
 
 </template>
 
@@ -90,6 +92,13 @@ export default {
 .listing {
    height: 360px;
    background: #F0F0F0;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .1s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0.5;
 }
 
 </style>
