@@ -201,7 +201,6 @@ export default {
     print() {
       axios.get('tasks/print/' + this.object.name + '?description='+ this.payload.name).then((response) => {
         this.printId = response.data.id
-        console.log('resposta post:' + this.printId)
         this.postForm()
         this.printing = true 
          

@@ -65,7 +65,7 @@ export default {
     handlePrint: function (payload) {
 
       this.formData = payload
-      console.log(this.formData.name)
+      //console.log(this.formData.name)
       this.stage = 'print'
     },
 
@@ -97,6 +97,7 @@ export default {
 .fade-enter-active, .fade-leave-active {
   transition: opacity .1s;
 }
+
 .fade-enter, .fade-leave-to {
   opacity: 0.5;
 }

@@ -9,7 +9,7 @@
                 <div class="flex row py-3">
                 <span style="color: #ffffff; font-size: 18px">Muito obrigado por visitar nosso estande, esperamos que tenha gostado ;)</span>
                 </div>
-                <span style="color: #ffffff; font-size: 18px">Você poderia preencher os campos ao lado? Gostariamos de te conhecer melhor!</span>
+                <span style="color: #ffffff; font-size: 18px">Você poderia preencher os campos ao lado? Gostariamos de conhecê-lo melhor!</span>
             </div>
         </div>
 
@@ -48,15 +48,9 @@
                         <el-button class="elevate-3" @click="$emit('return')">Voltar</el-button>
                         <el-button class="elevate-3" @click="handleSendForm">Iprimir</el-button>
                     </el-form-item>
-                    <!-- <el-form-item label="">
-                    
-                    </el-form-item> -->
                 </el-form>  
             </div>
-        </div>
-    
-    
-    
+        </div>  
     </div>
 </template>
 
