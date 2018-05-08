@@ -4,6 +4,8 @@
       class="queue-card pa-3"
       :style="{'background-image': 'url(\'' + fileThumb + '\')'}"
       @click="$emit('click')">
+      <!--Task status watcher-->
+      <template>{{taskStatus}}</template>
       <!--Progress Bar-->
       <div v-if="task.status == 'running'" class="progress-bar" :style="{ width: task.progress + '%' }"></div>
       <!--First row, contains user name (task.payload.description) and printer id (task.owner)-->
@@ -68,11 +70,21 @@ export default {
   },
   data () {
     return {
-      status: null
+      status: null,
+      printStatusSent: false,
     }
   },
 
   computed: {
+    taskStatus() {
+      if(this.task.status == 'success' && this.printStatusSent == false){
+        this.sendPrintStatus()
+        this.printStatusSent = true
+        //console.log(this.task.id)
+      }
+      //return this.task.status
+    },
+
     statusColor() {
       return {
         'running': 'light-blue',
@@ -112,6 +124,20 @@ export default {
     archiveTask: function () {
       axios.get('tasks/' + this.task.id + '/archive')
     },
+
+    sendPrintStatus: function () {
+      axios.get('http://script.google.com/macros/s/AKfycbyfPfRhRTRwR4ha-gvRTkGhLy-JHwtuKo273Sv35Qydy8rQxwPr/exec?', {
+            params: {
+             action: 'change',
+             printid: this.task.id  
+            }
+        }).then((response) => {
+          console.log('print finished' + response)
+        })
+        .catch(function (e) {
+            console.error(e)
+        });
+    }
   }
 }
 </script>

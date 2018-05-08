@@ -2,12 +2,14 @@
   <div class="row flex-wrap align-center justify-center scroll-y" v-loading="!objects">
     <ObjectCard
       v-for="object in objects"
+      v-if="!belongsToBlackList(object.name)"
       :key="object.name"
       :object="object"
       class="ma-2 elevate-2"
       :selected="selected == object"
       @click="$emit('select', object)"
     ></ObjectCard>
+    <el-button class="elevate-2" size="large" @click="showSecretParts = !showSecretParts">...</el-button>
   </div>
 </template>
 
@@ -33,6 +35,8 @@ export default {
   data() {
     return {
       objects: null,
+      blackList: ['bagHolder', 'dino', 'marvin'],
+      showSecretParts: false,
     }
   },
 
@@ -46,6 +50,14 @@ export default {
         this.objects = res.data
       })
     },
+
+    belongsToBlackList(name) {
+      if(this.showSecretParts){
+        return false       
+      }else{
+        return this.blackList.includes(name)
+      }
+    }
   },
 }
 

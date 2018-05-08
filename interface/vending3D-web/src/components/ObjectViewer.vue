@@ -6,8 +6,8 @@
         <span class="ml-3">{{objectName}}</span>
       </div>
       <div class="flex"></div>
-      <el-button v-if="!confirming" type="success" size="large" @click="confirming = true">Imprimir</el-button>
-      <el-button v-else-if="!printing" type="primary" size="large" @click="print()">Clique para confirmar</el-button>
+      <el-button v-if="stage == 'initial'" type="success" size="large" @click="$emit('confirm')" style="background:transparent; border:none; color:transparent;">Imprimir</el-button>
+      <el-button v-else-if="stage=='print'" type="primary" size="large" @click="print()">Clique para confirmar</el-button>
       <span v-else class="light-green--text" @click="resetPrint()"><v-icon>check</v-icon> enviado para fila de impressão</span>
     </div>
     <div
@@ -64,6 +64,11 @@ export default {
       type: Object,
       default: () => ({}),
     },
+
+    stage: {
+      type: String,
+      required: true,
+    },
   },
 
   data() {
@@ -93,6 +98,7 @@ export default {
 
       wrapper: null,
       body: null,
+      printId: null,
     }
   },
 
@@ -198,14 +204,43 @@ export default {
     },
 
     print() {
-      axios.get('tasks/print/' + this.object.name, {params: this.payload}).then(() => {
-        this.printing = true  
-      })
+      axios.get('tasks/print/' + this.object.name + '?description='+ this.payload.name).then((response) => {
+        this.printId = response.data.id
+        this.postForm()
+        this.printing = true 
+         
+      }).catch(function (e) {
+        console.error(e)
+      });
+
+      this.$emit('finish')
+      
+    },
+
+    postForm: function () {
+        axios.get('http://script.google.com/macros/s/AKfycbyfPfRhRTRwR4ha-gvRTkGhLy-JHwtuKo273Sv35Qydy8rQxwPr/exec?', {
+            params: {
+             name: this.payload.name,
+             email: this.payload.email,
+             number: this.payload.phone,
+             role: this.payload.role,
+             school: this.payload.school,
+             studentsNumber: this.payload.studentsNumber, 
+             printid: this.printId, 
+             action: 'insert'  
+            }
+        }).then((response) => {
+          console.log("print insert" +  response)
+        })
+        .catch(function (e) {
+            console.error(e)
+        });
     },
 
     resetPrint() {
-      this.confirming = false
-      this.printing = false
+      // this.confirming = false
+      // this.printing = false
+      this.$emit('clean')
     },
 
     onResize() {
