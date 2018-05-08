@@ -108,7 +108,7 @@ export default {
 
   border-left-width: 8px;
   border-left-style: solid;
-  background: white !important;
+  background-color: white !important;
 }
 
 .progress-bar, .progress-bar-failed {

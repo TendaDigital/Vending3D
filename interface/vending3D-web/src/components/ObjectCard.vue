@@ -41,7 +41,7 @@ export default {
     },
 
     imgPath() {
-      return 'http://localhost:9077/objects/files/' + this.object.files.png
+      return SERVER_URL + '/objects/files/' + this.object.files.png
     },
   },
 

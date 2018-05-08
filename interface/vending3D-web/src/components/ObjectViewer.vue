@@ -127,6 +127,11 @@ export default {
     this.onResize()
   },
 
+  destroyed() {
+    console.log('unmounted')
+    this.autoRotate = false
+  },
+
   beforeDestroy() {
     window.removeEventListener('resize', this.onResize, false)
   },

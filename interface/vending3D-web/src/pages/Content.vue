@@ -42,7 +42,7 @@ export default {
 <style scoped>
 
 .listing {
-   height: 360px;
+   height: 50%;
    background: #F0F0F0;
 }
 

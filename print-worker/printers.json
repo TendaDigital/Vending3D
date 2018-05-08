@@ -18,6 +18,13 @@
     "port": {
       "serialNumber": "CZPX2617X003XK24982"
     },
-    "TERM_SESSION_ID": "w0t1p2:7C26EE6E-0C73-421E-A648-07E0C747ED36"
+    "TERM_SESSION_ID": "w0t2p2:23F8D39E-4F2F-40BF-A251-D05FC77B8DAD"
+  },
+  {
+    "name": "Printer D",
+    "port": {
+      "serialNumber": "CZPX2617X003XK25026"
+    },
+    "TERM_SESSION_ID": "w0t2p3:A0E67A7C-4878-49B6-886E-B9A795600B04"
   }
 ]

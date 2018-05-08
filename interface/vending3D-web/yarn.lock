@@ -5874,12 +5874,11 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-vue-3d-model@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/vue-3d-model/-/vue-3d-model-1.0.0.tgz#785a46546fc1e0bddbc0b950250970f7d8a41a89"
+vue-3d-model@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/vue-3d-model/-/vue-3d-model-1.0.1.tgz#f6a44552738d417162bc62cdf97c25d67652ca06"
   dependencies:
     three "^0.88.0"
-    vue "^2.2.6"
 
 vue-eslint-parser@^2.0.3:
   version "2.0.3"
@@ -5932,7 +5931,7 @@ vue-template-es2015-compiler@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.6.0.tgz#dc42697133302ce3017524356a6c61b7b69b4a18"
 
-vue@^2.2.6, vue@^2.5.2:
+vue@^2.5.2:
   version "2.5.16"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.16.tgz#07edb75e8412aaeed871ebafa99f4672584a0085"
 

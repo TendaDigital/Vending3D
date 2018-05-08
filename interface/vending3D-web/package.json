@@ -15,7 +15,7 @@
     "element-ui": "^2.3.6",
     "material-design-icons-iconfont": "^3.0.3",
     "vue": "^2.5.2",
-    "vue-3d-model": "^1.0.0",
+    "vue-3d-model": "^1.0.1",
     "vuetify": "^1.0.17"
   },
   "devDependencies": {

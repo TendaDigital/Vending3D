@@ -65,6 +65,9 @@ export default {
       tasks: null,
       printers: null,
       selectedTask: null,
+
+      loadingTasks: false,
+      loadingPrinters: false,
     }
   },
   created() {
@@ -75,20 +78,27 @@ export default {
   },
   methods: {
     fetchTasks: function () {
+      if (this.loadingTasks) return;
+      this.loadingTasks = true
       
       axios.get('tasks').then((response) => {
-        //console.log(response.data)
+        this.loadingTasks = false
         this.tasks = response.data
-      })
-      .catch(function (e) {
+      }).catch(function (e) {
+        this.loadingTasks = false
         console.error(e)
       });
     },
 
     fetchPrinters() {
+      if (this.loadingPrinters) return;
+
+      this.loadingPrinters = true
       axios.get('printers').then((res) => {
+        this.loadingPrinters = false
         this.printers = res.data
       }).catch(function (e) {
+        this.loadingPrinters = false
         console.error(e)
       });
     },
