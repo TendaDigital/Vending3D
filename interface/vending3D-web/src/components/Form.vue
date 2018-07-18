@@ -1,7 +1,7 @@
 <template>
-    <div class="flex column py-5 color">
+    <div class="flex column py-5 px-5 color">
 
-        <div class="flex column align-center pl-5 pr-3 py-5" style="width=50%">
+        <div class="flex column align-center pt-5">
             <div>
                 <p style="line-height: 38px; font-size: 34px;"><span style="color: #ffffff; text-align:left">Vamos conversar?</span></p>
                 <img src="../assets/wave.png" alt="logo" height="16" width="222">
@@ -13,7 +13,7 @@
             </div>
         </div>
 
-        <div class="flex column align-center pr-5 pl-3 py-5" style="width=50%">
+        <div class="flex column align-center pt-3" style="zoom: 1.5">
             <div class="form-container">
                 <el-form ref="form" :model="form">
                     <el-form-item label="" prop="name">
@@ -108,8 +108,8 @@ export default {
 }
 
 .form-container {
-    display: inline;
-    width: 400px;
+    /*display: inline;*/
+    width: 100%;
 }
 
 .el-select {

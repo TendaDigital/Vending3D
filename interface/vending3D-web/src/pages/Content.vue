@@ -3,8 +3,8 @@
   <transition name="fade" mode="out-in">
     <div v-if="this.stage=='form'" class="column" key="form">
       <Form
-          @return="handleReturn"
-          @print="handlePrint"
+        @return="handleReturn"
+        @print="handlePrint"
       ></Form>
     </div>
     <div v-else class="column" key="viewer">
