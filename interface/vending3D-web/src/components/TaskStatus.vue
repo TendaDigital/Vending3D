@@ -126,7 +126,7 @@ export default {
     },
 
     sendPrintStatus: function () {
-      axios.get('http://script.google.com/macros/s/AKfycbyfPfRhRTRwR4ha-gvRTkGhLy-JHwtuKo273Sv35Qydy8rQxwPr/exec?', {
+      axios.get('https://script.google.com/macros/s/AKfycbyVs3XNZcsFNiKuSc8R3zwJnjttqSNibeleSAn6yws1VRjPFpAz/exec', {
             params: {
              action: 'change',
              printid: this.task.id  

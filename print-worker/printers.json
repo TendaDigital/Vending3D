@@ -1,37 +1,37 @@
 [
   {
-    "name": "Printer A",
-    "port": {
-      "serialNumber": "CZPX2617X003XK25033"
-    },
-    "TERM_SESSION_ID": "w0t0p2:48FFA458-0E48-4715-AD32-830F5AC097E7"
-  },
-  {
-    "name": "Printer B",
-    "port": {
-      "serialNumber": "CZPX2617X003XK24826"
-    },
-    "TERM_SESSION_ID": "w0t0p3:38E36899-7ED0-471C-96B1-B13B81F40BAE"
-  },
-  {
     "name": "Printer C",
     "port": {
-      "serialNumber": "CZPX2617X003XK24982"
+      "serialNumber": "CZPX2617X003XK25026"
     },
-    "TERM_SESSION_ID": "w0t0p4:90CE93E5-EF80-45F7-963D-6D930A0DCCC0"
+    "TERM_SESSION_ID": "w1t0p0:6D99B5C7-CB8C-44B7-ABCB-4A4D63750A3E"
   },
   {
     "name": "Printer D",
     "port": {
-      "serialNumber": "CZPX2617X003XK25026"
+      "serialNumber": "CZPX2617X003XK24826"
     },
-    "TERM_SESSION_ID": "w0t0p5:1DBF3CE7-758D-4DBA-BF83-8D705D60F9FE"
+    "TERM_SESSION_ID": "w1t0p6:C84DBD99-902F-4CEE-8E19-8266EF723F6D"
+  },
+  {
+    "name": "Printer B",
+    "port": {
+      "serialNumber": "CZPX2617X003XK25035"
+    },
+    "TERM_SESSION_ID": "w1t0p5:8D0F712A-F54B-400E-8A69-6D7B62404195"
+  },
+  {
+    "name": "Printer A",
+    "port": {
+      "serialNumber": "CZPX2617X003XK24982"
+    },
+    "TERM_SESSION_ID": "w1t0p4:CBBB22D7-01D1-46F5-B735-9477FA86576F"
   },
   {
     "name": "Printer E",
     "port": {
-      "serialNumber": "CZPX2617X003XK25035"
+      "serialNumber": "CZPX2617X003XK25033"
     },
-    "TERM_SESSION_ID": "w0t0p6:71FE3642-002F-4FCE-A0BF-04EE34400D45"
+    "TERM_SESSION_ID": ""
   }
 ]
