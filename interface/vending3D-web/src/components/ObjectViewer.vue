@@ -218,7 +218,7 @@ export default {
     },
 
     postForm: function () {
-        axios.get('https://script.google.com/macros/s/AKfycbyVs3XNZcsFNiKuSc8R3zwJnjttqSNibeleSAn6yws1VRjPFpAz/exec', {
+        axios.get('https://script.google.com/a/tenda.digital/macros/s/AKfycbyCGfd66lclHCduZEbOtrYupG6KGI37JhbtOxlADrO7zSbvoYlZ/exec?isWrite=true', {
             params: {
              name: this.payload.name,
              email: this.payload.email,
@@ -227,7 +227,9 @@ export default {
              school: this.payload.school,
              studentsNumber: this.payload.studentsNumber, 
              printid: this.printId, 
-             action: 'insert'  
+             action: 'insert',
+             phone: `55${this.payload.phone}`,
+             _id: this.printId
             }
         }).then((response) => {
           console.log("print insert" +  response)

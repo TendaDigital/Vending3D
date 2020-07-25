@@ -125,11 +125,12 @@ export default {
       axios.get('tasks/' + this.task.id + '/archive')
     },
 
-    sendPrintStatus: function () {
-      axios.get('https://script.google.com/macros/s/AKfycbyVs3XNZcsFNiKuSc8R3zwJnjttqSNibeleSAn6yws1VRjPFpAz/exec', {
+    sendPrintStatus: function () {      
+      axios.get('https://script.google.com/a/tenda.digital/macros/s/AKfycbyCGfd66lclHCduZEbOtrYupG6KGI37JhbtOxlADrO7zSbvoYlZ/exec?isUpdate=true', {
             params: {
-             action: 'change',
-             printid: this.task.id  
+             status: 'queued',
+             _id: this.task.id,
+             name: this.task.payload.description            
             }
         }).then((response) => {
           console.log('print finished' + response)
