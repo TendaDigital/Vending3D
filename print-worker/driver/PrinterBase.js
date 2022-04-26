@@ -4,16 +4,15 @@ const fsReadFile = require('util').promisify(require('fs').readFile)
 const sleep = ms => new Promise(res => setTimeout(res, ms))
 
 module.exports = class Printer {
+  static match() {
+    return false
+  }
+
   constructor (options) {
     this.options = options
     
-    this.switch = {
-      x: false,
-      y: false,
-      z: false,
-      b: false,
-    }
-
+    this.switch = {}
+    
     this.state = {
       temp_bed: null,
       temp_bed_target: null,
@@ -33,9 +32,34 @@ module.exports = class Printer {
   // Resolves promise once connected
   ready() {}
 
-  connect() {}
+  /**
+   * This delegate method must be implemented by the underlying class that extends
+   * this class to provide connectivity with a real device
+   * @param {String} command 
+   */
+  async sendCommand(command) {throw new Error('This method must be implemented')}
 
-  async sendCommand(command) {}
+  /**
+   * Use this method do update the state of a specific switch.
+   * Example: `updateSwitchState('x_min', true)`
+   * @param {string} place 
+   * @param {boolean} triggered 
+   */
+  updateSwitchState(place, triggered) {
+    if (this.options.debug)
+      console.log('> switch', place, 'is now', triggered)
+    this.switch[place] = triggered
+  }
+
+  /**
+   * Use this method do update the state of printer temperatures
+   * Example: `updateTemperatureStates({bed_temp: 10.9, bed_temp_target: null})`
+   * @param {string} place 
+   * @param {boolean} triggered 
+   */
+  updateTemperatureStates(state) {
+    Object.assign(this.state, state)
+  }
 
   async command(gcode) {
     let original = gcode
@@ -59,9 +83,13 @@ module.exports = class Printer {
     } else if (gcode.startsWith('M117')) {
       this.message = gcode.replace('M117 ', '')
     } else if (gcode.startsWith('M104')) {
-      this.state.temp_extruder_target = parseFloat(gcode.replace('M104 S', ''))
+      this.updateTemperatureStates({
+        temp_extruder_target: parseFloat(gcode.replace('M104 S', ''))
+      })
     } else if (gcode.startsWith('M140')) {
-      this.state.temp_bed_target = parseFloat(gcode.replace('M140 S', ''))
+      this.updateTemperatureStates({
+        temp_bed_target: parseFloat(gcode.replace('M140 S', ''))
+      })
     }
 
     return await this.sendCommand(gcode)
@@ -112,7 +140,7 @@ module.exports = class Printer {
       await sleep(50)
 
       if (t++ % 30 == 0) await this.beep(20);
-    } while(!this.switch.x)
+    } while(!this.switch['button'])
 
     await this.beep()
   }
@@ -138,7 +166,7 @@ module.exports = class Printer {
 
     while(limit--) {
       await this.readSwitches()
-      if (this.switch[axis]) {
+      if (this.switch[axis+'_min']) {
         homed = true
         break
       }

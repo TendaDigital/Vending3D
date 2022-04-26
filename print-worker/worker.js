@@ -5,19 +5,50 @@ const SerialPort = require('serialport')
 
 const draftlog = require('draftlog').into(console).addLineListener(process.stdin)
 
-const Printer = process.env.MOCK ? require('./prusa/PrinterMock') : require('./prusa/PrinterPrusa')
-const GcodeParser = require('./prusa/GcodeParser')
+const Driver = require('./driver')
+// const Printer = process.env.MOCK ? require('./driver/printers/PrinterMock') : require('./driver/printers/PrinterPrusa')
+const GcodeParser = require('./driver/GcodeParser')
 
 const sleep = require('./sleep')
 const PoolWorker = require('./PoolWorker')
+const { readFileSync, writeFileSync } = require('fs')
 
-let printerInfo = null
+let TERM_SESSION_ID = process.env.TERM_SESSION_ID
+
+/**
+ * Saves the TERM_SESSION_ID that identifies the current session
+ * to the Printers List
+ */
+async function bindTerminalToPrinter(printerInfo){
+  let printers = JSON.parse(readFileSync('./printers.json'))
+
+  // Save to json
+  let didSave = false
+  printers = printers.map(test => {
+    if (test.name == printerInfo.name) {
+      // Set session to printer
+      test.TERM_SESSION_ID = TERM_SESSION_ID
+      didSave = true
+    } else if (test.TERM_SESSION_ID == TERM_SESSION_ID) {
+      // Unset session to printer
+      test.TERM_SESSION_ID = undefined
+      didSave = true
+    }
+    return test
+  })
+
+  if (didSave) {
+    console.log(chalk.green(' . This Terminal session is now binded to this printer!'))
+    const json = JSON.stringify(printers, null, 2)
+    writeFileSync('./printers.json', json)
+  }
+}
 
 async function loadPrinterInfo() {
-  let printers = require('./printers')
+  let printers = JSON.parse(readFileSync('./printers.json'))
   
   if (process.env.MOCK) {
-    let name = process.env.PRINTER || 'Mocked Printer'
+    let name = process.env.PRINTER || 'Mocked Printer #' + Math.round(Math.random() * 10)
     return {
       name,
       port: {
@@ -33,7 +64,6 @@ async function loadPrinterInfo() {
   }
 
   // Try matching terminal session to printer
-  let TERM_SESSION_ID = process.env.TERM_SESSION_ID
   let printer = _.find(printers, {TERM_SESSION_ID})
 
   if (printer) return printer;
@@ -53,27 +83,16 @@ async function loadPrinterInfo() {
     process.exit(1)
   }
 
-  // Save to json
-  printers = printers.map(test => {
-    if (test == choice) {
-      test.TERM_SESSION_ID = TERM_SESSION_ID
-    }
-    return test
-  })
-
-  console.log('saving')
-  require('fs').writeFileSync('./printers.json', JSON.stringify(printers, null, 2))
-
   return choice
 }
 
-async function getPoolOptions() {
+async function getPoolOptions(printerInfo) {
   return {
     url: 'http://localhost:9077?printer='+printerInfo.name,
   }
 }
 
-async function getPrinterOptions() {
+async function getPrinterOptions(printerInfo) {
   // console.log(await SerialPort.list())
 
   return {
@@ -129,26 +148,33 @@ function draftProgress(phrase, len) {
 
 async function main() {
   // Load configs
-  printerInfo = await loadPrinterInfo()
-  let poolOpts = await getPoolOptions()
-  let printerOpts = await getPrinterOptions()
+  let printerInfo = await loadPrinterInfo()
+  let poolOpts = await getPoolOptions(printerInfo)
+  let printerOpts = await getPrinterOptions(printerInfo)
+
+  // Set debug flag to assist
+  if (process.env.DEBUG) printerOpts.debug = true
 
   // Configs
   console.log()
   console.log(chalk.green(' # =================='))
-  console.log(chalk.green(' #    PRINTER', printerInfo.name))
+  console.log(chalk.green(' # PRINTER', printerInfo.name))
   console.log(chalk.green(' # =================='))
 
   // The printer interface
-  let printer = new Printer(printerOpts)
+  const PrintDriver = Driver.detectBestDeviceDriver(printerInfo)
+  let printer = new PrintDriver(printerOpts)
   console.log()
-  console.log(chalk.yellow(' # Connect to Printer'), printerOpts.port.serialNumber)
+  console.log(chalk.yellow(' # Connect to Printer'), printerOpts.name)
 
   // Wait printer to be ready
-  await printer.connect()
-  console.log(chalk.yellow(' . Connected to USB, waiting to be ready'))
+  console.log(chalk.yellow(' . Connecting to USB'))
+  console.log(chalk.yellow(' . Waiting printer to be ready...'))
   await printer.ready()
   console.log(chalk.yellow(' . Ready, waiting for button press...'))
+
+  // Bind this TERM_SESSION to the Printer
+  await bindTerminalToPrinter(printerInfo)
 
   // Beep twice
   await printer.beep()

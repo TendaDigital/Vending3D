@@ -1,10 +1,15 @@
 const _ = require('lodash')
 
-const PrinterBase = require('./PrinterBase')
+const PrinterBase = require('../PrinterBase')
 
 const sleep = ms => new Promise(res => setTimeout(res, ms))
 
 module.exports = class PrinterMock extends PrinterBase{
+  static match() {
+    if (process.env.MOCK) return true
+    return false
+  }
+
   constructor (options) {
     super(options)
   }
@@ -14,9 +19,9 @@ module.exports = class PrinterMock extends PrinterBase{
     return sleep(400)
   }
 
-  connect() {
-    return sleep(400)
-  }
+  // connect() {
+  //   return sleep(400)
+  // }
 
   async sendCommand(command) {
     await sleep(2)

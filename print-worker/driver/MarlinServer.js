@@ -7,10 +7,11 @@ const EventEmitter = require('events')
 const Defered = require('./Defered')
 
 module.exports = class MarlinServer extends EventEmitter{
-  constructor(options) {
+  constructor(options, marlinOptions) {
     super()
 
     this.options = options || {}
+    this.marlinOptions = marlinOptions || {}
     
     this.promiseQueue = []
 
@@ -22,9 +23,9 @@ module.exports = class MarlinServer extends EventEmitter{
     return this.port ? this.port.path : 'DISCONNECTED'
   }
 
-  async connect(serialPort) {
+  async ready() {
     // Defaults to options.port
-    serialPort = serialPort || this.options.port || null
+    let serialPort = this.options.port || null
 
     // Is it connecting/connected? Return last promise
     if (this._connect) {
@@ -70,12 +71,24 @@ module.exports = class MarlinServer extends EventEmitter{
         // Once there is data in the line Buffer, delegate to dataReceived
         lineBuffer.on('data', (data) => this.dataReceived(data))
         // Every time it opens/closes, reset the current queue
-        this.port.on('open', () => this.resetQueue())
+        this.port.on('open', () => {
+          // Force command queue reset
+          this.resetQueue()
+          // Send dummy command
+          if (this.marlinOptions.START_COMMAND)
+            this.execute("M115").catch(() => {})
+          else
+            this._ready.resolve()
+        })
         // this.port.on('close', () => this.resetQueue())
         this.port.on('close', () => {throw new Error('Printer Disconnected')})
         this.port.on('error', (err) => {
           reject(err)
         })
+
+        // Wait to get heartbeat from printer
+        await this._ready.promise;
+
         resolve()
       } catch (e) {
         reject(e)
@@ -83,16 +96,12 @@ module.exports = class MarlinServer extends EventEmitter{
     })
 
     await this._connect
-  } 
-
-  ready() {
-    return this._ready.promise
   }
 
   resetQueue() {
     let promise
     while(promise = this.promiseQueue.shift())
-      promise.reject('Connection opening')
+      promise.reject(new Error(`Command "${promise.command}" canceled due to connection opening`))
     // this.promiseQueue = []
   }
 
@@ -113,8 +122,34 @@ module.exports = class MarlinServer extends EventEmitter{
     // Emit data
     this.emit('data', data)
 
+    // Emit Switch updates
+    {
+      let match = /^(\w\_(max|min))/.exec(data)
+      if (match) {
+        this.emit('state:switch', {
+          place: match[1],
+          triggered: data.includes('TRIGGERED')
+        })
+      }
+    }
+
+    // Emit Temperature updates
+    {
+      var [$, temp_bed, temp_bed_target] = data.match(/B:(\d+\.?\d*)\s*\/(\d+\.?\d*)/) || []
+      var [$, temp_extruder, temp_extruder_target] = data.match(/T:(\d+\.?\d*)\s*\/(\d+\.?\d*)/) || []
+      
+      if (temp_bed || temp_extruder) {
+        this.emit('state:temperature', {
+          temp_bed: parseFloat(temp_bed) || void 0,
+          temp_bed_target: parseFloat(temp_bed_target) || void 0, 
+          temp_extruder: parseFloat(temp_extruder) || void 0,
+          temp_extruder_target: parseFloat(temp_extruder_target) || void 0,
+        })
+      }
+    }
+
     // Check for start packet
-    if (data.startsWith('start')) {
+    if (this.marlinOptions.START_TOKEN && data.startsWith(this.marlinOptions.START_TOKEN)) {
       if (this._started) {
         throw new Error('Printer restarted')
       }
@@ -140,16 +175,13 @@ module.exports = class MarlinServer extends EventEmitter{
     if (this.options.debug)
       console.log('>', command)
 
-    // Combine with nl and cr
-    command += '\n'
-
-    // Write to serial port
+    // Write to serial port with Carriage Return
     // console.log(') ', command.replace(/\n/g, chalk.yellow('\\n')).replace(/\r/g, chalk.yellow('\\r')))
-    this.port.write(command)
+    this.port.write(command + '\n')
 
     // Return a new promise and pushes it to the queue
     let promise = new Promise((resolve, reject) => {
-      this.promiseQueue.push({resolve, reject})
+      this.promiseQueue.push({resolve, reject, command})
     })
 
     return promise

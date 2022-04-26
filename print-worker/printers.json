@@ -3,8 +3,7 @@
     "name": "Printer C",
     "port": {
       "serialNumber": "CZPX2617X003XK25026"
-    },
-    "TERM_SESSION_ID": "w0t0p1:5C70DBF6-912F-40DA-829D-B2A7039B9F10"
+    }
   },
   {
     "name": "Printer D",
@@ -33,5 +32,13 @@
       "serialNumber": "CZPX2617X003XK25033"
     },
     "TERM_SESSION_ID": ""
+  },
+  {
+    "name": "Ender Mini 1",
+    "port": {
+      "vendorId": "1a86",
+      "productId": "7523"
+    },
+    "TERM_SESSION_ID": "w0t0p3:0979F1D2-A95F-4646-8748-5426BB6CF3A1"
   }
 ]
