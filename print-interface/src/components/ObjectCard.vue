@@ -57,8 +57,8 @@ export default {
 <style scoped>
 .object-viewer {
   background: #FFF;
-  height: 100px;
-  width: 100px;
+  height: 120px;
+  width: 120px;
   padding: 8px;
   border-radius: 8px;
   transition: background 0.3s;
@@ -66,9 +66,6 @@ export default {
 
 .object-viewer.selected {
   background: #5ef14d;
-  position: sticky;
-  top: 8px;
-  bottom: 8px;
 }
 
 .viewer-text {

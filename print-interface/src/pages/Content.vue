@@ -1,11 +1,11 @@
 <template>
 
-  <transition name="fade" mode="out-in">
+  <transition name="fade" mode="out-in" @finish="handleFinish">
     <div v-if="this.stage=='form'" class="column" key="form">
-      <Form
-        @return="handleReturn"
-        @print="handlePrint"
-      ></Form>
+      <TypeformForms
+        @cancel="handleCancel"
+        @print="handlePrint($event)"
+      ></TypeformForms>
     </div>
     <div v-else class="column" key="viewer">
       <ObjectViewer
@@ -22,9 +22,9 @@
       <div v-else class="flex row align-center justify-center">
         <span class="grey--text">Selecione algum objeto para visualizar</span>
       </div>
-      
+
       <ObjectListing
-        class="listing elevate-3"
+        class="listing elevate-3 mid-height"
         :selected="selectedObject"
         @select="handleSelect"
       ></ObjectListing>
@@ -34,9 +34,11 @@
 </template>
 
 <script>
+import axios from 'axios'
 import Form from '../components/Form'
 import ObjectViewer from '../components/ObjectViewer'
 import ObjectListing from '../components/ObjectListing'
+import TypeformForms from '../components/TypeformForms.vue'
 
 export default {
   name: 'Content',
@@ -44,8 +46,9 @@ export default {
     Form,
     ObjectViewer,
     ObjectListing,
+    TypeformForms
   },
-  
+
   data() {
     return {
       selectedObject: null,
@@ -58,15 +61,21 @@ export default {
       this.stage = 'form';
     },
 
-    handleReturn: function () {
+    handleCancel: function () {
       this.stage = 'initial';
     },
 
-    handlePrint: function (payload) {
-
-      this.formData = payload
-      //console.log(this.formData.name)
+    handlePrint: async function (taskOwner) {
       this.stage = 'print'
+      try {
+        const response = await axios.get(`tasks/print/${this.selectedObject.name}/?description=${taskOwner}`)
+        this.printId = response.data.id
+        this.printing = true
+      } catch (error) {
+        console.error(error)
+      }
+      this.handleFinish()
+      setTimeout(this.handleClean, 3000)
     },
 
     handleFinish: function () {
@@ -81,8 +90,6 @@ export default {
       this.handleClean()
       this.selectedObject = payload
     }
-    
-
   }
 }
 </script>
@@ -90,7 +97,7 @@ export default {
 <style scoped>
 
 .listing {
-   height: 50%;
+   height: max(180px, 10%);
    background: #F0F0F0;
 }
 
@@ -100,6 +107,10 @@ export default {
 
 .fade-enter, .fade-leave-to {
   opacity: 0.5;
+}
+
+.mid-height {
+  height: 50%;
 }
 
 </style>

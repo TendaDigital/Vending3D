@@ -1,19 +1,16 @@
 <template>
   <div class="row" style="height: 100%; overflow: hidden;">
-    <Sidebar class="no-flex" style="width: 350px; z-index: 2;"/>
     <Content class="flex"/>
   </div>
 </template>
 
 <script>
 import Content from './pages/Content'
-import Sidebar from './pages/Sidebar'
 
 export default {
   name: 'App',
   components: {
     Content,
-    Sidebar
   }
 }
 </script>
@@ -38,8 +35,8 @@ html, body {
   widows: 100%;
 }
 
-/* 
-  Webkit Scrollbar 
+/*
+  Webkit Scrollbar
 */
 *::-webkit-scrollbar {
   width: 6px !important;

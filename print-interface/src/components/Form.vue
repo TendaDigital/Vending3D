@@ -30,33 +30,31 @@
                             <el-option key="Diretor" label="Diretor" value="Diretor"></el-option>
                             <el-option key="Coordenador" label="Coordenador" value="Coordenador"></el-option>
                             <el-option key="Professor" label="Professor" value="Professor"></el-option>
-                            <el-option key="Outros" label="Outros" value="Outros"></el-option>   
+                            <el-option key="Outros" label="Outros" value="Outros"></el-option>
                         </el-select>
                     </el-form-item>
                     <!-- <el-form-item label="" prop="school">
-                        <el-input class="elevate-3" placeholder="Qual o nome da sua escola?" v-model="form.school"></el-input> 
+                        <el-input class="elevate-3" placeholder="Qual o nome da sua escola?" v-model="form.school"></el-input>
                     </el-form-item> -->
                     <!-- <el-form-item label="" prop="studentsNumber">
                         <el-select class="elevate-3" v-model="form.studentsNumber" style="width: 100%;" placeholder="Quantos alunos tem sua escola?">
                             <el-option key="Até 100 alunos" label="Até 100 alunos" value="Até 100 alunos"></el-option>
                             <el-option key="Até 250 alunos" label="Até 250 alunos" value="Até 250 alunos"></el-option>
                             <el-option key="Até 1000 alunos" label="Até 1000 alunos" value="Até 1000 alunos"></el-option>
-                            <el-option key="Mais de 1000 alunos" label="Mais de 1000 alunos" value="Mais de 1000 alunos"></el-option>  
+                            <el-option key="Mais de 1000 alunos" label="Mais de 1000 alunos" value="Mais de 1000 alunos"></el-option>
                         </el-select>
                     </el-form-item> -->
                     <el-form-item label="">
-                        <el-button class="elevate-3" @click="$emit('return')">Voltar</el-button>
+                        <el-button class="elevate-3" @click="$emit('cancel')">Voltar</el-button>
                         <el-button class="elevate-3" @click="handleSendForm">Imprimir</el-button>
                     </el-form-item>
-                </el-form>  
+                </el-form>
             </div>
-        </div>  
+        </div>
     </div>
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   name: 'Form',
   data () {
@@ -96,7 +94,7 @@ export default {
     handleSendForm: function () {
         this.$emit('print', this.form)
     },
-    
+
    }
 }
 </script>

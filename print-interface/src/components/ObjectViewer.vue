@@ -1,15 +1,22 @@
 <template>
   <div class="column align-center justify-center" style="position: relative;">
-    <div class="info-panel row align-center px-4" style="height: 100px;">
-      <div class="display-3 align-center row grey--text">
-        <v-icon size="48">layers</v-icon>
-        <span class="ml-3">{{objectName}}</span>
+    <!-- <div class="info-panel row justify-between align-center px-4" style="height: 100px;">
+      <div class="display-3 align-center row">
+        <img src="../../static/layers-icon-colorido.svg" alt="Ícone da Layers" style="width: 48px; height: 48px">
       </div>
-      <div class="flex"></div>
-      <el-button v-if="stage == 'initial'" type="success" size="large" @click="$emit('confirm')">Imprimir</el-button>
-      <el-button v-else-if="stage=='print'" type="primary" size="large" @click="print()">Clique para confirmar</el-button>
-      <span v-else class="light-green--text" @click="resetPrint()"><v-icon>check</v-icon> enviado para fila de impressão</span>
+    </div> -->
+    <!-- <div class="object-name">
+        <span class="grey--text">Modelo de {{objectName}}</span>
+    </div> -->
+    <div style="position: absolute; top: 2%; right: 5%; z-index: 100">
+      <el-button @click="openWaitList" class="ml-0" style="justify-self: flex-end">Fila de Espera</el-button>
+      <el-button :type="this.stage == 'initial' ? 'success' : 'primary' " size="large" @click="$emit('confirm')" style="justify-self: center; width: 100px">{{buttonText}}</el-button>
+      <!-- <el-button v-else-if="stage=='print'" type="primary" size="large" @click="print()">Clique para confirmar</el-button> -->
+      <!-- <span v-else class="light-green--text" @click="resetPrint()"><v-icon v-if="stage != 'initial'" v-icon>check</v-icon> enviado para fila de impressão</span> -->
     </div>
+    <el-drawer :visible.sync="isWaitlistOpen" :with-header="false" size="90%">
+      <Sidebar />
+    </el-drawer>
     <div
       ref="stlHolder"
       v-if="stlPath"
@@ -40,18 +47,21 @@
 
 <script>
 
-import {Matrix4, GridHelper} from 'three'
+import { GridHelper } from 'three'
 import axios from 'axios'
 
 import {ModelStl} from 'vue-3d-model'
 
 import {getSize, getCenter} from '../helpers/Util3D'
 
+import Sidebar from './Sidebar.vue'
+
 export default {
   name: 'ObjectViewer',
 
   components: {
     ModelStl,
+    Sidebar
   },
 
   props: {
@@ -99,6 +109,7 @@ export default {
       wrapper: null,
       body: null,
       printId: null,
+      isWaitlistOpen: false
     }
   },
 
@@ -118,6 +129,10 @@ export default {
 
       return this.object.name
     },
+
+    buttonText() {
+      return this.stage == 'initial' ? 'Imprimir' : 'Enviado'
+    }
   },
 
   created() {
@@ -183,7 +198,7 @@ export default {
     },
     rotate () {
       if (!this.autoRotate) return;
-      
+
       if (this.wrapper) {
         this.wrapper.rotation.z += 0.01;
       }
@@ -207,14 +222,14 @@ export default {
       axios.get('tasks/print/' + this.object.name + '?description='+ this.payload.name).then((response) => {
         this.printId = response.data.id
         this.postForm()
-        this.printing = true 
-         
+        this.printing = true
+
       }).catch(function (e) {
         console.error(e)
       });
 
       this.$emit('finish')
-      
+
     },
 
     postForm: function () {
@@ -225,8 +240,8 @@ export default {
              number: this.payload.phone,
              role: this.payload.role,
              school: this.payload.school,
-             studentsNumber: this.payload.studentsNumber, 
-             printid: this.printId, 
+             studentsNumber: this.payload.studentsNumber,
+             printid: this.printId,
              action: 'insert',
              phone: `55${this.payload.phone}`,
              _id: this.printId
@@ -254,6 +269,10 @@ export default {
         }
       })
     },
+
+    openWaitList() {
+      this.isWaitlistOpen = true
+    },
   },
 }
 
@@ -264,6 +283,19 @@ export default {
   height: 100px;
   width: 100%;
   background: #000000CC;
+}
+
+.object-name {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  max-height: 60px;
+  width: 100%;
+  height: 100%;
+  padding: min(30px, 2.5%) 0;
+  background-color: #590653;
+  font-size: 24px;
 }
 
 .stl-holder {
