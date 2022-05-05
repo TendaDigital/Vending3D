@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const chalk = require('chalk')
-// const StlThumbnailer = require('node-stl-thumbnailer')
+const StlThumbnailer = require('node-stl-thumbnailer')
 
 exports.read = async function read(dir) {
   let files = require('fs').readdirSync(dir)
@@ -17,7 +17,7 @@ exports.read = async function read(dir) {
       info = {name, files: {}}
       objects.push(info)
     }
-    
+
     info.files[ext] = file
   }
 
@@ -36,11 +36,11 @@ exports.generateThumbnails = async function generateThumbnails(dir) {
   if (!missingThumbs.length) {
     return
   }
-  
+
   console.log(chalk.cyan(` ! Generating thumbs for ${missingThumbs.length} objects`))
 
   for (obj of missingThumbs) {
-    break;
+    // break;
     let stlPath = path.join(dir, obj.files.stl)
     console.log(chalk.cyan(` ! Generating thumbs: Object "${obj.files.stl}"`))
     let [thumb] = await new StlThumbnailer({
@@ -50,7 +50,7 @@ exports.generateThumbnails = async function generateThumbnails(dir) {
         lineColor: 0x03a9f4,
         baseColor: 0x03a9f4,
         baseOpacity: 0.3,
-        cameraAngle: [0, -100, 70], 
+        cameraAngle: [0, -100, 70],
       }]
     })
 

@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const cors = require('cors')
 const http = require('http')
+const Axios = require('axios')
 const chalk = require('chalk')
 const mongodb = require('mongodb')
 const express = require('express')
@@ -13,6 +14,7 @@ const Task = require('./Task')
 const Printer = require('./Printer')
 const PoolServer = require('./PoolServer')
 const ObjectStore = require('./ObjectStore')
+const { default: axios } = require('axios')
 
 const PORT = process.PORT || 9077
 
@@ -86,12 +88,28 @@ async function startRESTServer(app) {
 
   app.use(cors())
 
+  app.get('/task/owner-info/:id', async (req, res, next) => {
+    const { id } = req.params
+    let response;
+    try {
+      response = await axios.get(`https://api.typeform.com/forms/${process.env.TYPEFORM_FORMID}/responses?fields=wdrwqBopYwsy&included_response_ids=${id}`,
+      {
+        headers: {
+          Authorization: process.env.TYPEFORM_TOKEN
+        }
+      })
+    } catch (error) {
+      console.log(error)
+    }
+    res.send(response.data.total_items > 0 ? response.data.items[0] : {})
+  })
+
   app.get('/tasks', async (req, res, next) => {
     let tasks = await Task
         .find({ active: true })
         .sort({ queuedAt: -1 })
         .limit(100)
-  
+
     res.send(tasks.map(p => _.pick(p, TaskFields)))
   })
 
@@ -100,11 +118,11 @@ async function startRESTServer(app) {
     console.log('tasks')
 
     let task = await Task.findById(taskId)
-    
+
     if (!task) {
       return res.status(404).send('Task não encontrada: ' + taskId)
     }
-    
+
     res.send(_.pick(task, TaskFields))
   })
 
@@ -122,14 +140,14 @@ async function startRESTServer(app) {
       namespace: 'print',
       payload,
     })
-    
+
     res.send(_.pick(task, TaskFields))
   })
 
   app.get('/tasks/:taskId/repeat', async (req, res, next) => {
     let taskId = req.params.taskId
     console.log('repeat print', taskId)
-    
+
     let task = await Task.findById(taskId)
 
     if (!task) {
@@ -146,14 +164,14 @@ async function startRESTServer(app) {
 
     // Save task
     await task.save()
-    
+
     res.send(_.pick(task, TaskFields))
   })
 
   app.get('/tasks/:taskId/archive', async (req, res, next) => {
     let taskId = req.params.taskId
     console.log('archive print', taskId)
-    
+
     let task = await Task.findById(taskId)
 
     if (!task) {
@@ -174,7 +192,7 @@ async function startRESTServer(app) {
   app.get('/tasks/:taskId/cancel', async (req, res, next) => {
     let taskId = req.params.taskId
     console.log('archive print', taskId)
-    
+
     let task = await Task.findById(taskId)
 
     if (!task) {
@@ -220,7 +238,7 @@ async function startRESTServer(app) {
     let printer = await Printer.findById(printerId)
 
     if (!printer) {
-      return res.status(404).send('Impressora não encontrada: ' + printerId) 
+      return res.status(404).send('Impressora não encontrada: ' + printerId)
     }
 
     await printer.remove()
@@ -294,7 +312,7 @@ async function startWorker(socket, pooler) {
     await printer.save()
   })
 
-  /* 
+  /*
    * Update job
    */
   socket.on('job', async (data) => {
@@ -316,7 +334,7 @@ async function startWorker(socket, pooler) {
 
     socket.emit('job:'+job._id, job)
   })
-  
+
   socket.on('disconnect', async () => {
     if (currentJob && currentJob.status == 'running') {
       await pooler.updateJob(currentJob._id, {status: 'failed', message: 'Impressora desconectou'})
