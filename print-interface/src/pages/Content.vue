@@ -1,13 +1,7 @@
 <template>
-
+<div class="row">
   <transition name="fade" mode="out-in" @finish="handleFinish">
-    <div v-if="this.stage=='form'" class="column" key="form">
-      <TypeformForms
-        @cancel="handleCancel"
-        @print="handlePrint($event)"
-      ></TypeformForms>
-    </div>
-    <div v-else class="column" key="viewer">
+    <div class="column" key="viewer">
       <ObjectViewer
         v-if="selectedObject"
         class="flex"
@@ -15,7 +9,7 @@
         :key="selectedObject.name"
         :stage="this.stage"
         :payload="this.formData"
-        @confirm="handleConfirm"
+        @confirm="$emit('confirm', selectedObject)"
         @finish="handleFinish"
         @clean="handleClean"
       ></ObjectViewer>
@@ -30,7 +24,7 @@
       ></ObjectListing>
     </div>
   </transition>
-
+</div>
 </template>
 
 <script>
@@ -57,10 +51,6 @@ export default {
     }
   },
   methods: {
-    handleConfirm: function () {
-      this.stage = 'form';
-    },
-
     handleCancel: function () {
       this.stage = 'initial';
     },

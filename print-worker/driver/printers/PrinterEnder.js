@@ -16,7 +16,7 @@ module.exports = class PrinterEnder extends PrinterPrusa {
     })
 
     this.channel.on('state:switch', ({place, triggered}) => {
-      console.log('switch updated: ', {place, triggered})
+      // console.log('switch updated: ', {place, triggered})
       this.updateSwitchState(place, triggered)
       // Update button switch to detect keypresses
       if (place == 'x_min')

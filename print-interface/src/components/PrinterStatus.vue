@@ -1,19 +1,27 @@
 <template>
   <div class="printer-card hover-parent py-2 pl-2 pr-3" :class="statusColor">
-    <div v-if="printer.task" class="progress-bar" v-bind:style="{ width: printer.task.progress + '%' }"></div>
+    <div
+      v-if="printer.task"
+      class="progress-bar"
+      v-bind:style="{ width: printer.task.progress + '%' }"
+    ></div>
 
     <div class="flex row align-center" style="z-index: 1; position: relative;">
       <div class="column">
-        <span class="subheading mb-1">{{printer.name}}</span>
-        <small :class="statusColorText">{{statusName}}</small>
+        <span class="subheading mb-1">{{ printer.name }}</span>
+        <small :class="statusColorText">{{ statusName }}</small>
       </div>
-      
+
       <div class="flex"></div>
 
-      <div v-if="printer.task" class="grey--text" style="font-family: monospace">
-        <small>{{printer.task.payload.name}}</small><v-icon size="14">attach_file</v-icon>
+      <div
+        v-if="printer.task"
+        class="grey--text"
+        style="font-family: monospace"
+      >
+        <small>{{ printer.task.payload.name }}</small
+        ><v-icon size="14">attach_file</v-icon>
       </div>
-
 
       <template v-if="printer.status != 'disconnected'">
         <TemperatureTag
@@ -33,11 +41,13 @@
         ></TemperatureTag>
       </template>
 
-      <v-btn 
+      <v-btn
         v-if="printer.status == 'disconnected'"
-        icon size="small" 
+        icon
+        size="small"
         @click="removePrinter()"
-        class="hover-show-translucid ma-0">
+        class="hover-show-translucid ma-0"
+      >
         <v-icon>close</v-icon>
       </v-btn>
     </div>
@@ -45,13 +55,12 @@
 </template>
 
 <script>
+import axios from "axios";
 
-import axios from 'axios'
-
-import TemperatureTag from './TemperatureTag'
+import TemperatureTag from "./TemperatureTag";
 
 export default {
-  name: 'PrinterStatus',
+  name: "PrinterStatus",
   props: {
     printer: {
       type: Object,
@@ -60,48 +69,55 @@ export default {
   },
 
   components: {
-    TemperatureTag,
+    TemperatureTag
   },
 
   computed: {
     statusColor() {
-      return {
-        'idle': 'light-green accent-4',
-        'printing': 'light-blue',
-        'disconnected': 'red',
-        'waiting': 'amber',
-      }[this.printer.status] || 'grey'
+      return (
+        {
+          idle: "light-green accent-4",
+          printing: "light-blue",
+          disconnected: "red",
+          waiting: "amber"
+        }[this.printer.status] || "grey"
+      );
     },
 
     statusColorText() {
-      return {
-        'idle': 'light-green--text text--accent-4',
-        'printing': 'light-blue--text',
-        'disconnected': 'red--text',
-        'waiting': 'amber--text text--darken-2',
-      }[this.printer.status] || 'grey'
+      return (
+        {
+          idle: "light-green--text text--accent-4",
+          printing: "light-blue--text",
+          disconnected: "red--text",
+          waiting: "amber--text text--darken-2"
+        }[this.printer.status] || "grey"
+      );
     },
 
     statusName() {
-      return {
-        'idle': 'Online',
-        'printing': 'Imprimindo' + (this.printer.task ? ' - '+this.printer.task.progress + '%' : ''),
-        'disconnected': 'Offline',
-        'waiting': 'Aguardando liberação',
-      }[this.printer.status] || this.printer.status
-    },
+      return (
+        {
+          idle: "Online",
+          printing:
+            "Imprimindo" +
+            (this.printer.task ? " - " + this.printer.task.progress + "%" : ""),
+          disconnected: "Offline",
+          waiting: "Aguardando liberação"
+        }[this.printer.status] || this.printer.status
+      );
+    }
   },
 
   methods: {
     removePrinter() {
-      axios.get('printers/' + this.printer.id + '/remove')
-    },
-  },
-}
+      axios.get("printers/" + this.printer.id + "/remove");
+    }
+  }
+};
 </script>
 
 <style scoped>
-
 .printer-card {
   position: relative;
   border-radius: 4px;
@@ -111,7 +127,8 @@ export default {
   background-color: white !important;
 }
 
-.progress-bar, .progress-bar-failed {
+.progress-bar,
+.progress-bar-failed {
   position: absolute;
   border-radius: 4px;
   top: 0;
@@ -126,19 +143,19 @@ export default {
 }
 
 @keyframes anim-fade-scale {
-    0% {
-      opacity: 0;
-      transform: scale(1.0);
-    }
-    
-    50% {
-      opacity: 1;
-    }
+  0% {
+    opacity: 0;
+    transform: scale(1);
+  }
 
-    100% {
-      opacity: 0;
-      transform: scale(1.4);
-    }
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
 }
 
 .printer-waiting {
@@ -146,7 +163,6 @@ export default {
   top: 0;
   left: 0;
 
-  animation: 2.0s anim-fade-scale infinite;
+  animation: 2s anim-fade-scale infinite;
 }
-
 </style>

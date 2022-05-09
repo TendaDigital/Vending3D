@@ -1,0 +1,71 @@
+:root {
+  --color-aqua: #00B8AD;
+  --color-aqua-light: #00c5b865;
+  --color-pink-light: #FFBFCB;
+  --color-pink-dark: #FBA0B1;
+  --color-blue-light: #15A4CC;
+  --color-blue-dark: #108EB1;
+  --color-purple-light: #8b89da81;
+  --color-purple-dark: #4644b59f;
+  --color-yellow-light: #FFCA65;
+  --color-yellow-dark: #F5B845;
+  --color-gray-light: #434E5B;
+  --color-gray-dark: #232B34;
+  --white: #fff;
+}
+
+body {
+  font-family: 'Nunito', sans-serif !important;
+  color: var(--color-gray-dark);
+}
+
+
+.bgc-light-aqua {
+  background-color: var(--color-aqua-light);
+}
+
+.wrapper-content {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  padding: 50px;
+}
+
+.wrapper-question {
+  font-size: 22px;
+}
+
+.title-main {
+  font-size: 28px;
+  color: var(--color-gray-dark);
+}
+
+.subtitle-main {
+  font-size: 24px;
+  color: var(--color-gray-dark);
+  text-align: center;
+}
+
+.button-main {
+  font-size: 14px;
+  border: 2px solid var(--color-pink-dark);
+  padding: 5px 10px;
+  border-radius: 5px 10px;
+  background-color: var(--color-pink-light);
+  transition: transform 0.2s ease-in-out 0s;
+  box-shadow: 2px 2px var(--color-gray-light);
+  vertical-align: middle;
+
+}
+
+.button-main:hover {
+  transform: scale(1.025);
+}
+
+.button-main:active {
+  transform: scale(0.95);
+  background-color: var(--color-pink-dark);
+}

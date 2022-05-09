@@ -1,10 +1,8 @@
 <template>
-<div style="width: 100%; height: 100%">
-  <!-- <el-button class="cancel-button" @click="$emit('cancel')"> -->
-    <v-icon class="cancel-button" @click="$emit('print', 'teste')">close</v-icon>
-  <!-- </el-button> -->
+  <div style="width: 100%; height: 100%">
+    <v-icon class="cancel-button" @click="$emit('cancel')">close</v-icon>
     <div
-        data-tf-widget="ShHFUNB5"
+        :data-tf-widget="formId"
         data-tf-on-ready="ready"
         data-tf-on-submit="submit"
         data-tf-hide-headers
@@ -13,7 +11,7 @@
         id="form"
         style="width: 100%; height: 100%"
     ></div>
-</div>
+  </div>
 </template>
 
 <script>
@@ -22,6 +20,12 @@ import { createWidget } from '@typeform/embed'
 import '@typeform/embed/build/css/widget.css'
 
 export default {
+  props: {
+    formId: {
+      required: true,
+      type: String
+    }
+  },
   methods: {
     async getOwnerInfo (responseId) {
       let response
@@ -42,20 +46,23 @@ export default {
   },
 
   mounted () {
-    createWidget('ShHFUNB5', {
+    createWidget(this.formId, {
       container: document.querySelector('#form'),
-      onSubmit: async (event) => {
-        let owner
-        try {
-          owner = await this.getOwnerInfo(event.response_id)
-        } catch (error) {
-          console.log(error)
-        }
-        const ownerName = owner.score >= 80 ? owner.name + ' 😎' : owner.name
-        setTimeout(() => {
-          this.$emit('print', ownerName)
-        }, 3000)
+      onSubmit: () => {
+        this.$emit('final')
       }
+      // async (event) => {
+      //   let owner
+      //   try {
+      //     owner = await this.getOwnerInfo(event.response_id)
+      //   } catch (error) {
+      //     console.log(error)
+      //   }
+      //   const ownerName = owner.score >= 80 ? owner.name + ' 😎' : owner.name
+      //   setTimeout(() => {
+      //     this.$emit('print', ownerName)
+      //   }, 3000)
+      // }
     })
   }
 }
@@ -66,8 +73,8 @@ export default {
 .cancel-button {
   position: absolute;
   z-index: 200;
-  top: 2%;
-  right: 2%;
+  top: 5%;
+  right: 5%;
 }
 
 .cancel-button:hover {

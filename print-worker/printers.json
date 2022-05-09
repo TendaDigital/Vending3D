@@ -1,5 +1,11 @@
 [
   {
+    "name": "Ender Mini 0",
+    "port": {
+      "comName": "/dev/ttyUSB0"
+    }
+  },
+  {
     "name": "Ender Mini 1",
     "port": {
       "comName": "/dev/ttyUSB1"

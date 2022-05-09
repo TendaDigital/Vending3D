@@ -5,7 +5,7 @@
       v-if="!belongsToBlackList(object.name)"
       :key="object.name"
       :object="object"
-      class="ma-2 elevate-2"
+      class="ma-2"
       :selected="selected == object"
       @click="$emit('select', object)"
     ></ObjectCard>
