@@ -13,19 +13,45 @@
       style="margin-top: 100px">
       Estou pronto!
     </button>
+    <!-- <button
+      class="button-main"
+      @click="toggleWaitList"
+      style="margin-top: 25px; width: 50%; font-size: 20px">
+      Lista de Espera
+    </button> -->
     <img
       src="../../static/layers-principal-verde.png"
       alt="Ícone da Layers Colorido"
-      style="  width: 140px; position: absolute; bottom: 70px; left: 70px"
+      style="width: 140px; position: absolute; bottom: 70px; left: 70px;"
+      @click="toggleWaitList"
     >
+    <el-drawer
+      :visible.sync="isWaitlistOpen"
+      :with-header="false"
+      size="90%"
+    >
+      <QueueList />
+    </el-drawer>
   </div>
 </template>
 
 <script>
 import Badge from '../components/Badge.vue'
+import QueueList from '../components/Sidebar.vue'
 export default {
   components: {
-    Badge
+    Badge,
+    QueueList
+  },
+  data () {
+    return {
+      isWaitlistOpen: false
+    }
+  },
+  methods: {
+    toggleWaitList () {
+      this.isWaitlistOpen = !this.isWaitlistOpen
+    }
   }
 }
 </script>
