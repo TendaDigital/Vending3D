@@ -1,23 +1,22 @@
 <template>
-  <div class="column align-center justify-center"
+  <div
+    class="column align-center justify-center"
     style='height: 100%; overflow: hidden;'>
     <Cover
       v-show="this.stage === 'idle'"
-      @start="handleNextStep('start')"
+      @next="handleNextStep('qualification')"
+    />
+    <Qualification
+      v-show="this.stage === 'qualification'"
+      @next="handleQualification($event)"
     />
     <Content
-      v-show="this.stage === 'start'"
+      v-show="this.stage === 'choose'"
       @confirm="handleConfirmation($event)"
       class='flex'
     />
-    <Qualification
-      v-if="this.stage === 'qualification'"
-      @final="handleNextStep('final')"
-      @forms="handleForms($event)"
-      @cancel="handleCancel"
-    />
     <TypeformForms
-      v-if="this.stage === 'forms'"
+      v-if="showForms"
       :formId="formId"
       @final="handleNextStep('final')"
       @cancel="handleCancel"
@@ -54,17 +53,52 @@ export default {
         'school-worker': 'pl3YPIe5',
         'startup': 'pl3YPIe5'
       },
-      formId: undefined
+      jumpForms: false,
+      formId: null,
+      userIs: null,
+      userName: '',
+      needDynamicGuide: null
     }
   },
   methods: {
     handleNextStep (step) {
-      console.log(step)
       this.stage = step
+    },
+    handleQualification (qualificationInfo) {
+      const { youAre, hasDynamicGuide, userName } = qualificationInfo
+      this.userIs = youAre
+      this.userName = this.hydrateUserName(userName)
+      this.needDynamicGuide = !hasDynamicGuide
+      console.log(this.userIs)
+      console.log(this.userName)
+      if (youAre === 'student') {
+        this.jumpForms = true
+        this.handleNextStep('choose')
+        return
+      }
+      this.jumpForms = false
+      this.formId = this.existingForms[youAre]
+      console.log(this.userIs)
+      console.log(this.userName)
+      this.handleNextStep('choose')
+    },
+    hydrateUserName (userName) {
+      switch (this.userIs) {
+        case 'student':
+          return userName + ' 🧑‍🎓'
+        case 'school-worker':
+          return userName + ' 🏫'
+        case 'startup-worker':
+          return userName + ' 🚀'
+      }
     },
     handleConfirmation (object) {
       this.printObject(object)
-      this.handleNextStep('qualification')
+      if (this.jumpForms || !this.needDynamicGuide) {
+        this.handleNextStep('final')
+      } else {
+        this.handleNextStep('forms')
+      }
     },
     handleForms (from) {
       this.formId = this.existingForms[from]
@@ -73,7 +107,7 @@ export default {
     async printObject (object) {
       let response
       try {
-        response = await axios.get(`tasks/print/${object.name}`)
+        response = await axios.get(`tasks/print/${object.name}/?description=${this.userName}`)
       } catch (error) {
         console.log(error)
       }
@@ -84,6 +118,16 @@ export default {
     },
     handleReset () {
       this.handleNextStep('idle')
+      this.jumpForms = false
+      this.formId = null
+      this.userIs = null
+      this.userName = ''
+      this.needDynamicGuide = null
+    }
+  },
+  computed: {
+    showForms () {
+      return !this.jumpForms && this.stage === 'forms'
     }
   }
 }

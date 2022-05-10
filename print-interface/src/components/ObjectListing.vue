@@ -1,5 +1,7 @@
 <template>
-  <div class="row object-list flex-wrap align-center justify-center" v-loading="!objects">
+  <div
+    class="row object-list flex-wrap align-center justify-center"
+    v-loading="!objects">
     <ObjectCard
       v-for="object in objects"
       v-if="!belongsToBlackList(object.name)"
@@ -68,9 +70,7 @@ export default {
 .object-list {
   z-index: 250;
   overflow: auto;
-  padding: 2% 2.5%;
-  box-shadow: 0px 5px 26px -4px rgba(0, 0, 0, 0.6) !important;
-  border-top: 5px solid rgba(0, 0, 0, 0.6);
+  padding: 15px 30px;
 }
 
 </style>

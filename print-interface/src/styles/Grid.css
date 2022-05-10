@@ -57,7 +57,7 @@
 
 
   .align-start {
-    align-items: flex-start;
+    align-items: flex-start !important;
   }
   .align-center {
     align-items: center;
@@ -110,6 +110,6 @@
   .flex-wrap {
     flex-wrap: wrap;
   }
-  .space-around {
-    justify-content: space-around;
+  .justify-around {
+    justify-content: space-around !important;
   }

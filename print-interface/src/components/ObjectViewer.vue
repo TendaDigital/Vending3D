@@ -8,7 +8,7 @@
     <!-- <div class="object-name">
         <span class="grey--text">Modelo de {{objectName}}</span>
     </div> -->
-    <div style="position: absolute; top: 2%; right: 5%; z-index: 100">
+    <!-- <div style="position: absolute; top: 2%; right: 5%; z-index: 100">
       <el-button
         @click="openWaitList"
         class="ml-0"
@@ -22,12 +22,12 @@
         style="justify-self: center; width: 100px"
         >{{ buttonText }}</el-button
       >
-      <!-- <el-button v-else-if="stage=='print'" type="primary" size="large" @click="print()">Clique para confirmar</el-button> -->
-      <!-- <span v-else class="light-green--text" @click="resetPrint()"><v-icon v-if="stage != 'initial'" v-icon>check</v-icon> enviado para fila de impressão</span> -->
-    </div>
-    <el-drawer :visible.sync="isWaitlistOpen" :with-header="false" size="90%">
+      <el-button v-else-if="stage=='print'" type="primary" size="large" @click="print()">Clique para confirmar</el-button>
+      <span v-else class="light-green--text" @click="resetPrint()"><v-icon v-if="stage != 'initial'" v-icon>check</v-icon> enviado para fila de impressão</span>
+    </div> -->
+    <!-- <el-drawer :visible.sync="isWaitlistOpen" :with-header="false" size="90%">
       <Sidebar />
-    </el-drawer>
+    </el-drawer> -->
     <div
       ref="stlHolder"
       v-if="stlPath"
@@ -46,9 +46,9 @@
         :cameraLookAt="cameraLookAt"
         :cameraUp="cameraUp"
         :src="stlPath"
-      ></ModelStl>
+      />
     </div>
-    <img v-else :src="imgPath" class="flex" style="width: 100%;" />
+    <!-- <img v-else :src="imgPath" class="flex" style="width: 100%;" /> -->
 
     <div style="position: absolute; bottom: 16px; right: 16px;">
       <v-btn v-if="!autoRotate" @click="startAutoRotate(true)" outline icon
@@ -81,7 +81,6 @@ export default {
       type: Object,
       required: true
     },
-
     payload: {
       type: Object,
       default: () => ({})
