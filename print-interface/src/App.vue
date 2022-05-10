@@ -50,7 +50,7 @@ export default {
     return {
       stage: 'idle',
       existingForms: {
-        'school-worker': 'pl3YPIe5',
+        'school-worker': 'lKMTVx6u',
         'startup': 'pl3YPIe5'
       },
       jumpForms: false,
@@ -71,16 +71,16 @@ export default {
       this.needDynamicGuide = !hasDynamicGuide
       console.log(this.userIs)
       console.log(this.userName)
-      if (youAre === 'student') {
-        this.jumpForms = true
-        this.handleNextStep('choose')
-        return
-      }
-      this.jumpForms = false
-      this.formId = this.existingForms[youAre]
-      console.log(this.userIs)
-      console.log(this.userName)
+      // if (youAre === 'student') {
+      this.jumpForms = true
       this.handleNextStep('choose')
+      // return
+      // }
+      // this.jumpForms = false
+      // this.formId = this.existingForms[youAre]
+      // console.log(this.userIs)
+      // console.log(this.userName)
+      // this.handleNextStep('choose')
     },
     hydrateUserName (userName) {
       switch (this.userIs) {
