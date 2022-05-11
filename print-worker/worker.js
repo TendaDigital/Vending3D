@@ -220,14 +220,14 @@ async function main() {
 
     // Wait printer to be ok
     printerStatus = 'waiting'
-    console.log(chalk.yellow(' # Waiting for button press'))
+    console.log(chalk.yellow(' # Waiting for button press on '+printerInfo.name))
     await printer.waitForButtonPress('[press] ' + _.get(job, 'data.payload.description', ''))
 
     // Start a new job
     job = null
     let pooling = draftLoading(chalk.yellow(' # Waiting for a new job'))
 
-    await printer.display('  Tenda ' + printerInfo.name)
+    await printer.display(' ' + printerInfo.name)
 
     // Keep pooling
     while(1) {
@@ -237,6 +237,9 @@ async function main() {
       job = await master.pool()
 
       if (!job) {
+        // Shutdown printer (keep heating)
+        printer.shutdown()
+
         // No job, delay and continue
         await sleep(100)
       } else {
@@ -327,6 +330,8 @@ async function runJob(printer, job) {
         await printer.display(status.padEnd(15) + (percentage + '%').padStart(5))
       }
     }
+
+    await printer.shutdown()
 
     await sleep(500)
     progress(100)
