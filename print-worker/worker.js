@@ -100,7 +100,7 @@ async function getPrinterOptions(printerInfo) {
   let portProp = _.find(portList, printerInfo.port)
 
   return {
-    debug: false,
+    debug: true,
     name: printerInfo.name,
     // port: {serialNumber: 'CZPX2617X003XK24982'},
     // port: {serialNumber: 'CZPX2617X003XK25033'},
@@ -238,10 +238,10 @@ async function main() {
 
       if (!job) {
         // Shutdown printer (keep heating)
-        printer.shutdown()
+        // printer.shutdown()
 
         // No job, delay and continue
-        await sleep(100)
+        await sleep(1000)
       } else {
         // Job found, break inner loop and continue
         break;
@@ -331,9 +331,9 @@ async function runJob(printer, job) {
       }
     }
 
+    await sleep(500)
     await printer.shutdown()
 
-    await sleep(500)
     progress(100)
     job.setProgress(100)
     job.setStatus('success', 'Completo!')
