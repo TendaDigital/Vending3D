@@ -15,6 +15,7 @@
     "axios": "0.18.0",
     "cors": "^2.8.5",
     "element-ui": "2.15.8",
+    "lodash": "^4.17.21",
     "material-design-icons-iconfont": "3.0.3",
     "vue": "2.5.2",
     "vue-3d-model": "1.0.1",

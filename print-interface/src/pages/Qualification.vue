@@ -59,6 +59,7 @@
 <script>
 import Badge from '../components/Badge.vue'
 import Step from '../components/Step.vue'
+import { cloneDeep } from 'lodash'
 export default {
   components: {
     Badge,
@@ -125,11 +126,12 @@ export default {
       if (this.currentStep < this.steps.length - 1) {
         this.currentStep++
       } else {
-        this.$emit('next', {
-          youAre: this.selectedYouAre,
-          hasDynamicGuide: this.hasDynamicGuide === 'yes',
-          userName: this.userName
-        })
+        const nextEvent = {
+          youAre: cloneDeep(this.selectedYouAre),
+          hasDynamicGuide: cloneDeep(this.hasDynamicGuide === 'yes'),
+          userName: cloneDeep(this.userName)
+        }
+        this.$emit('next', nextEvent)
         this.resetUserSelection()
       }
     },
