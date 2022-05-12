@@ -69,7 +69,7 @@ export default {
       this.userIs = youAre
       this.userName = this.hydrateUserName(userName)
       this.needDynamicGuide = !hasDynamicGuide
-      if (youAre === 'student') {
+      if (youAre === 'student' || !this.needDynamicGuide) {
         this.jumpForms = true
         this.handleNextStep('choose')
         return
