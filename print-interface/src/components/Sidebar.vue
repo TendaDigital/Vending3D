@@ -2,6 +2,7 @@
   <div class="sidebar column">
     <div class="header no-flex">
       <span class="text">Fila De Impressão</span>
+      <span class="text">| N. de Impressões na fila {{tasksInWaitlist}}</span>
     </div>
 
     <div class="flex column scroll-y" style="background: #F0F0F0;">
@@ -116,6 +117,12 @@ export default {
           );
         return task.status !== "success" && task.status !== "failed";
       });
+    }
+  },
+  computed: {
+    tasksInWaitlist () {
+      console.log(this.tasks)
+      return this.tasks === null ? 0 : this.tasks.filter((task) => task.status === 'queued').length
     }
   }
 };

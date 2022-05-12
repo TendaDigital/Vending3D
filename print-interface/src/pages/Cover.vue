@@ -30,7 +30,7 @@
       :with-header="false"
       size="90%"
     >
-      <QueueList />
+      <QueueList v-if="isWaitlistOpen"/>
     </el-drawer>
   </div>
 </template>
