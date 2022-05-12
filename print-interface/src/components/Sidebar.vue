@@ -3,6 +3,7 @@
     <div class="header no-flex">
       <span class="text">Fila De Impressão</span>
       <span class="text">| N. de Impressões na fila {{tasksInWaitlist}}</span>
+      <span class="text">| Tempo estimado da fila {{tasksTotalTime}} minutos / {{prettyTime}}</span>
     </div>
 
     <div class="flex column scroll-y" style="background: #F0F0F0;">
@@ -123,6 +124,15 @@ export default {
     tasksInWaitlist () {
       console.log(this.tasks)
       return this.tasks === null ? 0 : this.tasks.filter((task) => task.status === 'queued').length
+    },
+    tasksTotalTime () {
+      return !this.tasksInWaitlist ? '-' : Math.round((this.tasksInWaitlist * 8) / 3)
+    },
+    prettyTime() {
+      const hours = Math.round(this.tasksTotalTime / 60)
+      const minutes = this.tasksTotalTime - (hours * 60)
+
+      return `${hours}h${minutes}min`
     }
   }
 };

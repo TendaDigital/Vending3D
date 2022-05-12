@@ -1,8 +1,5 @@
 <template>
   <div class="column bgc-light-aqua wrapper-content align-start">
-    <Badge>
-      Tempo aproximado: <b>4min</b>
-    </Badge>
     <div class="mt-4">
       <h1 class="title-main">Pronto para criar seu brinde impresso em 3D?</h1>
       <h2 class="subtitle-main mt-4">E um guia prático da Bett!</h2>
