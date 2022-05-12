@@ -1,6 +1,6 @@
 <template>
-      <Step :badge-text="'Um pouco sobre você'" :step-text="currentQuestion">
-        <template v-if="steps[0].question === currentQuestion">
+      <Step :badge-text="'Um pouco sobre você'" :step-text="currentText">
+        <template v-if="steps[0].text === currentText">
           <div class="wrapper-options" style="width: 100%; height: 100%">
             <div
               v-for="(option, index) in youAreOptions"
@@ -20,7 +20,7 @@
             </div>
           </div>
         </template>
-        <template v-if="steps[1].question === currentQuestion">
+        <template v-if="steps[1].text === currentText">
           <div class="wrapper-options" style="width: 100%; height: 100%">
             <div
               v-for="(option, index) in dynamicGuideOptions"
@@ -40,7 +40,27 @@
             </div>
           </div>
         </template>
-        <template v-if="steps[2].question === currentQuestion">
+        <template v-if="steps[2].text === currentText">
+          <div class="wrapper-options" style="width: 100%; height: 100%">
+            <p class="paragraph mb-4">
+              O Guia Prático é um guia gerado <u class="underline-main">dinamicamente</u> de acordo com <u class="underline-main">suas
+              preferências</u>. Basta responder algumas perguntinhas sobre seus interesses
+              na Bett que ele será enviado <u class="underline-main">personalizado</u> e diretamente para o seu e-mail.
+              Para mais informações, <u class="underline-main">basta acessar o QRCode abaixo.</u>
+            </p>
+            <div class="wrapper-image">
+              <img
+              src="../../static/mapa-only-qrcode.svg"
+              alt="QRCode para o guia personalizado da Bett"
+              style="width: 45%">
+              <img
+                src="../../static/mapa-bett.svg"
+                alt="Exemplo de guia personalizado da Bett"
+                style="width: 45%">
+            </div>
+          </div>
+        </template>
+        <template v-if="steps[3].text === currentText">
           <div class="column" style="width: 100%; height: 100%;">
           <input autofocus type="text" class="input-main" v-model="userName">
           </div>
@@ -51,7 +71,7 @@
           style="align-self: flex-end"
           :disabled="isContinueDisabled"
         >
-          Continuar
+          Próximo
         </button>
       </Step>
 </template>
@@ -73,13 +93,20 @@ export default {
       userName: '',
       steps: [
         {
-          question: 'Você é...'
+          badgeText: 'Um pouco sobre você',
+          text: 'Você é...'
         },
         {
-          question: 'Você já tem o Guia Prática da Bett?'
+          badgeText: 'Um pouco sobre você',
+          text: 'Você já tem o Guia Prática da Bett?'
         },
         {
-          question: 'Qual é o seu primeiro nome?'
+          badgeText: 'Guia Prático',
+          text: 'Uma maneira mais fácil de se localizar'
+        },
+        {
+          badgeText: 'Um pouco sobre você',
+          text: 'Qual é o seu primeiro nome?'
         }
       ],
       youAreOptions: [
@@ -88,11 +115,11 @@ export default {
           id: 'student'
         },
         {
-          text: 'de uma instituição de ensino',
+          text: 'um colaborador em uma escola',
           id: 'school-worker'
         },
         {
-          text: 'de um fornecedor',
+          text: 'um expositor na Bett',
           id: 'startup'
         }
       ],
@@ -123,6 +150,9 @@ export default {
       if (this.selectedYouAre !== 'school-worker') {
         this.currentStep++
       }
+      if (this.selectedYouAre === 'school-worker' && this.hasDynamicGuide === 'yes') {
+        this.currentStep++
+      }
       if (this.currentStep < this.steps.length - 1) {
         this.currentStep++
       } else {
@@ -143,8 +173,8 @@ export default {
     }
   },
   computed: {
-    currentQuestion () {
-      return this.currentStep < this.steps.length ? this.steps[this.currentStep].question : ''
+    currentText () {
+      return this.currentStep < this.steps.length ? this.steps[this.currentStep].text : ''
     },
     isContinueDisabled () {
       if (this.currentStep === 0) {
@@ -153,7 +183,7 @@ export default {
       if (this.currentStep === 1) {
         return this.hasDynamicGuide === null
       }
-      if (this.currentStep === 2) {
+      if (this.currentStep === 3) {
         return this.userName === ''
       }
     }

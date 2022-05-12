@@ -69,18 +69,14 @@ export default {
       this.userIs = youAre
       this.userName = this.hydrateUserName(userName)
       this.needDynamicGuide = !hasDynamicGuide
-      console.log(this.userIs)
-      console.log(this.userName)
-      if (youAre === 'student') {
-        this.jumpForms = true
-        this.handleNextStep('choose')
-        return
-      }
-      this.jumpForms = false
-      this.formId = this.existingForms[youAre]
-      console.log(this.userIs)
-      console.log(this.userName)
+      // if (youAre === 'student') {
+      this.jumpForms = true
       this.handleNextStep('choose')
+      // return
+      // }
+      // this.jumpForms = false
+      // this.formId = this.existingForms[youAre]
+      // this.handleNextStep('choose')
     },
     hydrateUserName (userName) {
       switch (this.userIs) {

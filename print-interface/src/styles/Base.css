@@ -109,3 +109,21 @@ body {
   border-radius: 145px;
   padding: 5px 15px;
 }
+
+.paragraph {
+  font-size: 20px;
+  color: var(--color-gray-dark);
+  font-weight: 700;
+}
+
+.underline-main {
+  text-decoration-color: var(--color-purple-dark);
+  text-decoration-thickness: 3px;
+}
+
+.wrapper-image {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 100%;
+}

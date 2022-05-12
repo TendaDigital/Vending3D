@@ -37,7 +37,7 @@
       style="margin-bottom: 70px"
       @click="nextStep"
       :disabled="isContinueDisabled"
-    >Continuar</button>
+    >{{ buttonText }}</button>
   </Step>
 </template>
 
@@ -110,6 +110,9 @@ export default {
     }
   },
   computed: {
+    buttonText () {
+      return this.currentStep === 0 ? 'Pré-visualizar' : 'Imprimir'
+    },
     isContinueDisabled () {
       return this.selectedObject === null
     }
