@@ -18,7 +18,7 @@
     <TypeformForms
       v-if="showForms"
       :formId="formId"
-      @final="handleNextStep('final')"
+      @next="handleNextStep('choose')"
       @cancel="handleCancel"
     />
     <BackCover
@@ -88,13 +88,13 @@ export default {
           return userName + ' 🚀'
       }
     },
-    handleConfirmation (object) {
-      this.printObject(object)
-      if (this.jumpForms || !this.needDynamicGuide) {
-        this.handleNextStep('final')
-      } else {
-        this.handleNextStep('forms')
-      }
+    handleConfirmation () {
+      // this.printObject(object)
+      // if (this.jumpForms || !this.needDynamicGuide) {
+      this.handleNextStep('final')
+      // } else {
+      // this.handleNextStep('forms')
+      // }
     },
     handleForms (from) {
       this.formId = this.existingForms[from]

@@ -49,7 +49,7 @@ export default {
     createWidget(this.formId, {
       container: document.querySelector('#form'),
       onSubmit: () => {
-        this.$emit('final')
+        this.$emit('next')
       }
       // async (event) => {
       //   let owner
