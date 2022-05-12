@@ -40,7 +40,7 @@
             </div>
           </div>
         </template>
-        <template v-if="steps[2].text === currentText">
+        <div v-show="steps[2].text === currentText" class="column">
           <div class="wrapper-options" style="width: 100%; height: 100%">
             <p class="paragraph mb-4">
               O Guia Prático é um guia gerado <u class="underline-main">dinamicamente</u> de acordo com <u class="underline-main">suas
@@ -59,7 +59,7 @@
                 style="width: 45%">
             </div>
           </div>
-        </template>
+        </div>
         <template v-if="steps[3].text === currentText">
           <div class="column" style="width: 100%; height: 100%;">
           <input autofocus type="text" class="input-main" v-model="userName">
@@ -148,6 +148,7 @@ export default {
     },
     handleNextStep () {
       if (this.selectedYouAre !== 'school-worker') {
+        this.currentStep++
         this.currentStep++
       }
       if (this.selectedYouAre === 'school-worker' && this.hasDynamicGuide === 'yes') {
