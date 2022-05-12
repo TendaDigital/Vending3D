@@ -89,7 +89,7 @@ export default {
       }
     },
     handleConfirmation () {
-      // this.printObject(object)
+      this.printObject(object)
       // if (this.jumpForms || !this.needDynamicGuide) {
       this.handleNextStep('final')
       // } else {
