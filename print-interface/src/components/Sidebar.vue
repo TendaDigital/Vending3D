@@ -129,7 +129,7 @@ export default {
       return !this.tasksInWaitlist ? '-' : Math.round((this.tasksInWaitlist * 8) / 3)
     },
     prettyTime() {
-      const hours = Math.round(this.tasksTotalTime / 60)
+      const hours = Math.floor(this.tasksTotalTime / 60)
       const minutes = this.tasksTotalTime - (hours * 60)
 
       return `${hours}h${minutes}min`
