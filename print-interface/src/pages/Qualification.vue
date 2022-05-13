@@ -98,7 +98,7 @@ export default {
         },
         {
           badgeText: 'Um pouco sobre você',
-          text: 'Você já tem o Guia Prática da Bett?'
+          text: 'Você já tem o Guia Prático da Bett?'
         },
         {
           badgeText: 'Guia Prático',

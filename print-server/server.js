@@ -107,8 +107,8 @@ async function startRESTServer(app) {
   app.get('/tasks', async (req, res, next) => {
     let tasks = await Task
         .find({ active: true })
-        .sort({ queuedAt: -1 })
-        .limit(100)
+        .sort({ createdAt: -1 })
+        .limit(200)
 
     res.send(tasks.map(p => _.pick(p, TaskFields)))
   })

@@ -88,7 +88,7 @@ export default {
           return userName + ' 🚀'
       }
     },
-    handleConfirmation () {
+    handleConfirmation (object) {
       this.printObject(object)
       // if (this.jumpForms || !this.needDynamicGuide) {
       this.handleNextStep('final')
