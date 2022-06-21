@@ -1,79 +1,49 @@
 <template>
-      <Step :badge-text="'Um pouco sobre você'" :step-text="currentText">
-        <template v-if="steps[0].text === currentText">
-          <div class="wrapper-options" style="width: 100%; height: 100%">
-            <div
-              v-for="(option, index) in youAreOptions"
-              :key="index"
-              @click="selectYouAre(option.id)"
-              class="row option-wrapper justify-between align-center mb-3"
-              :class="selectedYouAre === option.id ? '-selected' : ''"
-            >
-              <p
-                class="option-text mb-0"
-                :class="selectedYouAre === option.id ? '-selected' : ''"
-              >{{option.text}}</p>
-              <span
-                class="option-selector"
-                :class="selectedYouAre === option.id ? '-selected' : ''"
-              />
-            </div>
-          </div>
-        </template>
-        <template v-if="steps[1].text === currentText">
-          <div class="wrapper-options" style="width: 100%; height: 100%">
-            <div
-              v-for="(option, index) in dynamicGuideOptions"
-              :key="index"
-              class="row option-wrapper justify-between align-center mb-3"
-              @click="selectDynamicGuide(option.id)"
-              :class="hasDynamicGuide === option.id ? '-selected' : ''"
-            >
-              <p
-                class="option-text mb-0"
-                :class="hasDynamicGuide === option.id ? '-selected' : ''"
-              >{{option.text}}</p>
-              <span
-                class="option-selector"
-                :class="hasDynamicGuide === option.id ? '-selected' : ''"
-              />
-            </div>
-          </div>
-        </template>
-        <div v-show="steps[2].text === currentText" class="column">
-          <div class="wrapper-options" style="width: 100%; height: 100%">
-            <p class="paragraph mb-4">
-              O Guia Prático é um guia gerado <u class="underline-main">dinamicamente</u> de acordo com <u class="underline-main">suas
-              preferências</u>. Basta responder algumas perguntinhas sobre seus interesses
-              na Bett que ele será enviado <u class="underline-main">personalizado</u> e diretamente para o seu e-mail.
-              Para mais informações, <u class="underline-main">basta acessar o QRCode abaixo.</u>
-            </p>
-            <div class="wrapper-image">
-              <img
-              src="../../static/mapa-only-qrcode.svg"
-              alt="QRCode para o guia personalizado da Bett"
-              style="width: 45%">
-              <img
-                src="../../static/mapa-bett.svg"
-                alt="Exemplo de guia personalizado da Bett"
-                style="width: 45%">
-            </div>
-          </div>
-        </div>
-        <template v-if="steps[3].text === currentText">
-          <div class="column" style="width: 100%; height: 100%;">
-          <input autofocus type="text" class="input-main" v-model="userName">
-          </div>
-        </template>
-        <button
-          class="button-main"
-          @click="handleNextStep"
-          style="align-self: flex-end"
-          :disabled="isContinueDisabled"
-        >
-          Próximo
-        </button>
-      </Step>
+  <Step :badge-text="'Um pouco sobre você'" :step-text="currentText">
+    <template v-if="steps[0].text === currentText">
+      <div class="column" style="width: 100%; height: 100%;">
+        <input autofocus type="text" class="input-main" v-model="userName" />
+      </div>
+    </template>
+    <template v-if="steps[1].text === currentText">
+      <div class="column" style="width: 100%; height: 100%;">
+        <input autofocus type="email" class="input-main" v-model="userMail" />
+      </div>
+    </template>
+    <template v-if="steps[2].text === currentText">
+      <div class="column" style="width: 100%; height: 100%;">
+        <input autofocus type="number" class="input-main" v-model="userPhone" />
+      </div>
+    </template>
+    <template v-if="steps[3].text === currentText">
+      <div class="column" style="width: 100%; height: 100%;">
+        <input
+          autofocus
+          type="text"
+          class="input-main"
+          v-model="userInstitution"
+        />
+      </div>
+    </template>
+    <template v-if="steps[4].text === currentText">
+      <div class="column" style="width: 100%; height: 100%;">
+        <input autofocus type="text" class="input-main" v-model="userCity" />
+      </div>
+    </template>
+    <template v-if="steps[5].text === currentText">
+      <div class="column" style="width: 100%; height: 100%;">
+        <input autofocus type="text" class="input-main" v-model="userState" />
+      </div>
+    </template>
+    <button
+      class="button-main"
+      @click="handleNextStep"
+      style="align-self: flex-end"
+      :disabled="isContinueDisabled"
+    >
+      Próximo
+    </button>
+  </Step>
 </template>
 
 <script>
@@ -88,79 +58,52 @@ export default {
   data () {
     return {
       currentStep: 0,
-      selectedYouAre: null,
-      hasDynamicGuide: null,
       userName: '',
+      userMail: '',
+      userPhone: '',
+      userInstitution: '',
+      userCity: '',
+      userState: '',
       steps: [
         {
           badgeText: 'Um pouco sobre você',
-          text: 'Você é...'
+          text: 'Qual é o seu nome e sobrenome?'
         },
         {
           badgeText: 'Um pouco sobre você',
-          text: 'Você já tem o Guia Prático da Bett?'
-        },
-        {
-          badgeText: 'Guia Prático',
-          text: 'Uma maneira mais fácil de se localizar'
+          text: 'Qual é o seu email?'
         },
         {
           badgeText: 'Um pouco sobre você',
-          text: 'Qual é o seu primeiro nome?'
-        }
-      ],
-      youAreOptions: [
-        {
-          text: 'um estudante',
-          id: 'student'
+          text: 'Qual é o seu celular?'
         },
         {
-          text: 'um colaborador em uma escola',
-          id: 'school-worker'
+          badgeText: 'Um pouco sobre você',
+          text: 'Qual é o nome da sua instituição?'
         },
         {
-          text: 'um expositor na Bett',
-          id: 'startup'
-        }
-      ],
-      dynamicGuideOptions: [
-        {
-          text: 'Já tenho sim!',
-          id: 'yes'
+          badgeText: 'Um pouco sobre você',
+          text: 'Você é de qual estado?'
         },
         {
-          text: 'Ainda não!',
-          id: 'no'
-        },
-        {
-          text: 'O que é o Guia Prático?',
-          id: 'what'
+          badgeText: 'Um pouco sobre você',
+          text: 'E de qual cidade?'
         }
       ]
     }
   },
   methods: {
-    selectYouAre (option) {
-      this.selectedYouAre = option
-    },
-    selectDynamicGuide (option) {
-      this.hasDynamicGuide = option
-    },
     handleNextStep () {
-      if (this.selectedYouAre !== 'school-worker') {
-        this.currentStep++
-        this.currentStep++
-      }
-      if (this.selectedYouAre === 'school-worker' && this.hasDynamicGuide === 'yes') {
-        this.currentStep++
-      }
       if (this.currentStep < this.steps.length - 1) {
         this.currentStep++
       } else {
         const nextEvent = {
-          youAre: cloneDeep(this.selectedYouAre),
-          hasDynamicGuide: cloneDeep(this.hasDynamicGuide === 'yes'),
-          userName: cloneDeep(this.userName)
+          userName: cloneDeep(this.userName),
+          userMail: cloneDeep(this.userMail),
+          userPhone: cloneDeep(this.userPhone),
+          userInstitution: cloneDeep(this.userInstitution),
+          userCity: cloneDeep(this.userCity),
+          userState: cloneDeep(this.userState)
         }
         this.$emit('next', nextEvent)
         this.resetUserSelection()
@@ -168,9 +111,12 @@ export default {
     },
     resetUserSelection () {
       this.currentStep = 0
-      this.selectedYouAre = null
-      this.hasDynamicGuide = null
       this.userName = ''
+      this.userMail = ''
+      this.userPhone = ''
+      this.userInstitution = ''
+      this.userCity = ''
+      this.userState = ''
     }
   },
   computed: {
@@ -179,13 +125,22 @@ export default {
     },
     isContinueDisabled () {
       if (this.currentStep === 0) {
-        return this.selectedYouAre === null
+        return this.userName === ''
       }
       if (this.currentStep === 1) {
-        return this.hasDynamicGuide === null
+        return this.userMail === ''
+      }
+      if (this.currentStep === 2) {
+        return this.userPhone === ''
       }
       if (this.currentStep === 3) {
-        return this.userName === ''
+        return this.userInstitution === ''
+      }
+      if (this.currentStep === 4) {
+        return this.userCity === ''
+      }
+      if (this.currentStep === 5) {
+        return this.userState === ''
       }
     }
   }
@@ -211,7 +166,7 @@ export default {
   color: var(--color-gray-light);
 }
 .option-text.-selected {
-  color: var(--color-purple-dark)
+  color: var(--color-purple-dark);
 }
 
 .option-selector {
@@ -221,7 +176,7 @@ export default {
   border-radius: 100%;
   background-color: var(--white);
   border: 2px solid var(--color-gray-light);
-  transition: border 0.25s 0s ease
+  transition: border 0.25s 0s ease;
 }
 .option-selector.-selected {
   border: 15px solid var(--color-purple-dark);
