@@ -43,7 +43,7 @@ export default {
   data () {
     return {
       stage: 'idle',
-      userInfo: {}
+      requesterInfo: {}
     }
   },
   methods: {
@@ -51,7 +51,7 @@ export default {
       this.stage = step
     },
     handleQualification (qualificationInfo) {
-      this.userInfo = { ...qualificationInfo }
+      this.requesterInfo = { ...qualificationInfo }
       this.handleNextStep('choose')
     },
     handleConfirmation (object) {
@@ -65,8 +65,8 @@ export default {
     async printObject (object) {
       let response
       try {
-        response = await axios.post(`tasks/print/${object.name}/?description=${this.userInfo.userName}`,
-          this.userInfo
+        response = await axios.post(`tasks/print/${object.name}`,
+          this.requesterInfo
         )
       } catch (error) {
         console.log(error)
@@ -78,7 +78,7 @@ export default {
     },
     handleReset () {
       this.handleNextStep('idle')
-      this.userInfo = {}
+      this.requesterInfo = {}
     }
   },
   computed: {}

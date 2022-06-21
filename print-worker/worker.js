@@ -221,7 +221,7 @@ async function main() {
     // Wait printer to be ok
     printerStatus = 'waiting'
     console.log(chalk.yellow(' # Waiting for button press on '+printerInfo.name))
-    await printer.waitForButtonPress('[press] ' + _.get(job, 'data.payload.description', ''))
+    await printer.waitForButtonPress('[press] ' + _.get(job, 'data.payload.requesterInfo.name', ''))
 
     // Start a new job
     job = null
@@ -291,7 +291,7 @@ async function runJob(printer, job) {
     let gcode = new GcodeParser(payload.file, payload.gcodeParams || {})
 
     job.setStatus('running', 'Executando...')
-    await printer.display((payload.name || '') + ' - ' + (payload.description || ''))
+    await printer.display((payload.model || '') + ' - ' + (payload.requesterInfo.name || ''))
 
     let lastShownDisplay = -1
     let lastPercentageUpdate = -1
@@ -326,7 +326,7 @@ async function runJob(printer, job) {
       // Update display every 10secs
       if (Date.now() > lastShownDisplay + 10000) {
         lastShownDisplay = Date.now()
-        let status = 'para ' + (payload.description || '').split(' ')[0]
+        let status = 'para ' + (payload.requesterInfo.name || '').split(' ')[0]
         await printer.display(status.padEnd(15) + (percentage + '%').padStart(5))
       }
     }

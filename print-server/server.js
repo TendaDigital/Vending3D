@@ -129,14 +129,13 @@ async function startRESTServer(app) {
 
   app.post('/tasks/print/:file', async (req, res, next) => {
     let file = req.params.file
-    let userInfo = req.body
-    console.log('new print', file)
+    let requesterInfo = req.body
+    console.log(`------- NEW PRINT ${file} -------`)
 
     let payload = {
       file: path.join(__dirname, `../objects/${file}.gcode`),
       name: file,
-      description: req.query.description,
-      ...userInfo
+      requesterInfo
     }
 
     let task = await Task.create({

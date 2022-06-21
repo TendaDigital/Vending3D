@@ -8,7 +8,7 @@
       <template>{{taskStatus}}</template>
       <!--Progress Bar-->
       <div v-if="task.status == 'running'" class="progress-bar" :style="{ width: task.progress + '%' }"></div>
-      <!--First row, contains user name (task.payload.description) and printer id (task.owner)-->
+      <!--First row, contains user name (this.requesterName) and printer id (task.owner)-->
       <div class="ontop row">
         <!-- Current status -->
         <v-chip label :color="statusColor" text-color="white" small class="ma-0">
@@ -20,11 +20,11 @@
         <div class="flex"></div>
         <!--Printer id (task.owner)-->
 
-        <!--User name (task.payload.description)-->
+        <!--User name (this.requesterName)-->
         <v-chip label color="grey" text-color="grey darken-2" outline small class="ma-0">
-          <template v-if="task.payload.description">
+          <template v-if="requesterName">
             <v-icon small>perm_identity</v-icon>
-            <span class="mr-3">{{task.payload.description}}</span>
+            <span class="mr-3">{{requesterName}}</span>
           </template>
           <v-icon size="12">attach_file</v-icon>
           <span> {{task.payload.name}}</span>
@@ -78,11 +78,9 @@ export default {
   computed: {
     taskStatus() {
       if(this.task.status == 'success' && this.printStatusSent == false){
-        this.sendPrintStatus()
+        // this.sendPrintStatus()
         this.printStatusSent = true
-        //console.log(this.task.id)
       }
-      //return this.task.status
     },
 
     statusColor() {
@@ -110,6 +108,14 @@ export default {
 
       return SERVER_URL + '/objects/files/' + this.task.payload.name + '.png'
     },
+
+    requesterName () {
+      if (this.task.payload.requesterInfo) {
+        return this.task.payload.requesterInfo.name
+      } else {
+        return this.task.payload.description
+      }
+    }
   },
 
   methods: {
@@ -130,7 +136,7 @@ export default {
             params: {
              status: 'queued',
              _id: this.task.id,
-             name: this.task.payload.description
+             name: this.requesterName
             }
         }).then((response) => {
           console.log('print finished' + response)

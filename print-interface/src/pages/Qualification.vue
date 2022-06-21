@@ -2,17 +2,17 @@
   <Step :badge-text="'Um pouco sobre você'" :step-text="currentText">
     <template v-if="steps[0].text === currentText">
       <div class="column" style="width: 100%; height: 100%;">
-        <input autofocus type="text" class="input-main" v-model="userName" />
+        <input autofocus type="text" class="input-main" v-model="requesterName" />
       </div>
     </template>
     <template v-if="steps[1].text === currentText">
       <div class="column" style="width: 100%; height: 100%;">
-        <input autofocus type="email" class="input-main" v-model="userMail" />
+        <input autofocus type="email" class="input-main" v-model="requesterMail" />
       </div>
     </template>
     <template v-if="steps[2].text === currentText">
       <div class="column" style="width: 100%; height: 100%;">
-        <input autofocus type="number" class="input-main" v-model="userPhone" />
+        <input autofocus type="number" class="input-main" v-model="requesterPhone" />
       </div>
     </template>
     <template v-if="steps[3].text === currentText">
@@ -21,18 +21,18 @@
           autofocus
           type="text"
           class="input-main"
-          v-model="userInstitution"
+          v-model="requesterInstitution"
         />
       </div>
     </template>
     <template v-if="steps[4].text === currentText">
       <div class="column" style="width: 100%; height: 100%;">
-        <input autofocus type="text" class="input-main" v-model="userCity" />
+        <input autofocus type="text" class="input-main" v-model="requesterCity" />
       </div>
     </template>
     <template v-if="steps[5].text === currentText">
       <div class="column" style="width: 100%; height: 100%;">
-        <input autofocus type="text" class="input-main" v-model="userState" />
+        <input autofocus type="text" class="input-main" v-model="requesterState" />
       </div>
     </template>
     <button
@@ -58,12 +58,12 @@ export default {
   data () {
     return {
       currentStep: 0,
-      userName: '',
-      userMail: '',
-      userPhone: '',
-      userInstitution: '',
-      userCity: '',
-      userState: '',
+      requesterName: '',
+      requesterMail: '',
+      requesterPhone: '',
+      requesterInstitution: '',
+      requesterCity: '',
+      requesterState: '',
       steps: [
         {
           badgeText: 'Um pouco sobre você',
@@ -98,25 +98,25 @@ export default {
         this.currentStep++
       } else {
         const nextEvent = {
-          userName: cloneDeep(this.userName),
-          userMail: cloneDeep(this.userMail),
-          userPhone: cloneDeep(this.userPhone),
-          userInstitution: cloneDeep(this.userInstitution),
-          userCity: cloneDeep(this.userCity),
-          userState: cloneDeep(this.userState)
+          name: cloneDeep(this.requesterName),
+          mail: cloneDeep(this.requesterMail),
+          phone: cloneDeep(this.requesterPhone),
+          institution: cloneDeep(this.requesterInstitution),
+          city: cloneDeep(this.requesterCity),
+          state: cloneDeep(this.requesterState)
         }
         this.$emit('next', nextEvent)
-        this.resetUserSelection()
+        this.resetrequesterSelection()
       }
     },
-    resetUserSelection () {
+    resetrequesterSelection () {
       this.currentStep = 0
-      this.userName = ''
-      this.userMail = ''
-      this.userPhone = ''
-      this.userInstitution = ''
-      this.userCity = ''
-      this.userState = ''
+      this.requesterName = ''
+      this.requesterMail = ''
+      this.requesterPhone = ''
+      this.requesterInstitution = ''
+      this.requesterCity = ''
+      this.requesterState = ''
     }
   },
   computed: {
@@ -125,22 +125,22 @@ export default {
     },
     isContinueDisabled () {
       if (this.currentStep === 0) {
-        return this.userName === ''
+        return this.requesterName === ''
       }
       if (this.currentStep === 1) {
-        return this.userMail === ''
+        return this.requesterMail === ''
       }
       if (this.currentStep === 2) {
-        return this.userPhone === ''
+        return this.requesterPhone === ''
       }
       if (this.currentStep === 3) {
-        return this.userInstitution === ''
+        return this.requesterInstitution === ''
       }
       if (this.currentStep === 4) {
-        return this.userCity === ''
+        return this.requesterCity === ''
       }
       if (this.currentStep === 5) {
-        return this.userState === ''
+        return this.requesterState === ''
       }
     }
   }
