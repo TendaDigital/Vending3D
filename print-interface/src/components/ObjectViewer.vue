@@ -1,33 +1,5 @@
 <template>
   <div class="column align-center justify-center" style="position: relative;">
-    <!-- <div class="info-panel row justify-between align-center px-4" style="height: 100px;">
-      <div class="display-3 align-center row">
-        <img src="../../static/layers-icon-colorido.svg" alt="Ícone da Layers" style="width: 48px; height: 48px">
-      </div>
-    </div> -->
-    <!-- <div class="object-name">
-        <span class="grey--text">Modelo de {{objectName}}</span>
-    </div> -->
-    <!-- <div style="position: absolute; top: 2%; right: 5%; z-index: 100">
-      <el-button
-        @click="openWaitList"
-        class="ml-0"
-        style="justify-self: flex-end"
-        >Fila de Espera</el-button
-      >
-      <el-button
-        :type="this.stage == 'initial' ? 'success' : 'primary'"
-        size="large"
-        @click="$emit('confirm')"
-        style="justify-self: center; width: 100px"
-        >{{ buttonText }}</el-button
-      >
-      <el-button v-else-if="stage=='print'" type="primary" size="large" @click="print()">Clique para confirmar</el-button>
-      <span v-else class="light-green--text" @click="resetPrint()"><v-icon v-if="stage != 'initial'" v-icon>check</v-icon> enviado para fila de impressão</span>
-    </div> -->
-    <!-- <el-drawer :visible.sync="isWaitlistOpen" :with-header="false" size="90%">
-      <Sidebar />
-    </el-drawer> -->
     <div
       ref="stlHolder"
       v-if="stlPath"
