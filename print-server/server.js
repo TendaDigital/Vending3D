@@ -87,6 +87,7 @@ async function startRESTServer(app) {
   ]
 
   app.use(cors())
+  app.use(express.json())
 
   app.get('/task/owner-info/:id', async (req, res, next) => {
     const { id } = req.params
@@ -126,14 +127,16 @@ async function startRESTServer(app) {
     res.send(_.pick(task, TaskFields))
   })
 
-  app.get('/tasks/print/:file', async (req, res, next) => {
+  app.post('/tasks/print/:file', async (req, res, next) => {
     let file = req.params.file
+    let userInfo = req.body
     console.log('new print', file)
 
     let payload = {
       file: path.join(__dirname, `../objects/${file}.gcode`),
       name: file,
       description: req.query.description,
+      ...userInfo
     }
 
     let task = await Task.create({
