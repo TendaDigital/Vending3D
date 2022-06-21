@@ -15,12 +15,6 @@
       @confirm="handleConfirmation($event)"
       class='flex'
     />
-    <TypeformForms
-      v-if="showForms"
-      :formId="formId"
-      @next="handleNextStep('choose')"
-      @cancel="handleCancel"
-    />
     <BackCover
       v-if="this.stage === 'final'"
       @reset="handleReset"
@@ -49,15 +43,7 @@ export default {
   data () {
     return {
       stage: 'idle',
-      existingForms: {
-        'school-worker': 'lKMPVx6u',
-        'startup': 'pl3YPIe5'
-      },
-      jumpForms: false,
-      formId: null,
-      userIs: null,
-      userName: '',
-      needDynamicGuide: null
+      userInfo: {}
     }
   },
   methods: {
@@ -65,36 +51,12 @@ export default {
       this.stage = step
     },
     handleQualification (qualificationInfo) {
-      const { youAre, hasDynamicGuide, userName } = qualificationInfo
-      this.userIs = youAre
-      this.userName = this.hydrateUserName(userName)
-      this.needDynamicGuide = !hasDynamicGuide
-      if (youAre === 'student' || !this.needDynamicGuide) {
-        this.jumpForms = true
-        this.handleNextStep('choose')
-        return
-      }
-      this.jumpForms = false
-      this.formId = this.existingForms[youAre]
-      this.handleNextStep('forms')
-    },
-    hydrateUserName (userName) {
-      switch (this.userIs) {
-        case 'student':
-          return userName + ' 🧑‍🎓'
-        case 'school-worker':
-          return userName + ' 🏫'
-        case 'startup-worker':
-          return userName + ' 🚀'
-      }
+      this.userInfo = { ...qualificationInfo }
+      this.handleNextStep('choose')
     },
     handleConfirmation (object) {
       this.printObject(object)
-      // if (this.jumpForms || !this.needDynamicGuide) {
       this.handleNextStep('final')
-      // } else {
-      // this.handleNextStep('forms')
-      // }
     },
     handleForms (from) {
       this.formId = this.existingForms[from]
@@ -103,7 +65,9 @@ export default {
     async printObject (object) {
       let response
       try {
-        response = await axios.get(`tasks/print/${object.name}/?description=${this.userName}`)
+        response = await axios.post(`tasks/print/${object.name}/?description=${this.userInfo.userName}`,
+          this.userInfo
+        )
       } catch (error) {
         console.log(error)
       }
@@ -114,18 +78,10 @@ export default {
     },
     handleReset () {
       this.handleNextStep('idle')
-      this.jumpForms = false
-      this.formId = null
-      this.userIs = null
-      this.userName = ''
-      this.needDynamicGuide = null
+      this.userInfo = {}
     }
   },
-  computed: {
-    showForms () {
-      return !this.jumpForms && this.stage === 'forms'
-    }
-  }
+  computed: {}
 }
 </script>
 <style>
