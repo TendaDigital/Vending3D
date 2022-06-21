@@ -2,7 +2,6 @@
   <div class="column bgc-light-aqua wrapper-content align-start">
     <div class="mt-4">
       <h1 class="title-main">Pronto para criar seu brinde impresso em 3D?</h1>
-      <h2 class="subtitle-main mt-4">E um guia prático da Bett!</h2>
     </div>
     <button
       class="button-main"
@@ -10,12 +9,6 @@
       style="margin-top: 100px">
       Estou pronto!
     </button>
-    <!-- <button
-      class="button-main"
-      @click="toggleWaitList"
-      style="margin-top: 25px; width: 50%; font-size: 20px">
-      Lista de Espera
-    </button> -->
     <img
       src="../../static/layers-principal-verde.png"
       alt="Ícone da Layers Colorido"
