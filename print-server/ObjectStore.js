@@ -17,7 +17,7 @@ exports.read = async function read(dir) {
       info = {name, files: {}}
       objects.push(info)
     }
-    
+
     info.files[ext] = file
   }
 
@@ -36,7 +36,7 @@ exports.generateThumbnails = async function generateThumbnails(dir) {
   if (!missingThumbs.length) {
     return
   }
-  
+
   console.log(chalk.cyan(` ! Generating thumbs for ${missingThumbs.length} objects`))
 
   for (obj of missingThumbs) {
@@ -50,7 +50,7 @@ exports.generateThumbnails = async function generateThumbnails(dir) {
         lineColor: 0x03a9f4,
         baseColor: 0x03a9f4,
         baseOpacity: 0.3,
-        cameraAngle: [0, -100, 70], 
+        cameraAngle: [0, -100, 70],
       }]
     })
 

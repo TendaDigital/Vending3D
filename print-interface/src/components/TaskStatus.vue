@@ -15,11 +15,11 @@
           <template v-if="task.status !='queued'">{{task.owner}}</template>
           <template v-else>Aguardando</template>
         </v-chip>
-        
+
         <!--Fill space-->
         <div class="flex"></div>
         <!--Printer id (task.owner)-->
-       
+
         <!--User name (task.payload.description)-->
         <v-chip label color="grey" text-color="grey darken-2" outline small class="ma-0">
           <template v-if="task.payload.description">
@@ -30,7 +30,7 @@
           <span> {{task.payload.name}}</span>
         </v-chip>
       </div>
-      
+
       <!--Second row, contains task status (task.message), task progress in percentage (task.progress) and payload name/gcode file (task.payload.name)-->
       <div class="ontop row align-center pt-2">
         <!--Task status-->
@@ -40,7 +40,7 @@
         </div>
 
         <!-- Waiting bar -->
-        <v-progress-linear v-else :indeterminate="true" height="3" color="amber darken-2" class="flex mr-3"></v-progress-linear> 
+        <v-progress-linear v-else :indeterminate="true" height="3" color="amber darken-2" class="flex mr-3"></v-progress-linear>
 
         <!--Payload name/gcode file (task.payload.name)-->
         <el-button v-if="task.status == 'failed' || task.status == 'canceled'"
@@ -50,7 +50,7 @@
 
         <el-button v-if="task.status == 'success' || task.status == 'failed' || task.status == 'canceled'"
           @click="archiveTask()" type="primary" icon="el-icon-check" plain size="mini" class="px-2"></el-button>
-        
+
       </div>
 
     </div>
@@ -94,7 +94,7 @@ export default {
         'success': 'light-green accent-4',
       }[this.task.status] || 'grey'
     },
-    
+
     statusColorText() {
       return {
         'running': 'light-blue--text',
@@ -125,12 +125,12 @@ export default {
       axios.get('tasks/' + this.task.id + '/archive')
     },
 
-    sendPrintStatus: function () {      
+    sendPrintStatus: function () {
       axios.get('https://script.google.com/a/tenda.digital/macros/s/AKfycbyCGfd66lclHCduZEbOtrYupG6KGI37JhbtOxlADrO7zSbvoYlZ/exec?isUpdate=true', {
             params: {
              status: 'queued',
              _id: this.task.id,
-             name: this.task.payload.description            
+             name: this.task.payload.description
             }
         }).then((response) => {
           console.log('print finished' + response)

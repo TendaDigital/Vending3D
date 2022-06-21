@@ -1,0 +1,129 @@
+:root {
+  --color-aqua: #00B8AD;
+  --color-aqua-light: #E5F8F7;
+  --color-pink-light: #FFBFCB;
+  --color-pink-dark: #FBA0B1;
+  --color-blue-light: #15A4CC;
+  --color-blue-dark: #108EB1;
+  --color-purple-light: #5451D640;
+  --color-purple-dark: #5451D6;
+  --color-yellow-light: #FFCA65;
+  --color-yellow-dark: #F5B845;
+  --color-gray-light: #748494;
+  --color-gray-light-50: #74849450;
+  --color-gray-dark: #232B34;
+  --white: #fff;
+}
+
+body {
+  font-family: 'Nunito', sans-serif !important;
+  color: var(--color-gray-dark);
+  user-select: none;
+}
+
+
+.bgc-light-aqua {
+  background-color: var(--color-aqua-light);
+}
+
+.wrapper-content {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  padding: 70px;
+}
+
+.wrapper-question {
+  font-size: 22px;
+}
+
+.title-main {
+  font-size: 68px;
+  color: var(--color-purple-dark);
+  font-weight: 900;
+}
+
+.subtitle-main {
+  font-size: 40px;
+  color: var(--color-gray-dark);
+  font-weight: bold;
+}
+
+.step-title {
+  font-size: 50px;
+  color: var(--color-purple-dark);
+  font-weight: 900;
+}
+
+.button-main {
+  font-size: 30px;
+  width: 100%;
+  background-color: var(--color-purple-dark);
+  border-radius: 15px;
+  text-align: center;
+  color: var(--white);
+  padding: 2.5% 0;
+  box-shadow: 0 5px 15px var(--color-purple-light);
+  font-weight: 700;
+  transition: transform 0.25s 0s ease;
+}
+
+.button-main:hover {
+  transform: scale(1.025);
+}
+
+.button-main:active {
+  transform: scale(0.95);
+  background-color: var(--color-purple-light);
+}
+
+.button-main:disabled {
+  background-color: var(--color-gray-light-50);
+  transition: background-color .25s 0s ease;
+}
+.button-main:disabled:hover {
+  transform: scale(1);
+}
+
+.button-change {
+  background-color: var(--color-blue-light);
+  font-size: 20px;
+  padding: 8px 16px;
+  color: var(--white);
+  font-weight: 600;
+  max-width: 120px;
+  border-radius: 10px;
+}
+.button-change:hover {
+  transform: scale(1.025);
+}
+
+.badge {
+  font-size: 20px;
+  background-color: var(--color-purple-dark);
+  color: var(--white);
+  font-weight: normal;
+  border-radius: 145px;
+  padding: 5px 15px;
+}
+
+.paragraph {
+  font-size: 20px;
+  color: var(--color-gray-dark);
+  font-weight: 700;
+}
+
+.underline-main {
+  text-decoration-color: var(--color-purple-dark);
+  text-decoration-thickness: 3px;
+}
+
+.wrapper-image {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 100%;
+}

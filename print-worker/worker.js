@@ -46,7 +46,7 @@ async function bindTerminalToPrinter(printerInfo){
 
 async function loadPrinterInfo() {
   let printers = JSON.parse(readFileSync('./printers.json'))
-  
+
   if (process.env.MOCK) {
     let name = process.env.PRINTER || 'Mocked Printer #' + Math.round(Math.random() * 10)
     return {
@@ -95,13 +95,17 @@ async function getPoolOptions(printerInfo) {
 async function getPrinterOptions(printerInfo) {
   // console.log(await SerialPort.list())
 
+  // Try to find port
+  let portList = await SerialPort.list()
+  let portProp = _.find(portList, printerInfo.port)
+
   return {
-    debug: false,
+    debug: true,
     name: printerInfo.name,
     // port: {serialNumber: 'CZPX2617X003XK24982'},
     // port: {serialNumber: 'CZPX2617X003XK25033'},
     // port: {serialNumber: 'CZPX2617X003XK24826'},
-    port: printerInfo.port,
+    port: portProp ? portProp : printerInfo.port,
     params: {
       temperatureExtruder: 200,
       temperatureBed: 60,
@@ -162,7 +166,7 @@ async function main() {
   console.log(chalk.green(' # =================='))
 
   // The printer interface
-  const PrintDriver = Driver.detectBestDeviceDriver(printerInfo)
+  const PrintDriver = Driver.detectBestDeviceDriver(printerOpts)
   let printer = new PrintDriver(printerOpts)
   console.log()
   console.log(chalk.yellow(' # Connect to Printer'), printerOpts.name)
@@ -207,23 +211,23 @@ async function main() {
 
     setTimeout(readTemperature, 2000)
   }
-  
+
   readTemperature()
 
   let job
   while (1) {
     console.log()
-    
+
     // Wait printer to be ok
     printerStatus = 'waiting'
-    console.log(chalk.yellow(' # Waiting for button press'))
+    console.log(chalk.yellow(' # Waiting for button press on '+printerInfo.name))
     await printer.waitForButtonPress('[press] ' + _.get(job, 'data.payload.description', ''))
 
     // Start a new job
     job = null
     let pooling = draftLoading(chalk.yellow(' # Waiting for a new job'))
 
-    await printer.display('  Tenda ' + printerInfo.name)
+    await printer.display(' ' + printerInfo.name)
 
     // Keep pooling
     while(1) {
@@ -233,8 +237,11 @@ async function main() {
       job = await master.pool()
 
       if (!job) {
+        // Shutdown printer (keep heating)
+        // printer.shutdown()
+
         // No job, delay and continue
-        await sleep(100)
+        await sleep(1000)
       } else {
         // Job found, break inner loop and continue
         break;
@@ -296,7 +303,7 @@ async function runJob(printer, job) {
         return
       }
 
-      // Run next 
+      // Run next
       let nextCommand = gcode.next()
 
       // Break if finished gcode
@@ -311,7 +318,7 @@ async function runJob(printer, job) {
       let percentage = Math.floor(gcode.percentage())
       if (Date.now() > lastPercentageUpdate + 1000) {
         lastPercentageUpdate = Date.now();
-        
+
         progress(percentage)
         job.setProgress(percentage)
       }
@@ -323,8 +330,10 @@ async function runJob(printer, job) {
         await printer.display(status.padEnd(15) + (percentage + '%').padStart(5))
       }
     }
-    
+
     await sleep(500)
+    await printer.shutdown()
+
     progress(100)
     job.setProgress(100)
     job.setStatus('success', 'Completo!')

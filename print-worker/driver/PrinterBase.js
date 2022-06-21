@@ -92,6 +92,13 @@ module.exports = class Printer {
       })
     }
 
+    // Check if its a blocked command
+    const blockedCommands = ['M106 S0', 'M104 S0', 'M140 S0']
+    if (blockedCommands.some(check => gcode.startsWith(check))) {
+      console.log('!', 'blocked command skiped:', gcode)
+      return
+    }
+
     return await this.sendCommand(gcode)
   }
 
@@ -188,10 +195,10 @@ module.exports = class Printer {
   }
 
   async shutdown(){
-    await this.command('G1 Z30 F3000.0')
-    await this.command('M84')
-    await this.command('M104 S0')
-    await this.command('M140 S0')
+    // await this.command('G1 Z30 F3000.0')
+    // await this.command('M84')
+    await this.command('M104 S200')
+    await this.command('M140 S60')
   }
 
   async softwareHomeY() {

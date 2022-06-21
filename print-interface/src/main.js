@@ -22,6 +22,7 @@ Vue.mixin(VueTimers)
 
 import './styles/UI.css'
 import './styles/Grid.css'
+import './styles/Base.css'
 
 Vue.use(ElementUI)
 Vue.use(Vuetify)

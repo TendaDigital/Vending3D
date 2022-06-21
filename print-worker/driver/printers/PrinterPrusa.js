@@ -18,7 +18,7 @@ module.exports = class PrinterPrusa extends PrinterBase {
     })
 
     this.channel.on('state:switch', ({place, triggered}) => {
-      console.log('switch updated: ', {place, triggered})
+      // console.log('switch updated: ', {place, triggered})
       this.updateSwitchState(place, triggered)
       // Update button switch to detect keypresses
       if (place == 'x_min')
@@ -40,14 +40,14 @@ module.exports = class PrinterPrusa extends PrinterBase {
     //   this.switch.z = data.includes('TRIGGERED')
     // } else if (data.startsWith('x_max:')){
     //   this.switch.b = data.includes('TRIGGERED')
-    // } else 
+    // } else
     if (data.startsWith('T:')) {
       // T:118.73 E:0 B:35.4
       var [
         $, temp_extruder,
         active_extruder,
         $, temp_bed] = data.match(/T:(\d+\.?\d*)\s*E:(\d+\.?\d*)\s*(B:(\d+\.?\d*))?/) || []
-      
+
       if (!_.isUndefined(temp_extruder)) {
         this.state.temp_extruder = parseFloat(temp_extruder)
       }

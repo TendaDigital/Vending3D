@@ -12,7 +12,7 @@ module.exports = class MarlinServer extends EventEmitter{
 
     this.options = options || {}
     this.marlinOptions = marlinOptions || {}
-    
+
     this.promiseQueue = []
 
     // Ready promise indicating reception of `start` string
@@ -40,8 +40,6 @@ module.exports = class MarlinServer extends EventEmitter{
     // If serialPort is a string, use it as a object {comName: String}
     if (_.isString(serialPort))
       serialPort = {comName: serialPort}
-    else
-      serialPort = serialPort
 
     // Try to find port
     let portList = await SerialPort.list()
@@ -51,7 +49,7 @@ module.exports = class MarlinServer extends EventEmitter{
     if (!portProp) {
       throw new Error('Port not found: ' + JSON.stringify(serialPort))
     }
-    
+
     // Create a new re-usable Promise that will wait for connection
     this._connect = new Promise(async (resolve, reject) => {
       try {
@@ -137,11 +135,11 @@ module.exports = class MarlinServer extends EventEmitter{
     {
       var [$, temp_bed, temp_bed_target] = data.match(/B:(\d+\.?\d*)\s*\/(\d+\.?\d*)/) || []
       var [$, temp_extruder, temp_extruder_target] = data.match(/T:(\d+\.?\d*)\s*\/(\d+\.?\d*)/) || []
-      
+
       if (temp_bed || temp_extruder) {
         this.emit('state:temperature', {
           temp_bed: parseFloat(temp_bed) || void 0,
-          temp_bed_target: parseFloat(temp_bed_target) || void 0, 
+          temp_bed_target: parseFloat(temp_bed_target) || void 0,
           temp_extruder: parseFloat(temp_extruder) || void 0,
           temp_extruder_target: parseFloat(temp_extruder_target) || void 0,
         })
@@ -164,7 +162,7 @@ module.exports = class MarlinServer extends EventEmitter{
       return
     }
     let promise = this.promiseQueue.shift()
-  
+
     if (!promise)
       return
 

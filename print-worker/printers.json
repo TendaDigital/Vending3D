@@ -1,44 +1,32 @@
 [
   {
-    "name": "Printer C",
+    "name": "Ender Mini 0",
     "port": {
-      "serialNumber": "CZPX2617X003XK25026"
+      "comName": "/dev/ttyUSB0"
     }
-  },
-  {
-    "name": "Printer D",
-    "port": {
-      "serialNumber": "CZPX2617X003XK24826"
-    },
-    "TERM_SESSION_ID": "w0t0p2:94B0F88B-7619-4755-9281-09B0B38EF608"
-  },
-  {
-    "name": "Printer B",
-    "port": {
-      "serialNumber": "CZPX2617X003XK25035"
-    },
-    "TERM_SESSION_ID": "w0t0p4:6F0169D7-0395-43A3-9392-E64E76ECC937"
-  },
-  {
-    "name": "Printer A",
-    "port": {
-      "serialNumber": "CZPX2617X003XK24982"
-    },
-    "TERM_SESSION_ID": "w0t2p5:B5A8BDCD-3008-41E5-9607-294281460606"
-  },
-  {
-    "name": "Printer E",
-    "port": {
-      "serialNumber": "CZPX2617X003XK25033"
-    },
-    "TERM_SESSION_ID": ""
   },
   {
     "name": "Ender Mini 1",
     "port": {
-      "vendorId": "1a86",
-      "productId": "7523"
-    },
-    "TERM_SESSION_ID": "w0t0p3:0979F1D2-A95F-4646-8748-5426BB6CF3A1"
+      "comName": "/dev/ttyUSB1"
+    }
+  },
+  {
+    "name": "Ender Mini 2",
+    "port": {
+      "comName": "/dev/ttyUSB2"
+    }
+  },
+  {
+    "name": "Ender Mini 3",
+    "port": {
+      "comName": "/dev/ttyUSB0"
+    }
+  },
+  {
+    "name": "Ender Mini 4",
+    "port": {
+      "comName": "/dev/ttyS0"
+    }
   }
 ]

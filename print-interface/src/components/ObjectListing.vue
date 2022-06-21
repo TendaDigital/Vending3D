@@ -1,11 +1,13 @@
 <template>
-  <div class="row flex-wrap align-center justify-center scroll-y" v-loading="!objects">
+  <div
+    class="row object-list flex-wrap align-center justify-center"
+    v-loading="!objects">
     <ObjectCard
       v-for="object in objects"
       v-if="!belongsToBlackList(object.name)"
       :key="object.name"
       :object="object"
-      class="ma-2 elevate-2"
+      class="ma-2"
       :selected="selected == object"
       @click="$emit('select', object)"
     ></ObjectCard>
@@ -53,7 +55,7 @@ export default {
 
     belongsToBlackList(name) {
       if(this.showSecretParts){
-        return false       
+        return false
       }else{
         return this.blackList.includes(name)
       }
@@ -64,4 +66,11 @@ export default {
 </script>
 
 <style scoped>
+
+.object-list {
+  z-index: 250;
+  overflow: auto;
+  padding: 15px 30px;
+}
+
 </style>

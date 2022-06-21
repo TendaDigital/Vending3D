@@ -1,26 +1,137 @@
 <template>
-  <div class="row" style="height: 100%; overflow: hidden;">
-    <Sidebar class="no-flex" style="width: 350px; z-index: 2;"/>
-    <Content class="flex"/>
+  <div
+    class="column align-center justify-center"
+    style='height: 100%; overflow: hidden;'>
+    <Cover
+      v-show="this.stage === 'idle'"
+      @next="handleNextStep('qualification')"
+    />
+    <Qualification
+      v-show="this.stage === 'qualification'"
+      @next="handleQualification($event)"
+    />
+    <Content
+      v-show="this.stage === 'choose'"
+      @confirm="handleConfirmation($event)"
+      class='flex'
+    />
+    <TypeformForms
+      v-if="showForms"
+      :formId="formId"
+      @next="handleNextStep('choose')"
+      @cancel="handleCancel"
+    />
+    <BackCover
+      v-if="this.stage === 'final'"
+      @reset="handleReset"
+    />
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+
+import Cover from './pages/Cover.vue'
 import Content from './pages/Content'
-import Sidebar from './pages/Sidebar'
+import Qualification from './pages/Qualification.vue'
+import TypeformForms from './components/TypeformForms.vue'
+import BackCover from './pages/BackCover.vue'
 
 export default {
   name: 'App',
   components: {
+    Cover,
     Content,
-    Sidebar
+    Qualification,
+    TypeformForms,
+    BackCover
+  },
+  data () {
+    return {
+      stage: 'idle',
+      existingForms: {
+        'school-worker': 'lKMPVx6u',
+        'startup': 'pl3YPIe5'
+      },
+      jumpForms: false,
+      formId: null,
+      userIs: null,
+      userName: '',
+      needDynamicGuide: null
+    }
+  },
+  methods: {
+    handleNextStep (step) {
+      this.stage = step
+    },
+    handleQualification (qualificationInfo) {
+      const { youAre, hasDynamicGuide, userName } = qualificationInfo
+      this.userIs = youAre
+      this.userName = this.hydrateUserName(userName)
+      this.needDynamicGuide = !hasDynamicGuide
+      if (youAre === 'student' || !this.needDynamicGuide) {
+        this.jumpForms = true
+        this.handleNextStep('choose')
+        return
+      }
+      this.jumpForms = false
+      this.formId = this.existingForms[youAre]
+      this.handleNextStep('forms')
+    },
+    hydrateUserName (userName) {
+      switch (this.userIs) {
+        case 'student':
+          return userName + ' 🧑‍🎓'
+        case 'school-worker':
+          return userName + ' 🏫'
+        case 'startup-worker':
+          return userName + ' 🚀'
+      }
+    },
+    handleConfirmation (object) {
+      this.printObject(object)
+      // if (this.jumpForms || !this.needDynamicGuide) {
+      this.handleNextStep('final')
+      // } else {
+      // this.handleNextStep('forms')
+      // }
+    },
+    handleForms (from) {
+      this.formId = this.existingForms[from]
+      this.handleNextStep('forms')
+    },
+    async printObject (object) {
+      let response
+      try {
+        response = await axios.get(`tasks/print/${object.name}/?description=${this.userName}`)
+      } catch (error) {
+        console.log(error)
+      }
+      return (response)
+    },
+    handleCancel () {
+      this.handleReset()
+    },
+    handleReset () {
+      this.handleNextStep('idle')
+      this.jumpForms = false
+      this.formId = null
+      this.userIs = null
+      this.userName = ''
+      this.needDynamicGuide = null
+    }
+  },
+  computed: {
+    showForms () {
+      return !this.jumpForms && this.stage === 'forms'
+    }
   }
 }
 </script>
-
 <style>
 body {
-  font-family: Ubuntu, Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,SimSun,sans-serif;
+  font-family: Ubuntu, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,
+    Microsoft YaHei, SimSun, sans-serif;
   overflow: auto;
   font-weight: 400;
   padding: 0;
@@ -31,15 +142,16 @@ html {
   overflow-y: initial;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   min-height: 100%;
   position: relative;
   widows: 100%;
 }
 
-/* 
-  Webkit Scrollbar 
+/*
+  Webkit Scrollbar
 */
 *::-webkit-scrollbar {
   width: 6px !important;
@@ -54,12 +166,10 @@ html, body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: rgba(0,0,0,0.2)
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 *::-webkit-scrollbar-track {
-  background: rgba(255,255,255,0.08)
+  background: rgba(255, 255, 255, 0.08);
 }
-
-
 </style>
