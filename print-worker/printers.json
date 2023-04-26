@@ -1,31 +1,47 @@
 [
   {
+    "queue": "brindes:3d",
     "name": "Ender Mini 0",
-    "port": {
-      "comName": "/dev/ttyUSB0"
-    }
+    "serialport": {
+      "comName": "/dev/tty.usbserial-2140"
+    },
+    "TERM_SESSION_ID": "w0t0p4:81520ADF-4B58-47FF-BFEB-3AEA1475691B"
   },
   {
+    "queue": "brindes:3d",
+    "name": "Mocked Ender Mini 0",
+    "serialport": {
+      "comName": "MOCKED:TEST"
+    },
+    "TERM_SESSION_ID": "w0t0p2:1A894C80-593C-4778-B5CA-9EF972E673AE"
+  },
+  {
+    "queue": "brindes:3d",
     "name": "Ender Mini 1",
-    "port": {
-      "comName": "/dev/ttyUSB1"
-    }
+    "serialport": {
+      "comName": "/dev/tty.usbserial-2130"
+    },
+    "TERM_SESSION_ID": "w0t0p2:D62B2A3B-7FD0-4CC2-983F-00A8851EAB0A"
   },
   {
+    "queue": "brindes:3d",
     "name": "Ender Mini 2",
-    "port": {
-      "comName": "/dev/ttyUSB2"
-    }
+    "serialport": {
+      "comName": "/dev/tty.usbserial-2120"
+    },
+    "TERM_SESSION_ID": "w0t0p3:02016440-6D5D-4419-92CE-3E2C62726FF2"
   },
   {
+    "queue": "brindes:3d",
     "name": "Ender Mini 3",
-    "port": {
+    "serialport": {
       "comName": "/dev/ttyUSB0"
     }
   },
   {
+    "queue": "brindes:3d",
     "name": "Ender Mini 4",
-    "port": {
+    "serialport": {
       "comName": "/dev/ttyS0"
     }
   }

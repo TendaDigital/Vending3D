@@ -1,1 +1,1 @@
-module.exports = ms => new Promise((res, rej) => setTimeout(res, ms))
+export default (ms) => new Promise((res, rej) => setTimeout(res, ms));
