@@ -22,12 +22,12 @@
 
         <!--User name (task.payload.description)-->
         <v-chip label color="grey" text-color="grey darken-2" outline small class="ma-0">
-          <template v-if="task.payload.description">
+          <template v-if="task.payload && task.payload.description">
             <v-icon small>perm_identity</v-icon>
             <span class="mr-3">{{task.payload.description}}</span>
           </template>
           <v-icon size="12">attach_file</v-icon>
-          <span> {{task.payload.name}}</span>
+          <span> {{task.file}}</span>
         </v-chip>
       </div>
 
@@ -108,7 +108,7 @@ export default {
     fileThumb() {
       if (!this.task) return;
 
-      return SERVER_URL + '/objects/files/' + this.task.payload.name + '.png'
+      return SERVER_URL + '/objects/files/' + this.task.file.replace(/.*\//, '').replace(/\..*/, '') + '.png'
     },
   },
 
@@ -126,18 +126,18 @@ export default {
     },
 
     sendPrintStatus: function () {
-      axios.get('https://script.google.com/a/tenda.digital/macros/s/AKfycbyCGfd66lclHCduZEbOtrYupG6KGI37JhbtOxlADrO7zSbvoYlZ/exec?isUpdate=true', {
-            params: {
-             status: 'queued',
-             _id: this.task.id,
-             name: this.task.payload.description
-            }
-        }).then((response) => {
-          console.log('print finished' + response)
-        })
-        .catch(function (e) {
-            console.error(e)
-        });
+      // axios.get('https://script.google.com/a/tenda.digital/macros/s/AKfycbyCGfd66lclHCduZEbOtrYupG6KGI37JhbtOxlADrO7zSbvoYlZ/exec?isUpdate=true', {
+      //       params: {
+      //        status: 'queued',
+      //        _id: this.task.id,
+      //        name: this.task.payload.description
+      //       }
+      //   }).then((response) => {
+      //     console.log('print finished' + response)
+      //   })
+      //   .catch(function (e) {
+      //       console.error(e)
+      //   });
     }
   }
 }

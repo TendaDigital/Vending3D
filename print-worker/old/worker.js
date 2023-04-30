@@ -109,7 +109,7 @@ async function getPrinterOptions(printerInfo) {
   let portProp = _.find(portList, printerInfo.serialport);
 
   return {
-    debug: false,
+    debug: printerInfo.debug ?? false,
     name: printerInfo.name,
     queue: printerInfo.queue,
     serialport: portProp ? portProp : printerInfo.serialport,

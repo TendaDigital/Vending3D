@@ -103,7 +103,7 @@ export default {
     async printObject (object) {
       let response
       try {
-        response = await axios.get(`tasks/print/${object.name}/?description=${this.userName}`)
+        response = await axios.get(`tasks/create?file=${object.name}&description=${encodeURIComponent(this.userName)}&queue=brindes:3d`)
       } catch (error) {
         console.log(error)
       }

@@ -1,48 +1,89 @@
-[
-  {
-    "queue": "brindes:3d",
-    "name": "Ender Mini 0",
-    "serialport": {
-      "comName": "/dev/tty.usbserial-2140"
-    },
-    "TERM_SESSION_ID": "w0t0p4:81520ADF-4B58-47FF-BFEB-3AEA1475691B"
+{
+  "server": {
+    "url": "http://localhost:9077"
   },
-  {
-    "queue": "brindes:3d",
-    "name": "Mocked Ender Mini 0",
-    "serialport": {
-      "comName": "MOCKED:TEST"
+  "printers": [
+    {
+      "name": "cannon:mb5100:a",
+      "driver": "cups",
+      "queue": "guias",
+      "debug": false,
+      "cups": {
+        "url": "ipp://localhost:631/printers/Canon_MB5100_series"
+      }
     },
-    "TERM_SESSION_ID": "w0t0p2:1A894C80-593C-4778-B5CA-9EF972E673AE"
-  },
-  {
-    "queue": "brindes:3d",
-    "name": "Ender Mini 1",
-    "serialport": {
-      "comName": "/dev/tty.usbserial-2130"
+    {
+      "name": "hp:7740:a",
+      "driver": "cups",
+      "queue": "guias",
+      "debug": false,
+      "cups": {
+        "url": "ipp://localhost:631/printers/HP_OfficeJet_Pro_7740_series"
+      }
     },
-    "TERM_SESSION_ID": "w0t0p2:D62B2A3B-7FD0-4CC2-983F-00A8851EAB0A"
-  },
-  {
-    "queue": "brindes:3d",
-    "name": "Ender Mini 2",
-    "serialport": {
-      "comName": "/dev/tty.usbserial-2120"
+    {
+      "name": "mocked:a",
+      "driver": "cups",
+      "queue": "guias",
+      "debug": false,
+      "cups": {
+        "url": "ipp://localhost:631/printers/nowhere"
+      }
     },
-    "TERM_SESSION_ID": "w0t0p3:02016440-6D5D-4419-92CE-3E2C62726FF2"
-  },
-  {
-    "queue": "brindes:3d",
-    "name": "Ender Mini 3",
-    "serialport": {
-      "comName": "/dev/ttyUSB0"
+    {
+      "name": "vplotter:01",
+      "driver": "marlin",
+      "queue": "vplotter",
+      "debug": false,
+      "serialport": {
+        "path": "/dev/tty.usbmodem212201"
+      }
+    },
+    {
+      "queue": "brindes:3d",
+      "driver": "marlin",
+      "name": "brindes:mocked:01",
+      "mocked": true,
+      "serialport": {
+        "path": "MOCKED:01"
+      }
+    },
+    {
+      "name": "brindes:mocked:02",
+      "queue": "brindes:3d",
+      "driver": "marlin",
+      "mocked": true,
+      "serialport": {
+        "path": "MOCKED:02"
+      }
+    },
+    {
+      "queue": "brindes:3d",
+      "name": "brindes:ender:01",
+      "serialport": {
+        "path": "/dev/tty.usbserial-2130"
+      }
+    },
+    {
+      "queue": "brindes:3d",
+      "name": "brindes:ender:02",
+      "serialport": {
+        "path": "/dev/tty.usbserial-2120"
+      }
+    },
+    {
+      "queue": "brindes:3d",
+      "name": "brindes:ender:03",
+      "serialport": {
+        "path": "/dev/ttyUSB0"
+      }
+    },
+    {
+      "queue": "brindes:3d",
+      "name": "brindes:ender:04",
+      "serialport": {
+        "path": "/dev/ttyS0"
+      }
     }
-  },
-  {
-    "queue": "brindes:3d",
-    "name": "Ender Mini 4",
-    "serialport": {
-      "comName": "/dev/ttyS0"
-    }
-  }
-]
+  ]
+}

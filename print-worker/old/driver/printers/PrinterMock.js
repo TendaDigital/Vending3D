@@ -5,7 +5,7 @@ const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 export default class PrinterMock extends PrinterBase {
   static match(obj) {
     if (process.env.MOCK) return true;
-    if (obj.serialport?.comName?.toLowerCase().includes("mock")) return true;
+    if (obj.serialport?.path?.toLowerCase().includes("mock")) return true;
     return false;
   }
 

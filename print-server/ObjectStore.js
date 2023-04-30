@@ -1,11 +1,11 @@
 import { readdirSync } from "fs";
 
-export default async function read(dir) {
+export async function readObjectStore(dir) {
   let files = readdirSync(dir);
 
   let objects = [];
 
-  for (file of files) {
+  for (let file of files) {
     let ext = file.replace(/.+\./, "");
     let name = file.replace(/\..+/, "");
     let info = objects.find((obj) => obj.name == name);

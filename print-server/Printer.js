@@ -5,11 +5,21 @@ import { Schema, model } from "mongoose";
 
 var Model = new Schema(
   {
+    active: {
+      type: Boolean,
+      default: true,
+    },
+
     name: String,
 
     connected: {
       type: Boolean,
       default: false,
+    },
+
+    queue: {
+      type: String,
+      default: null,
     },
 
     pingAt: {
@@ -30,12 +40,12 @@ var Model = new Schema(
   { timestamps: true }
 );
 
-Model.virtual("active").get(function () {
+Model.virtual("online").get(function () {
   return this.connected && Date.now() - this.pingAt < 5000;
 });
 
 Model.virtual("status").get(function () {
-  return this.active ? this.message : "disconnected";
+  return this.online ? this.message : "disconnected";
 });
 
 Model.virtual("task", {
@@ -61,11 +71,11 @@ Model.static("ping", async function (name, message = undefined) {
   await printer.save();
 });
 
-Model.static("disconnected", async function (name) {
-  let printer = await this.findOrCreate(name);
-  printer.connected = false;
-  await printer.save();
-});
+// Model.static("disconnected", async function (name) {
+//   let printer = await this.findOrCreate(name);
+//   printer.connected = false;
+//   await printer.save();
+// });
 
 Model.static("findOrCreate", async function (name) {
   let printer = await this.findOne({ name });

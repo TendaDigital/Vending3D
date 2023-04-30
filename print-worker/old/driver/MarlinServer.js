@@ -1,5 +1,5 @@
 import _ from "lodash";
-import Readline from "@serialport/parser-readline";
+import { ReadlineParser } from "@serialport/parser-readline";
 import { SerialPort } from "serialport";
 import EventEmitter from "events";
 
@@ -36,8 +36,8 @@ export default class MarlinServer extends EventEmitter {
       throw new Error("No serial port name or pattern provided");
     }
 
-    // If serialPort is a string, use it as a object {comName: String}
-    if (typeof serialPort === "string") serialPort = { comName: serialPort };
+    // If serialPort is a string, use it as a object {path: String}
+    if (typeof serialPort === "string") serialPort = { path: serialPort };
 
     // Try to find port
     let portList = await SerialPort.list();
@@ -52,10 +52,14 @@ export default class MarlinServer extends EventEmitter {
     this._connect = new Promise(async (resolve, reject) => {
       try {
         // Open Serial Port
-        this.port = new SerialPort(portProp.comName, { baudRate: 115200 });
+        console.log(portProp);
+        this.port = new SerialPort({
+          path: portProp.path,
+          baudRate: this.marlinOptions.baudRate ?? 115200,
+        });
 
         // Bufferize Line and use as dataReceived
-        let lineBuffer = new Readline({ delimiter: "\n" });
+        let lineBuffer = new ReadlineParser({ delimiter: "\n" });
 
         // Proxy all data received by serial port to the line Buffer
         this.port.pipe(lineBuffer);
