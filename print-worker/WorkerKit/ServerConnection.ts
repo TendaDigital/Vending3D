@@ -10,6 +10,8 @@ import axios from 'axios'
 export class ServerConnection {
   config: ServerConfig
   socket: Socket
+  uri: string
+  connectionQuery: Record<string, string>
 
   static build(config: ServerConfig, printerConfig: PrinterConfig) {
     // Create socket connection with server
@@ -21,12 +23,8 @@ export class ServerConnection {
 
   constructor(config: ServerConfig, connectionQuery: Record<string, string> = {}, uri = config.url) {
     this.config = config
-
-    // Create socket connection with server
-    console.log(uri)
-    this.socket = io(uri, {
-      query: connectionQuery,
-    })
+    this.uri = uri
+    this.connectionQuery = connectionQuery
   }
 
   #connecting: Promise<void> = null
@@ -35,13 +33,24 @@ export class ServerConnection {
    */
   connect() {
     if (this.#connecting == null) {
+      // Create socket connection with server
+      console.log(this.uri, this.connectionQuery)
+      this.socket = io(this.uri, {
+        query: this.connectionQuery,
+      })
       this.#connecting = new Promise((resolve, reject) => {
+        this.socket.on('*', (event, data) => {
+          console.log(chalk.grey(' ? Event: ' + event), data)
+        })
         this.socket.once('error', (msg) => {
           console.error(chalk.red(' ! Error connecting to pool: ' + msg))
           reject()
           this.socket.disconnect()
         })
-        this.socket.once('register', () => setTimeout(resolve, 500))
+        this.socket.once('register', () => {
+          console.log(chalk.grey(' ? Connected to pool'))
+          setTimeout(resolve, 500)
+        })
       })
     }
 
@@ -88,17 +97,17 @@ export class ServerConnection {
   }
 
   async getTaskFile(job: JobRequest) {
-    const url = this.config.url + '/tasks/' + job._id + '/file'
-    console.log(chalk.grey(' ? fetch file: ' + url))
-    const response = await axios<Blob>({
+    const url = this.config.url + '/tasks/' + job.id + '/file'
+    // console.log(chalk.grey(' ? fetch file: ' + url))
+    const response = await axios<ArrayBuffer>({
       url,
       method: 'GET',
-      responseType: 'blob',
+      responseType: 'arraybuffer',
     })
     // Format size in MB/KB/Bytes using library
-    console.log(response)
-    const fileSize = prettyBytes(response.data.size)
-    console.log(chalk.grey(` ? loaded file: ${fileSize}`))
+    // console.log(response)
+    // const fileSize = prettyBytes(response.data.byteLength)
+    // console.log(chalk.grey(` ? loaded file: ${fileSize}`))
     return response.data
   }
 }

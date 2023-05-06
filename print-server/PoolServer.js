@@ -122,7 +122,7 @@ export default class PoolServer {
     const jobs = await Task.find({
       owner: printerInfo.name,
       queue: printerInfo.queue,
-      status: { $in: [null, 'queued', 'printing'] },
+      status: { $in: [null, 'queued', 'running'] },
     })
 
     for (const job of jobs) {

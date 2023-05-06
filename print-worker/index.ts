@@ -20,24 +20,10 @@ async function main() {
 
   console.log('Printer config:', printerConfig)
 
-  // if (!printerConfig) {
-  //   console.log('Usage: yarn start <printerName>')
-  //   console.log()
-  //   console.log('Available printers:')
-  //   console.log(worker.printers.map((p) => ' - ' + p.name).join('\n'))
-  //   console.log()
-  //   process.exit(1)
-  // }
-
-  // Set debug flag to assist
-  // if (process.env.DEBUG) printerConfig.debug = true
-
   // Build executor
   const worker = new PrinterWorker(printerConfig, settings.server)
 
   await worker.run()
-
-  // console.log(worker.printers)
 }
 
 async function main2() {

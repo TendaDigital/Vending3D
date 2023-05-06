@@ -55,31 +55,32 @@ async function main() {
   // console.log(tasks)
 }
 
+const TaskFields = [
+  'id',
+  'name',
+  'active',
+  'file',
+  'queue',
+  'status',
+  'owner',
+  'pingAt',
+  'lockedAt',
+  'startedAt',
+  'createdAt',
+  'completedAt',
+  'archivedAt',
+  'duration',
+  'progress',
+  'restarts',
+  'message',
+  'payload',
+  'fileURL',
+  'taskURL',
+]
+
+const PrinterFields = ['id', 'name', 'queue', 'status', 'active', 'online', 'message', 'pingAt', 'state', 'task']
+
 async function startRESTServer(app) {
-  const TaskFields = [
-    'id',
-    'active',
-    'file',
-    'queue',
-    'status',
-    'owner',
-    'pingAt',
-    'lockedAt',
-    'startedAt',
-    'createdAt',
-    'completedAt',
-    'archivedAt',
-    'duration',
-    'progress',
-    'restarts',
-    'message',
-    'payload',
-    'fileURL',
-    'taskURL',
-  ]
-
-  const PrinterFields = ['id', 'name', 'queue', 'status', 'active', 'online', 'message', 'pingAt', 'state', 'task']
-
   app.use(cors())
 
   app.get('/', function (req, res) {
@@ -100,7 +101,7 @@ async function startRESTServer(app) {
     if (queue) {
       query.queue = queue
     }
-    let tasks = await Task.find(query).sort({ createdAt: -1 }).limit(200)
+    const tasks = await Task.find(query).sort({ createdAt: -1 }).limit(200)
     // let count = await Task.count(query);
 
     res.send(tasks.map((p) => _.pick(p, TaskFields)))
@@ -151,7 +152,7 @@ async function startRESTServer(app) {
 
   app.get('/tasks/create', async (req, res) => {
     let file = req.query.file
-    let queue = req.query.queue
+    const queue = req.query.queue
 
     if (!file) {
       return res.status(400).send('file not specified in query')
@@ -172,12 +173,12 @@ async function startRESTServer(app) {
       }
     }
 
-    let payload = {
+    const payload = {
       // name,
       // description: req.query.description,
     }
 
-    let task = await Task.create({
+    const task = await Task.create({
       payload,
       queue,
       file,
@@ -188,10 +189,10 @@ async function startRESTServer(app) {
   })
 
   app.get('/tasks/:taskId', async (req, res) => {
-    let taskId = req.params.taskId
+    const taskId = req.params.taskId
     console.log('tasks')
 
-    let task = await Task.findById(taskId)
+    const task = await Task.findById(taskId)
 
     if (!task) {
       return res.status(404).send('Task não encontrada: ' + taskId)
@@ -201,9 +202,9 @@ async function startRESTServer(app) {
   })
 
   app.get('/tasks/:taskId/file', async (req, res) => {
-    let taskId = req.params.taskId
+    const taskId = req.params.taskId
 
-    let task = await Task.findById(taskId)
+    const task = await Task.findById(taskId)
 
     if (!task) {
       return res.status(404).send('Task não encontrada: ' + taskId)
@@ -222,27 +223,33 @@ async function startRESTServer(app) {
     const objectFile = path.join(`../objects`, task.file)
     if (fs.existsSync(objectFile)) {
       // Get absolute path to file
-      let absolutePath = path.resolve(objectFile)
+      const absolutePath = path.resolve(objectFile)
       return res.sendFile(absolutePath)
     }
 
-    res.send('aaaaaaaaaaaaaaaa')
+    // Check if file is an external URL
+    if (task.file.startsWith('http')) {
+      return res.redirect(task.file)
+    }
+
+    // Return 404 if file not found
+    return res.status(404).send('Arquivo não encontrado: ' + task.file)
   })
 
   // Serve static files at /objects
   app.use('/objects', express.static('../objects'))
 
   app.get('/tasks/:taskId/repeat', async (req, res) => {
-    let taskId = req.params.taskId
+    const taskId = req.params.taskId
     console.log('repeat print', taskId)
 
-    let task = await Task.findById(taskId)
+    const task = await Task.findById(taskId)
 
     if (!task) {
       return res.status(404).send('Task não encontrada: ' + taskId)
     }
 
-    let BlockRestartStatuses = ['queued', 'running']
+    const BlockRestartStatuses = ['queued', 'running']
     if (BlockRestartStatuses.includes(task.status)) {
       return res.status(400).send(`Não pode reiniciar task com status '${task.status}'`)
     }
@@ -257,16 +264,16 @@ async function startRESTServer(app) {
   })
 
   app.get('/tasks/:taskId/archive', async (req, res) => {
-    let taskId = req.params.taskId
+    const taskId = req.params.taskId
     console.log('archive print', taskId)
 
-    let task = await Task.findById(taskId)
+    const task = await Task.findById(taskId)
 
     if (!task) {
       return res.status(404).send('Task não encontrada: ' + taskId)
     }
 
-    let BlockRestartStatuses = ['queued', 'running']
+    const BlockRestartStatuses = ['queued', 'running']
     if (BlockRestartStatuses.includes(task.status)) {
       return res.status(400).send(`Não pode arquivar task com status '${task.status}'`)
     }
@@ -278,16 +285,16 @@ async function startRESTServer(app) {
   })
 
   app.get('/tasks/:taskId/cancel', async (req, res) => {
-    let taskId = req.params.taskId
+    const taskId = req.params.taskId
     console.log('archive print', taskId)
 
-    let task = await Task.findById(taskId)
+    const task = await Task.findById(taskId)
 
     if (!task) {
       return res.status(404).send('Task não encontrada: ' + taskId)
     }
 
-    let AllowedStatuses = ['queued', 'running', 'failed']
+    const AllowedStatuses = ['queued', 'running', 'failed']
     if (!AllowedStatuses.includes(task.status)) {
       return res.status(400).send(`Não pode cancelar task com status '${task.status}'`)
     }
@@ -317,7 +324,7 @@ async function startRESTServer(app) {
       })
 
     // Sort printers acordingly
-    let weights = ['', 'printing', 'idle', 'waiting', 'disconnected']
+    const weights = ['', 'printing', 'idle', 'waiting', 'disconnected']
     printers = _.sortBy(printers, (p) => weights.indexOf(p.status) || 10)
 
     printers = printers.map((p) => _.pick(p, PrinterFields))
@@ -329,7 +336,7 @@ async function startRESTServer(app) {
   app.get('/printers/:id', async (req, res) => {
     const id = req.params.id
 
-    let printer = await Printer.findById(id).populate({
+    const printer = await Printer.findById(id).populate({
       path: 'task',
       match: {
         status: 'running',
@@ -340,9 +347,9 @@ async function startRESTServer(app) {
   })
 
   app.get('/printers/:printerId/archive', async (req, res) => {
-    let printerId = req.params.printerId
+    const printerId = req.params.printerId
 
-    let printer = await Printer.findById(printerId)
+    const printer = await Printer.findById(printerId)
 
     if (!printer) {
       return res.status(404).send('Impressora não encontrada: ' + printerId)
@@ -361,9 +368,9 @@ async function startRESTServer(app) {
   /*
    * Objects api
    */
-  let objectsPath = '../objects'
+  const objectsPath = '../objects'
   app.get('/objects', async (req, res) => {
-    let objects = await readObjectStore(objectsPath)
+    const objects = await readObjectStore(objectsPath)
 
     res.send(objects)
   })
@@ -422,19 +429,19 @@ async function startWorker(socket: Socket, pooler) {
     const job = await pooler.findJobAndLock(printerInfo)
 
     if (job) {
-      console.log(chalk.green(` # Job '${job._id}' Assigned to ${printerInfo.name}`))
+      console.log(chalk.green(` # Job '${job.id}' Assigned to ${printerInfo.name}`))
       currentJob = job
     }
 
     Printer.ping(printerInfo.name)
 
     // console.log(chalk.yellow(' . debug message'))
-    socket.emit('job', job)
+    socket.emit('job', job ? _.pick(job, TaskFields) : null)
   })
 
   socket.on('printerStatus', async (data) => {
     // console.log('printerStatus', status)
-    let printer = await Printer.findOrCreate(printerInfo.name)
+    const printer = await Printer.findOrCreate(printerInfo.name)
     printer.ping(data.status)
     printer.set({ state: data.payload || {} })
     await printer.save()
@@ -444,7 +451,7 @@ async function startWorker(socket: Socket, pooler) {
    * Update job
    */
   socket.on('job', async (data) => {
-    let job = await pooler.updateJob(data._id, data.payload)
+    const job = await pooler.updateJob(data.id, data.payload)
 
     // Update job if they are the same
     if (currentJob && job && job.id == currentJob.id) {
@@ -452,7 +459,7 @@ async function startWorker(socket: Socket, pooler) {
     }
 
     if (job) {
-      console.log(chalk.green(` # Job '${data._id}' status='${job.status}' ${JSON.stringify(data)}`))
+      console.log(chalk.green(` # Job '${data.id}' status='${job.status}' ${JSON.stringify(data)}`))
       if (job.status == 'failed' && job.message) {
         console.log(chalk.dim(' | ') + chalk.red(job.message))
       }
@@ -460,7 +467,7 @@ async function startWorker(socket: Socket, pooler) {
 
     Printer.ping(printerInfo.name)
 
-    socket.emit('job:' + job._id, job)
+    socket.emit('job:' + job.id, job)
   })
 
   socket.on('disconnect', async () => {

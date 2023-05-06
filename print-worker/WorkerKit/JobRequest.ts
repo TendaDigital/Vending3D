@@ -1,6 +1,4 @@
-import prettyBytes from 'pretty-bytes'
-import Worker from './PrinterWorker'
-import { Job } from './Types'
+import { Job, JobStatus } from './Types'
 import { ServerConnection } from './ServerConnection'
 
 export class JobRequest {
@@ -12,7 +10,7 @@ export class JobRequest {
   startedAt: number
   constructor(server: ServerConnection, job: Job) {
     if (!job) throw new Error('No job data set')
-    if (!job._id) throw new Error('No _id set on job')
+    if (!job.id) throw new Error('No id set on job')
     if (!job.status) throw new Error('No status set on job')
 
     this.startedAt = Date.now()
@@ -26,26 +24,28 @@ export class JobRequest {
     )
 
     this.stopped = false
-
-    // this._id = data._id
-    this.topic = 'job:' + this.job._id
-
+    this.topic = 'job:' + this.job.id
     this.server.socket.on(this.topic, (data) => this.handleEvent(data))
   }
 
-  get _id() {
-    return this.job._id
+  get id() {
+    return this.job.id
+  }
+
+  get name() {
+    return this.job.name
   }
 
   handleEvent(data) {
     // console.log('handleEvent', data)
 
     // Skip if not the job itself
-    if (!data || data._id != this._id) return
+    if (!data || data.id != this.id) return
 
     // Stop if job is not running or queued
     if (!['running', 'queued'].includes(data.status)) {
       // Turn off events and set stopped flag
+      console.log('Job is not running or queued, stopping...')
       this.server.socket.off(this.topic)
       this.stopped = true
     }
@@ -54,22 +54,20 @@ export class JobRequest {
   }
 
   update(payload) {
-    this.server.socket.emit('job', { _id: this._id, payload })
+    this.server.socket.emit('job', { id: this.id, payload })
   }
 
-  updateStatus({
-    status,
-    message,
-    progress,
-  }: {
-    status?: 'failed' | 'success' | 'printing' | 'queued'
-    message?: string
-    progress?: number
-  }) {
+  updateStatus({ status, message, progress }: { status?: JobStatus; message?: string; progress?: number } = {}) {
     this.update({ status, message, progress })
   }
 
-  getFile() {
-    return this.server.getTaskFile(this)
+  assertNotStopped() {
+    if (this.stopped) throw new Error('Job was stopped by server')
+  }
+
+  #file: ArrayBuffer | null = null
+  async loadFile() {
+    if (this.#file) return this.#file
+    return (this.#file = await this.server.getTaskFile(this))
   }
 }

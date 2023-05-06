@@ -2,6 +2,9 @@
   "server": {
     "url": "http://localhost:9077"
   },
+  "formats": {
+    "guias": {}
+  },
   "printers": [
     {
       "name": "cannon:mb5100:a",
@@ -18,7 +21,16 @@
       "queue": "guias",
       "debug": false,
       "cups": {
-        "url": "ipp://localhost:631/printers/HP_OfficeJet_Pro_7740_series"
+        "url": "ipp://localhost:631/printers/Printer_HP_7740_A"
+      }
+    },
+    {
+      "name": "hp:7740:b",
+      "driver": "cups",
+      "queue": "guias",
+      "debug": false,
+      "cups": {
+        "url": "ipp://localhost:631/printers/Printer_HP_7740_B"
       }
     },
     {
@@ -31,12 +43,13 @@
       }
     },
     {
-      "name": "vplotter:01",
+      "name": "vplotter:A",
       "driver": "marlin",
       "queue": "vplotter",
-      "debug": false,
-      "serialport": {
-        "path": "/dev/tty.usbmodem212201"
+      "debug": true,
+      "marlin": {
+        "port": "/dev/tty.usbserial-1140",
+        "model": "vplotter"
       }
     },
     {
