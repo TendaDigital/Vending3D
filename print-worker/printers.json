@@ -21,7 +21,7 @@
       "queue": "guias",
       "debug": false,
       "cups": {
-        "url": "ipp://localhost:631/printers/Printer_HP_7740_A"
+        "url": "ipp://localhost:631/printers/hp_7740_a"
       }
     },
     {
@@ -30,7 +30,7 @@
       "queue": "guias",
       "debug": false,
       "cups": {
-        "url": "ipp://localhost:631/printers/Printer_HP_7740_B"
+        "url": "ipp://localhost:631/printers/hp_7740_b"
       }
     },
     {

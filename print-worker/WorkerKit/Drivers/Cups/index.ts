@@ -17,6 +17,7 @@ import { FullRequest } from 'ipp'
 import { GetPrinterAttributesResponse } from 'ipp'
 import { GetJobsResponse } from 'ipp'
 import { GetJobsRequest } from 'ipp'
+import { readFileSync } from 'fs'
 
 /**
  * Disable ipp parser to avoid errors when receiving unknown tags
@@ -55,18 +56,22 @@ export namespace CupsDriver {
       }
     }
 
-    async #getCurrentMessage({ ignoreReasons }: { ignoreReasons?: string[] } = {}): Promise<PrinterStatusMessage> {
+    async #getCurrentMessage({ ignoreReasons }: { ignoreReasons?: string[] } = {}): Promise<
+      PrinterStatusMessage & { reasons: string[] }
+    > {
       const status = await this.#ippStatus()
+      // console.log(status)
       // this.debug({ status })
-      const excludedReasons = ['none', ...(ignoreReasons ?? [])]
+      const excludedReasons = ['none', 'wifi-not-configured-report', ...(ignoreReasons ?? [])]
       const isReady = status.reasons.every((reason) => excludedReasons.includes(reason))
-      // console.log({ isReady, reasons: status.reasons })
+      // console.log({ isReady, reasons: status.reasons.join(',') })
       if (!isReady) {
         const humanReadableReason = this.#getHumanReadablePrinterReason(status.reasons)
         return {
           type: 'printer',
           status: 'waiting',
           message: humanReadableReason,
+          reasons: status.reasons.filter((reason) => !excludedReasons.includes(reason)),
         }
       }
     }
@@ -76,17 +81,40 @@ export namespace CupsDriver {
       let hadException = false
       let reasons = null
       let pending = 0
+      let didSentEmptyPrintToCheckOutOFPaper = false
       do {
         const printerMessage = await this.#getCurrentMessage({
-          ignoreReasons: ['media-empty-report', 'wifi-not-configured-report'],
+          ignoreReasons: [
+            // 'media-empty-error',
+            // 'media-needed-error',
+          ],
         })
         if (printerMessage) {
           hadException = true
           if (printerMessage.message != reasons) {
             reasons = printerMessage.message
-            this.debug(`PRinter is not ready: ${reasons}`)
+            this.debug(`Printer is not ready: ${reasons} (${printerMessage.reasons.join(',')})`)
           }
-          yield printerMessage
+          // Specif edge case for out of paper
+          if (printerMessage.reasons.some((s) => s.includes('media-empty-'))) {
+            const jobs = await this.#ippGetJobs()
+            if (jobs.length == 0) {
+              await this.#printDummyJob()
+              yield {
+                type: 'printer',
+                status: 'waiting',
+                message: `Printing dummy job to clear out of paper error`,
+              }
+            } else {
+              yield {
+                type: 'printer',
+                status: 'waiting',
+                message: `Waiting ${jobs.length} pending jobs to be printed`,
+              }
+            }
+          } else {
+            yield printerMessage
+          }
           await Sleep(500)
           continue
         }
@@ -129,7 +157,7 @@ export namespace CupsDriver {
         const file = await job.loadFile()
         const result = await this.#executeIppCall<PrintJobResponse, PrintJobRequest>('Print-Job', {
           'operation-attributes-tag': {
-            'requesting-user-name': 'ivanseidel',
+            'requesting-user-name': 'felipetiozo',
             'document-name': documentName,
           },
           'job-attributes-tag': {
@@ -179,15 +207,19 @@ export namespace CupsDriver {
         }
 
         const printerMessage = await this.#getCurrentMessage({
-          ignoreReasons: ['cups-waiting-for-job-completed', 'other-report', 'wifi-not-configured-report'],
+          ignoreReasons: ['cups-waiting-for-job-completed', 'other-report'],
         })
         if (printerMessage) {
-          yield {
-            type: 'job',
-            message: printerMessage.message,
-          }
-          await Sleep(500)
-          continue
+          // throw new Error('Printer is not ready: ' + printerMessage.message)
+          // yield {
+          //   type: 'job',
+          //   message: printerMessage.message,
+          // }
+          // Cancel job
+          await this.#ippCancelJob(jobId)
+          throw new Error('Printer got into unknown state: ' + printerMessage.message)
+          // await Sleep(500)
+          // continue
         }
 
         const result = await this.#ippGetJob(jobId)
@@ -231,10 +263,42 @@ export namespace CupsDriver {
       // this.debug('loaded file', file)
     }
 
+    async #printDummyJob() {
+      this.debug('Printing dummy job')
+      const result = await this.#executeIppCall<PrintJobResponse, PrintJobRequest>('Print-Job', {
+        'operation-attributes-tag': {
+          'requesting-user-name': 'felipetiozo',
+          'document-name': 'PrintWorker:dummy',
+        },
+        'job-attributes-tag': {
+          'media-col': {
+            'media-size': {
+              'x-dimension': 29700,
+              'y-dimension': 42000,
+            },
+            'media-top-margin': 0,
+            'media-left-margin': 0,
+            'media-right-margin': 0,
+            'media-bottom-margin': 0,
+          },
+          'print-color-mode': 'color',
+          'print-quality': 'draft',
+          'multiple-document-handling': 'separate-documents-collated-copies',
+          sides: 'two-sided-long-edge',
+          'orientation-requested': 'landscape',
+        },
+
+        // Convert ArrayBuffer to binary Buffer
+        data: Buffer.from(readFileSync('./WorkerKit/Drivers/Cups/blank.pdf')),
+      })
+    }
+
     #getHumanReadablePrinterReason(reasons: PrinterStateReasons[]): string {
       const str = reasons.join(',')
-      if (str.includes('media-empty')) {
-        return 'Out of paper'
+      if (str.includes('media-empty-report')) {
+        return 'Out of paper (coloque papel e imprima a página teste)'
+      } else if (str.includes('media-empty-error')) {
+        return 'Out of paper (durante a impressão)'
       } else if (str.includes('jam')) {
         return 'Paper jam'
       } else if (str.includes('open')) {
@@ -252,6 +316,26 @@ export namespace CupsDriver {
     async #ippStatus(): Promise<{ message: string; reasons: PrinterStateReasons[] }> {
       const result = await this.#executeIppCall<GetPrinterAttributesResponse>('Get-Printer-Attributes', null)
       const tags = result['printer-attributes-tag']
+      // delete result['printer-attributes-tag']['operations-supported']
+      // delete result['printer-attributes-tag']['media-supported']
+      // delete result['printer-attributes-tag']['media-source-supported']
+      // delete result['printer-attributes-tag']['media-size-supported']
+      // delete result['printer-attributes-tag']['which-jobs-supported']
+      // delete result['printer-attributes-tag']['notify-events-supported']
+      // delete result['printer-attributes-tag']['printer-settable-attributes-supported']
+      // delete result['printer-attributes-tag']['document-format-supported']
+      // delete result['printer-attributes-tag']['job-hold-until-supported']
+      // delete result['printer-attributes-tag']['job-creation-attributes-supported']
+      // delete result['printer-attributes-tag']['multiple-document-handling-supported']
+      // delete result['printer-attributes-tag']['pdf-versions-supported']
+      // delete result['printer-attributes-tag']['job-settable-attributes-supported']
+      // delete result['printer-attributes-tag']['media-col-supported']
+      // delete result['printer-attributes-tag']['job-sheets-supported']
+      // delete result['printer-attributes-tag']['number-up-layout-supported']
+      // delete result['printer-attributes-tag']['marker-types']
+      // delete result['printer-attributes-tag']['media-type-supported']
+
+      // console.log(result)
       const status = {
         message: tags?.['printer-state-message'],
         // Make sure it is an array
@@ -263,7 +347,7 @@ export namespace CupsDriver {
     async #ippGetJobs(): Promise<JobStatusAttributes[]> {
       const result = await this.#executeIppCall<GetJobsResponse, GetJobsRequest>('Get-Jobs', {
         'operation-attributes-tag': {
-          'requesting-user-name': 'ivanseidel',
+          'requesting-user-name': 'felipetiozo',
           'requested-attributes': ['all'],
         },
       })
@@ -274,7 +358,7 @@ export namespace CupsDriver {
     async #ippCancelJob(jobId: number) {
       await this.#executeIppCall<unknown, CancelReleaseJobRequest>('Cancel-Job', {
         'operation-attributes-tag': {
-          'requesting-user-name': 'ivanseidel',
+          'requesting-user-name': 'felipetiozo',
           'job-id': jobId,
         },
       })

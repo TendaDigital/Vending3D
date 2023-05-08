@@ -157,7 +157,7 @@ Model.static('sendWebhook', async function sendWebhook(model) {
   try {
     await Axios({
       method: 'post',
-      url: model.webhookUrl,
+      url: model.webhook.url,
       data: payload,
       timeout: 10000,
     })
