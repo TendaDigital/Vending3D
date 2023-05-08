@@ -2,10 +2,7 @@ import MarlinServer from '../MarlinServer.js'
 import PrinterPrusa from './PrinterPrusa.js'
 
 export default class PrinterEnder extends PrinterPrusa {
-  static match({ serialport }) {
-    const vendorId = serialport.vendorId || ''
-    return vendorId == '1a86'
-  }
+  static model: string = 'ender'
 
   constructor(options) {
     super(options)

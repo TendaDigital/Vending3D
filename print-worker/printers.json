@@ -73,8 +73,10 @@
     {
       "queue": "brindes:3d",
       "name": "brindes:ender:01",
-      "serialport": {
-        "path": "/dev/tty.usbserial-2130"
+      "driver": "marlin",
+      "marlin": {
+        "model": "ender",
+        "port": "/dev/tty.usbserial-2130"
       }
     },
     {

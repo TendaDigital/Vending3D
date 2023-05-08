@@ -9,9 +9,7 @@ export type PrinterOptions = {
 }
 
 export default class PrinterBase {
-  static match(config: PrinterConfig) {
-    return false
-  }
+  static model: string = 'base'
 
   options: PrinterOptions
   switch: Record<string, boolean>
@@ -158,7 +156,7 @@ export default class PrinterBase {
     await this.home(['W'])
   }
 
-  async waitForButtonPress(msg = '    Press Button    ') {
+  async *waitForButtonPress(msg = '    Press Button    ') {
     await this.display(msg)
 
     let t = 1
@@ -168,6 +166,7 @@ export default class PrinterBase {
       await Sleep(50)
 
       if (t++ % 30 == 0) await this.beep(20)
+      yield
     } while (!this.switch['button'])
 
     await this.beep()

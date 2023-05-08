@@ -3,11 +3,7 @@ import PrinterBase from '../PrinterBase.js'
 const sleep = (ms) => new Promise((res) => setTimeout(res, ms))
 
 export default class PrinterMock extends PrinterBase {
-  static match(obj) {
-    if (process.env.MOCK) return true
-    if (obj.serialport?.path?.toLowerCase().includes('mock')) return true
-    return false
-  }
+  static model: string = 'mocked'
 
   constructor(options) {
     super(options)
@@ -30,7 +26,7 @@ export default class PrinterMock extends PrinterBase {
     await sleep(2)
   }
 
-  async waitForButtonPress() {
+  async *waitForButtonPress() {
     await sleep(500)
   }
 

@@ -26,8 +26,20 @@ export namespace MarlinDriver {
       console.log(chalk.yellow(' . Connected'))
     }
 
+    #ready = false
     async *waitToBeReady(): AsyncGenerator<PrinterStatusMessage> {
-      // await Sleep(100)
+      if (this.#ready) {
+        return
+      }
+
+      for await (const loop of this.printer.waitForButtonPress()) {
+        yield {
+          type: 'printer',
+          status: 'waiting',
+          message: 'Waiting printer to be ready...',
+        }
+      }
+      this.#ready = true
       // yield {
       //   type: 'printer',
       //   status: 'waiting',
@@ -50,6 +62,7 @@ export namespace MarlinDriver {
       const gcode = new GcodeParser(fileContent, this.config?.marlin?.config ?? {})
 
       // let line = 0
+      this.#ready = true
       for await (const line of gcode) {
         if (line === null) continue
         yield {

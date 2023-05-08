@@ -4,10 +4,7 @@ import PrinterBase from '../PrinterBase.js'
 import MarlinServer from '../MarlinServer.js'
 
 export default class PrinterPrusa extends PrinterBase {
-  static match({ serialport }) {
-    const serialNumber = serialport.serialNumber || ''
-    return serialNumber.includes('CZPX2617')
-  }
+  static model: string = 'prusa'
 
   constructor(options) {
     super(options)

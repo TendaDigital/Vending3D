@@ -15,7 +15,7 @@ export default function DetectBestDriver(hints: PrinterConfig) {
     //  PrinterPrusa,
     PrinterEnder,
   ]
-  const Driver = Drivers.find((Driver) => Driver.match(hints))
+  const Driver = Drivers.find((Driver) => Driver.model === hints.marlin.model)
 
   if (!Driver) {
     console.error('No Driver detected with hints:', JSON.stringify(hints))

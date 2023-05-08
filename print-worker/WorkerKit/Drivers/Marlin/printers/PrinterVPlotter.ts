@@ -28,7 +28,7 @@ export default class PrinterVPlotter extends PrinterBase {
     })
   }
 
-  async waitForButtonPress() {
+  async *waitForButtonPress() {
     await Sleep(1000)
   }
 
