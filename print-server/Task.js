@@ -2,6 +2,9 @@
  * Database Model
  */
 import { Schema, model } from 'mongoose'
+import Axios from 'axios'
+import { TaskFields } from './Fields'
+import _ from 'lodash'
 
 var Model = new Schema(
   {
@@ -16,6 +19,26 @@ var Model = new Schema(
       type: String,
       default: 'queued',
       required: true,
+    },
+
+    webhook: {
+      type: {
+        url: {
+          type: String,
+          default: null,
+        },
+
+        pendingSince: {
+          type: Date,
+          default: null,
+        },
+
+        failedMessage: {
+          type: String,
+          default: null,
+        },
+      },
+      default: null,
     },
 
     owner: {
@@ -111,6 +134,53 @@ Model.pre('save', function () {
       this.lockedAt = null
       this.progress = null
     }
+  }
+
+  // Flag it to send webhook
+  if (this.webhook?.url) {
+    if (this.isNew || this.isModified(['active', 'status', 'progress'])) {
+      this.webhook.pendingSince = Date.now()
+    }
+  }
+})
+
+Model.post('save', async function postSave() {
+  console.log('post save', this.webhook, this.webhook?.pendingSince)
+  if (this.webhook?.pendingSince) {
+    console.log('sending webhook')
+    await this.constructor.sendWebhook(this)
+  }
+})
+
+Model.static('sendWebhook', async function sendWebhook(model) {
+  const payload = _.pick(model, TaskFields)
+  try {
+    await Axios({
+      method: 'post',
+      url: model.webhookUrl,
+      data: payload,
+      timeout: 10000,
+    })
+
+    await this.findOneAndUpdate(
+      {
+        _id: model._id,
+        'webhook.pendingSince': model.webhook.pendingSince,
+      },
+      {
+        $set: { 'webhook.pendingSince': null, 'webhook.failedMessage': null },
+      }
+    )
+  } catch (e) {
+    await this.findOneAndUpdate(
+      {
+        _id: model._id,
+        'webhook.pendingSince': model.webhook.pendingSince,
+      },
+      {
+        $set: { 'webhook.failedMessage': e.message },
+      }
+    )
   }
 })
 

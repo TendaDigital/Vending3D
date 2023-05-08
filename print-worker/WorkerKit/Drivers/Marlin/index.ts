@@ -49,16 +49,16 @@ export namespace MarlinDriver {
 
       const gcode = new GcodeParser(fileContent, this.config?.marlin?.config ?? {})
 
-      let line = 0
+      // let line = 0
       for await (const line of gcode) {
         if (line === null) continue
         yield {
           type: 'job',
           status: 'running',
-          message: `Printing job (line #${line})`,
+          message: `Printing job...`,
           progress: gcode.percentage(),
         }
-        console.log(chalk.yellow(' . Sending line:'), gcode.percentage())
+        // console.log(chalk.yellow(' . Sending line:'), gcode.percentage())
         await this.printer.command(line)
       }
     }

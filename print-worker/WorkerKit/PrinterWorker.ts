@@ -1,9 +1,10 @@
 import chalk from 'chalk'
-import { ServerConfig, PrinterConfig, Printer } from './Types'
+import { ServerConfig, PrinterConfig, Printer, JobStatusMessage } from './Types'
 import { Driver } from './Drivers'
 import { ServerConnection } from './ServerConnection'
 import { PromiseWithTimeout } from './Util/PromiseWithTimeout'
 import prettyBytes from 'pretty-bytes'
+import { throttle } from 'lodash'
 
 const TAG = chalk.grey('[PrinterWorker]')
 
@@ -98,34 +99,42 @@ export default class PrinterWorker {
 
           // Print job
           console.log(TAG, JOB_TAG, chalk.grey('⌛️ Printing file'))
-          let lastStatus = null
-          let lastMessage = null
-          let lastProgress = 0
+          const jobStatus: JobStatusMessage = {
+            status: 'running',
+            message: 'Imprimindo...',
+            progress: 0,
+          }
+          // let lastStatus = null
+          // let lastMessage = null
+          // let lastProgress = 0
           job.assertNotStopped()
 
           // Flags to keep track of job status, and prevent stuck jobs
           let lastProgressUpdate = Date.now()
           const MAX_PROGRESS_TIMEOUT = 60000
+          const THROTTLING = 1000
+
+          const updateStatus = throttle(() => {
+            job.updateStatus(jobStatus)
+          }, THROTTLING)
+
+          updateStatus()
 
           for await (const message of this.printer.printJob(job)) {
+            // Update job status update
+            lastProgressUpdate = Date.now()
+
             if (job.stopped) {
               console.log(TAG, JOB_TAG, chalk.grey('🛑 Job was stopped'))
               throw new Error('Job was stopped during print')
             }
-            if (message.status && lastStatus !== message.status) {
-              console.log(TAG, JOB_TAG, chalk.grey(`🖨  Job status is now ${chalk.yellow(message.status)}`))
-              lastStatus = message.status
-              lastProgressUpdate = Date.now()
-            }
-            if (message.message && lastMessage !== message.message) {
-              console.log(TAG, JOB_TAG, chalk.grey(`🖨  Job message is now ${chalk.yellow(message.message)}`))
-              lastMessage = message.message
-              lastProgressUpdate = Date.now()
-            }
-            if (message.progress && lastProgress !== message.progress) {
-              console.log(TAG, JOB_TAG, chalk.grey(`🖨  Job progress is now ${chalk.yellow(String(message.progress))}%`))
-              lastProgress = message.progress
-              lastProgressUpdate = Date.now()
+
+            for (const key in message) {
+              if (message[key] && jobStatus[key] !== message[key]) {
+                console.log(TAG, JOB_TAG, chalk.grey(`🖨  Job ${key} is now ${chalk.yellow(message[key])}`))
+                jobStatus[key] = message[key]
+                updateStatus()
+              }
             }
 
             // Check if job is stuck
@@ -133,9 +142,11 @@ export default class PrinterWorker {
               console.log(TAG, JOB_TAG, chalk.red('🚨 Job is stuck'))
               throw new Error(`Job status timeout for too long. Timeout of ${MAX_PROGRESS_TIMEOUT}ms exceeded`)
             }
-
-            job.updateStatus(message)
           }
+
+          // Cancel throthling and update status one last time
+          updateStatus.cancel()
+          job.updateStatus(jobStatus)
 
           // Notify server that job is done
           // Format duration to human readable

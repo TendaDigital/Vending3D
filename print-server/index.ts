@@ -55,30 +55,7 @@ async function main() {
   // console.log(tasks)
 }
 
-const TaskFields = [
-  'id',
-  'name',
-  'active',
-  'file',
-  'queue',
-  'status',
-  'owner',
-  'pingAt',
-  'lockedAt',
-  'startedAt',
-  'createdAt',
-  'completedAt',
-  'archivedAt',
-  'duration',
-  'progress',
-  'restarts',
-  'message',
-  'payload',
-  'fileURL',
-  'taskURL',
-]
-
-const PrinterFields = ['id', 'name', 'queue', 'status', 'active', 'online', 'message', 'pingAt', 'state', 'task']
+import { TaskFields, PrinterFields } from './Fields.js'
 
 async function startRESTServer(app) {
   app.use(cors())
@@ -97,7 +74,7 @@ async function startRESTServer(app) {
   app.get('/tasks', async (req, res) => {
     const queue = req.query.queue || undefined
 
-    const query: object = { active: true }
+    const query: any = { active: true }
     if (queue) {
       query.queue = queue
     }
@@ -108,7 +85,7 @@ async function startRESTServer(app) {
   })
 
   app.get('/tasks/pending', async (req, res) => {
-    const query = { active: true, status: { $nin: ['success'] } }
+    const query: any = { active: true, status: { $nin: ['success'] } }
 
     const queue = req.query.queue || undefined
     if (queue) {
@@ -153,6 +130,7 @@ async function startRESTServer(app) {
   app.get('/tasks/create', async (req, res) => {
     let file = req.query.file
     const queue = req.query.queue
+    const webhook = req.query.webhook
 
     if (!file) {
       return res.status(400).send('file not specified in query')
@@ -182,6 +160,11 @@ async function startRESTServer(app) {
       payload,
       queue,
       file,
+      webhook: webhook
+        ? {
+            url: webhook,
+          }
+        : null,
       refId: req.query.refId ?? null,
     })
 
@@ -308,7 +291,7 @@ async function startRESTServer(app) {
 
   app.get('/printers', async (req, res) => {
     const queue = req.query.queue ?? undefined
-    const query = { active: true }
+    const query: any = { active: true }
 
     if (queue) {
       query.queue = queue
@@ -380,7 +363,7 @@ async function startRESTServer(app) {
     express.static(objectsPath, {
       index: false,
       extensions: ['gcode', 'stl', 'jpg', 'png', 'jpeg', 'txt'],
-      setHeaders: () => {},
+      // setHeaders: () => {},
     })
   )
 
