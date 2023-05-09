@@ -138,7 +138,7 @@ Model.pre('save', function () {
 
   // Flag it to send webhook
   if (this.webhook?.url) {
-    if (this.isNew || this.isModified(['active', 'status', 'progress'])) {
+    if (this.isNew || this.isModified(['active', 'status'])) {
       this.webhook.pendingSince = Date.now()
     }
   }
