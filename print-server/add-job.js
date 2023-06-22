@@ -14,12 +14,12 @@ async function main() {
   // Create task
   for (let k = 0; k < 1; k++) {
     await Task.create({
-      namespace: 'print',
+      queue: '3d:default',
       payload: {
         file: path.join(__dirname, '../objects/S.gcode'),
         name: 'Test File',
         description: 'Samy',
-      }
+      },
     })
   }
 

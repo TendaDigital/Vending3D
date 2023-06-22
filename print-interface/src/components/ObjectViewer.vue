@@ -242,7 +242,7 @@ export default {
     print() {
       axios
         .get(
-          "tasks/print/" +
+          "tasks/create?file=" +
             this.object.name +
             "?description=" +
             this.payload.name
@@ -260,30 +260,30 @@ export default {
     },
 
     postForm: function() {
-      axios
-        .get(
-          "https://script.google.com/a/tenda.digital/macros/s/AKfycbyCGfd66lclHCduZEbOtrYupG6KGI37JhbtOxlADrO7zSbvoYlZ/exec?isWrite=true",
-          {
-            params: {
-              name: this.payload.name,
-              email: this.payload.email,
-              number: this.payload.phone,
-              role: this.payload.role,
-              school: this.payload.school,
-              studentsNumber: this.payload.studentsNumber,
-              printid: this.printId,
-              action: "insert",
-              phone: `55${this.payload.phone}`,
-              _id: this.printId
-            }
-          }
-        )
-        .then(response => {
-          console.log("print insert" + response);
-        })
-        .catch(function(e) {
-          console.error(e);
-        });
+      // axios
+      //   .get(
+      //     "https://script.google.com/a/tenda.digital/macros/s/AKfycbyCGfd66lclHCduZEbOtrYupG6KGI37JhbtOxlADrO7zSbvoYlZ/exec?isWrite=true",
+      //     {
+      //       params: {
+      //         name: this.payload.name,
+      //         email: this.payload.email,
+      //         number: this.payload.phone,
+      //         role: this.payload.role,
+      //         school: this.payload.school,
+      //         studentsNumber: this.payload.studentsNumber,
+      //         printid: this.printId,
+      //         action: "insert",
+      //         phone: `55${this.payload.phone}`,
+      //         _id: this.printId
+      //       }
+      //     }
+      //   )
+      //   .then(response => {
+      //     console.log("print insert" + response);
+      //   })
+      //   .catch(function(e) {
+      //     console.error(e);
+      //   });
     },
 
     resetPrint() {

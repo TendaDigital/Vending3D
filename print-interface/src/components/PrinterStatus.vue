@@ -19,7 +19,7 @@
         class="grey--text"
         style="font-family: monospace"
       >
-        <small>{{ printer.task.payload.name }}</small
+        <small>{{ printer.task.file.split('/').pop() }}</small
         ><v-icon size="14">attach_file</v-icon>
       </div>
 
@@ -111,7 +111,7 @@ export default {
 
   methods: {
     removePrinter() {
-      axios.get("printers/" + this.printer.id + "/remove");
+      axios.get("printers/" + this.printer.id + "/archive");
     }
   }
 };

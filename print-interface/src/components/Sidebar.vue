@@ -83,7 +83,7 @@ export default {
       this.loadingTasks = true;
 
       axios
-        .get("tasks")
+        .get("tasks?queue=brindes:3d")
         .then(response => {
           this.loadingTasks = false;
           this.tasks = response.data;
@@ -99,7 +99,7 @@ export default {
 
       this.loadingPrinters = true;
       axios
-        .get("printers")
+        .get("printers?queue=brindes:3d")
         .then(res => {
           this.loadingPrinters = false;
           this.printers = res.data;
@@ -111,13 +111,14 @@ export default {
     },
 
     cleanTasks() {
-      this.tasks = this.tasks.filter(async task => {
-        if (task.status !== "running")
-          await axios.get(
-            "http://localhost:9077/tasks/" + task.id + "/archive"
-          );
-        return task.status !== "success" && task.status !== "failed";
-      });
+      // this.tasks = this.tasks.filter(async task => {
+      //   if (task.status !== "running")
+      //     await axios.get(
+      //       "http://localhost:9077/tasks/" + task.id + "/archive"
+      //     );
+      //   return task.status !== "success" && task.status !== "failed";
+      // });
+      axios.get("tasks/archive");
     }
   },
   computed: {

@@ -1,38 +1,51 @@
 /*
  * Database Model
  */
-const Schema = require('mongoose').Schema
+import { Schema, model } from 'mongoose'
 
-var Model = new Schema({
-  name: String,
+var Model = new Schema(
+  {
+    active: {
+      type: Boolean,
+      default: true,
+    },
 
-  connected: {
-    type: Boolean,
-    default: false,
+    name: String,
+
+    connected: {
+      type: Boolean,
+      default: false,
+    },
+
+    queue: {
+      type: String,
+      default: null,
+    },
+
+    pingAt: {
+      type: Date,
+      default: Date.now,
+    },
+
+    message: {
+      type: String,
+      default: '',
+    },
+
+    state: {
+      type: Object,
+      default: {},
+    },
   },
+  { timestamps: true }
+)
 
-  pingAt: {
-    type: Date,
-    default: Date.now,
-  },
-
-  message: {
-    type: String,
-    default: ''
-  },
-
-  state: {
-    type: Object,
-    default: {},
-  }
-})
-
-Model.virtual('active').get(function () {
-  return this.connected && (Date.now() - this.pingAt < 5000)
+Model.virtual('online').get(function () {
+  return this.connected && Date.now() - this.pingAt < 5000
 })
 
 Model.virtual('status').get(function () {
-  return this.active ? this.message : 'disconnected'
+  return this.online ? this.message : 'disconnected'
 })
 
 Model.virtual('task', {
@@ -53,22 +66,22 @@ Model.method('ping', function (message = undefined) {
 })
 
 Model.static('ping', async function (name, message = undefined) {
-  let printer = await this.findOrCreate(name)
+  const printer = await this.findOrCreate(name)
   printer.ping()
   await printer.save()
 })
 
-Model.static('disconnected', async function (name) {
-  let printer = await this.findOrCreate(name)
-  printer.connected = false
-  await printer.save()
-})
+// Model.static("disconnected", async function (name) {
+//   let printer = await this.findOrCreate(name);
+//   printer.connected = false;
+//   await printer.save();
+// });
 
 Model.static('findOrCreate', async function (name) {
-  let printer = await this.findOne({name})
+  const printer = await this.findOne({ name })
 
   if (!printer) {
-    return await this.create({name})
+    return await this.create({ name })
   }
 
   return printer
@@ -77,7 +90,4 @@ Model.static('findOrCreate', async function (name) {
 // Model.pre('save', () => {
 //   this.running = ['queued', 'running'].includes(thhis.status)
 // })
-const PluginTimestamp = require('mongoose-timestamp')
-Model.plugin(PluginTimestamp)
-
-module.exports = require('mongoose').model('Printer', Model);
+export default model('Printer', Model)

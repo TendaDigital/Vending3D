@@ -1,32 +1,29 @@
-[
-  {
-    "name": "Ender Mini 0",
-    "port": {
-      "comName": "/dev/ttyUSB0"
-    }
+{
+  "server": {
+    "url": "http://localhost:9077"
   },
-  {
-    "name": "Ender Mini 1",
-    "port": {
-      "comName": "/dev/ttyUSB1"
-    }
+  "formats": {
+    "guias": {}
   },
-  {
-    "name": "Ender Mini 2",
-    "port": {
-      "comName": "/dev/ttyUSB2"
+  "printers": [
+    {
+      "queue": "brindes:3d",
+      "name": "brindes:01",
+      "driver": "marlin",
+      "mocked": false,
+      "marlin": {
+        "model": "ender",
+        "port": "/dev/tty.usbserial-120"
+      }
+    },
+    {
+      "queue": "brindes:3d",
+      "name": "brindes:mocked:01",
+      "driver": "marlin",
+      "mocked": true,
+      "marlin": {
+        "model": "mocked"
+      }
     }
-  },
-  {
-    "name": "Ender Mini 3",
-    "port": {
-      "comName": "/dev/ttyUSB0"
-    }
-  },
-  {
-    "name": "Ender Mini 4",
-    "port": {
-      "comName": "/dev/ttyS0"
-    }
-  }
-]
+  ]
+}

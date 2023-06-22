@@ -1,0 +1,17 @@
+{
+  "name": "print-thumbnailer",
+  "version": "1.0.0",
+  "main": "thumbnailer.js",
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "license": "MIT",
+  "scripts": {
+    "start": "node ./thumbnailer.js"
+  },
+  "dependencies": {
+    "chalk": "^2.4.0",
+    "lodash": "^4.17.5",
+    "node-stl-thumbnailer": "^1.0.1"
+  }
+}
