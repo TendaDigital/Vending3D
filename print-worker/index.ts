@@ -1,3 +1,4 @@
+import dotenv from 'dotenv'
 import chalk from 'chalk'
 // import sleep from './sleep.js'
 import { Settings } from './WorkerKit/Settings'
@@ -5,6 +6,8 @@ import PrinterWorker from './WorkerKit/PrinterWorker'
 import { Driver } from './WorkerKit/Drivers'
 import { MarlinDriver } from './WorkerKit/Drivers/Marlin'
 import { CupsDriver } from './WorkerKit/Drivers/Cups'
+
+dotenv.config()
 
 async function main() {
   // Register drivers

@@ -23,7 +23,8 @@ export default class PrinterMock extends PrinterBase {
   }
 
   async sendCommand(command) {
-    await sleep(2)
+    const delay = Number(process.env.MOCKED_DELAY_IN_MS) / 100 || 50
+    await sleep(delay)
   }
 
   async *waitForButtonPress() {

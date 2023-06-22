@@ -7,97 +7,22 @@
   },
   "printers": [
     {
-      "name": "cannon:mb5100:a",
-      "driver": "cups",
-      "queue": "guias",
-      "debug": false,
-      "cups": {
-        "url": "ipp://localhost:631/printers/Canon_MB5100_series"
-      }
-    },
-    {
-      "name": "hp:7740:a",
-      "driver": "cups",
-      "queue": "guias",
-      "debug": false,
-      "cups": {
-        "url": "ipp://localhost:631/printers/hp_7740_a"
-      }
-    },
-    {
-      "name": "hp:7740:b",
-      "driver": "cups",
-      "queue": "guias",
-      "debug": false,
-      "cups": {
-        "url": "ipp://localhost:631/printers/hp_7740_b"
-      }
-    },
-    {
-      "name": "mocked:a",
-      "driver": "cups",
-      "queue": "guias",
-      "debug": false,
-      "cups": {
-        "url": "ipp://localhost:631/printers/nowhere"
-      }
-    },
-    {
-      "name": "vplotter:A",
-      "driver": "marlin",
-      "queue": "vplotter",
-      "debug": true,
-      "marlin": {
-        "port": "/dev/tty.usbserial-1140",
-        "model": "vplotter"
-      }
-    },
-    {
       "queue": "brindes:3d",
+      "name": "brindes:01",
       "driver": "marlin",
-      "name": "brindes:mocked:01",
-      "mocked": true,
-      "serialport": {
-        "path": "MOCKED:01"
-      }
-    },
-    {
-      "name": "brindes:mocked:02",
-      "queue": "brindes:3d",
-      "driver": "marlin",
-      "mocked": true,
-      "serialport": {
-        "path": "MOCKED:02"
-      }
-    },
-    {
-      "queue": "brindes:3d",
-      "name": "brindes:ender:01",
-      "driver": "marlin",
+      "mocked": false,
       "marlin": {
         "model": "ender",
-        "port": "/dev/tty.usbserial-2130"
+        "port": "/dev/tty.usbserial-120"
       }
     },
     {
       "queue": "brindes:3d",
-      "name": "brindes:ender:02",
-      "serialport": {
-        "path": "/dev/tty.usbserial-2120"
-      }
-    },
-    {
-      "queue": "brindes:3d",
-      "name": "brindes:ender:03",
-      "serialport": {
-        "path": "/dev/ttyUSB0"
-      }
-    },
-    {
-      "queue": "brindes:3d",
-      "name": "brindes:ender:04",
-      "serialport": {
-        "path": "/dev/ttyS0"
+      "name": "brindes:mocked:01",
+      "driver": "marlin",
+      "mocked": true,
+      "marlin": {
+        "model": "mocked"
       }
     }
   ]
