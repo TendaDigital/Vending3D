@@ -2,10 +2,12 @@ import _ from 'lodash'
 
 import PrinterBase from '../PrinterBase.js'
 import MarlinServer from '../MarlinServer.js'
+import { EventEmitter } from 'stream'
 
 export default class PrinterPrusa extends PrinterBase {
-  static model: string = 'prusa'
+  static model = 'prusa'
 
+  channel: MarlinServer
   constructor(options) {
     super(options)
 
@@ -39,7 +41,7 @@ export default class PrinterPrusa extends PrinterBase {
     // } else
     if (data.startsWith('T:')) {
       // T:118.73 E:0 B:35.4
-      var [$, temp_extruder, active_extruder, $, temp_bed] =
+      const [, temp_extruder, active_extruder, , temp_bed] =
         data.match(/T:(\d+\.?\d*)\s*E:(\d+\.?\d*)\s*(B:(\d+\.?\d*))?/) || []
 
       if (!_.isUndefined(temp_extruder)) {
@@ -62,6 +64,6 @@ export default class PrinterPrusa extends PrinterBase {
   // }
 
   async sendCommand(command) {
-    return await this.channel.execute(command)
+    await this.channel.execute(command)
   }
 }

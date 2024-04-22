@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 
 import _ from 'lodash'
-import fs from 'fs'
+import fs, { readFileSync } from 'fs'
 import path from 'path'
 import cors from 'cors'
 import http from 'http'
@@ -10,6 +10,7 @@ import mongoose from 'mongoose'
 
 import Task from './Task.js'
 import Printer from './Printer.js'
+import Integration from './Integration.js'
 import PoolServer from './PoolServer.js'
 import { readObjectStore } from './ObjectStore.js'
 import { Server } from 'socket.io'
@@ -20,7 +21,7 @@ const PORT = process.env.PORT || 9077
 async function main() {
   console.log()
   console.log(' # Configuration')
-  console.log(' # PORT:', PORT)
+  console.log(' # http://localhost:' + PORT)
   console.log()
   console.log(' # Startup...')
 
@@ -49,13 +50,17 @@ async function main() {
   console.log(' . start REST server')
   await startRESTServer(app)
 
-  console.log(' . lift server')
+  console.log(' . start Integration deamons')
+  await startIntegrationDeamons(app)
+
+  console.log(chalk.green(' . lifted server'))
   await server.listen(PORT)
   // let tasks = await Task.find({})
   // console.log(tasks)
 }
 
 import { TaskFields, PrinterFields } from './Fields.js'
+import IntegrationDeamon from './IntegrationDeamon.js'
 
 async function startRESTServer(app) {
   app.use(cors())
@@ -200,6 +205,10 @@ async function startRESTServer(app) {
     // If is extenal file, redirect
     if (task.fileURL.startsWith('http')) {
       return res.redirect(task.fileURL)
+    }
+
+    if (task.fileURL.startsWith('data:')) {
+      return task.fileURL.replace(/^data:/, '')
     }
 
     // Return to static asset if exists
@@ -378,6 +387,19 @@ function startPoolServer(io: Server) {
   io.on('connection', async (socket) => {
     await startWorker(socket, pooler)
   })
+}
+
+async function startIntegrationDeamons() {
+  const config = JSON.parse(readFileSync('../config.json').toString('utf-8'))
+
+  for (const integration of config.integrations) {
+    console.log(' . ', '+', integration.name)
+    const deamon = await IntegrationDeamon.build(integration)
+    deamon.start().catch((e) => {
+      console.error(' ! IntegrationDeamon crashed', integration.name, e)
+      process.exit(1)
+    })
+  }
 }
 
 async function startWorker(socket: Socket, pooler) {

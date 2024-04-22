@@ -9,6 +9,9 @@ export default class MarlinServer extends EventEmitter {
   options: PrinterConfig
   marlinOptions: object
   promiseQueue: any[]
+  port: SerialPort
+  _ready: Deferred = null
+  _connect: Promise<void> = null
   constructor(options: PrinterConfig, marlinOptions) {
     super()
 
@@ -19,6 +22,8 @@ export default class MarlinServer extends EventEmitter {
 
     // Ready promise indicating reception of `start` string
     this._ready = new Deferred()
+
+    if (this.options.debug) console.log('MarlinServer', 'debug mode enabled')
   }
 
   get name() {
@@ -27,10 +32,10 @@ export default class MarlinServer extends EventEmitter {
 
   async ready() {
     // Defaults to options.port
-    let serialPortStr = this.options.marlin?.port || null
+    const serialPortStr = this.options.marlin?.port || null
 
     // Is it connecting/connected? Return last promise
-    if (this._connect) {
+    if (this._connect !== null) {
       return await this._connect
     }
 
@@ -52,7 +57,7 @@ export default class MarlinServer extends EventEmitter {
     }
 
     // Create a new re-usable Promise that will wait for connection
-    this._connect = new Promise(async (resolve, reject) => {
+    this._connect = new Promise((resolve, reject) => {
       try {
         // Open Serial Port
         console.log(portProp)
@@ -90,9 +95,7 @@ export default class MarlinServer extends EventEmitter {
         })
 
         // Wait to get heartbeat from printer
-        await this._ready.promise
-
-        resolve()
+        this._ready.promise.then(resolve)
       } catch (e) {
         reject(e)
       }
@@ -162,7 +165,7 @@ export default class MarlinServer extends EventEmitter {
     }
 
     // Only packets starting with `:` are responses
-    if (!data.startsWith('ok')) {
+    if (!data.toLowerCase().startsWith('ok') && !data.toLowerCase().endsWith('ok')) {
       return
     }
     const promise = this.promiseQueue.shift()

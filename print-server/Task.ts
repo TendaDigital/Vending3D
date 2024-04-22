@@ -6,7 +6,7 @@ import Axios from 'axios'
 import { TaskFields } from './Fields'
 import _ from 'lodash'
 
-var Model = new Schema(
+const Model = new Schema(
   {
     queue: String,
 
@@ -105,7 +105,7 @@ var Model = new Schema(
 
 Model.pre('save', function () {
   if (!this.active && this.isModified('active')) {
-    this.archivedAt = Date.now()
+    this.archivedAt = new Date()
     this.lockedAt = null
   }
 
@@ -116,16 +116,16 @@ Model.pre('save', function () {
     }
 
     if (this.status == 'queued') {
-      this.queuedAt = Date.now()
+      this.queuedAt = new Date()
       this.restarts = this.restarts + 1 || 2
     } else if (this.status == 'running') {
-      this.startedAt = Date.now()
+      this.startedAt = new Date()
     } else if (this.status == 'failed') {
-      this.lastFailedAt = Date.now()
+      this.lastFailedAt = new Date()
     } else if (this.status == 'success') {
-      this.completedAt = Date.now()
+      this.completedAt = new Date()
     } else if (this.status == 'canceled') {
-      this.lastCanceledAt = Date.now()
+      this.lastCanceledAt = new Date()
     }
 
     if (['canceled', 'failed', 'queued'].includes(this.status)) {
@@ -139,7 +139,7 @@ Model.pre('save', function () {
   // Flag it to send webhook
   if (this.webhook?.url) {
     if (this.isNew || this.isModified(['active', 'status'])) {
-      this.webhook.pendingSince = Date.now()
+      this.webhook.pendingSince = new Date()
     }
   }
 })

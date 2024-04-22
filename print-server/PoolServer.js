@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import Task from './Task.js'
+import Task from './Task'
 import Printer from './Printer.js'
 import chalk from 'chalk'
 

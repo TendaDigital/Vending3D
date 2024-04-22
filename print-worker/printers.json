@@ -24,6 +24,16 @@
       "marlin": {
         "model": "mocked"
       }
+    },
+    {
+      "queue": "barcodes",
+      "name": "barcodes:01",
+      "driver": "marlin",
+      "debug": true,
+      "marlin": {
+        "model": "barcode",
+        "port": "/dev/tty.usbmodemC7FD1AA1122F1"
+      }
     }
   ]
 }

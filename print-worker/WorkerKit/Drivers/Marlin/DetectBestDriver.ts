@@ -1,4 +1,5 @@
 import { PrinterConfig } from '../../Types.js'
+import BarcodeScanner from './printers/BarcodeScanner.js'
 import PrinterEnder from './printers/PrinterEnder.js'
 import PrinterMock from './printers/PrinterMock.js'
 import PrinterPrusa from './printers/PrinterPrusa.js'
@@ -14,6 +15,7 @@ export default function DetectBestDriver(hints: PrinterConfig) {
     PrinterVPlotter,
     //  PrinterPrusa,
     PrinterEnder,
+    BarcodeScanner,
   ]
   const Driver = Drivers.find((Driver) => Driver.model === hints.marlin.model)
 
