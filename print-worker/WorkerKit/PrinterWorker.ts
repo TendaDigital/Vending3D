@@ -53,6 +53,7 @@ export default class PrinterWorker {
           }
           await this.server.setPrinterStatus('waiting', message)
         }
+        if (newJob) console.log(TAG, chalk.green('ready.'))
 
         // Wait for job
         if (lastPrinterMessage) console.log(TAG, chalk.grey('Waiting for a new job to be available...'))
@@ -100,6 +101,7 @@ export default class PrinterWorker {
           // Print job
           console.log(TAG, JOB_TAG, chalk.grey('⌛️ Printing file'))
           const jobStatus: JobStatusMessage = {
+            type: 'job',
             status: 'running',
             message: 'Imprimindo...',
             progress: 0,
@@ -159,7 +161,12 @@ export default class PrinterWorker {
           })
           console.log(TAG, JOB_TAG, chalk.grey('----------------------------------------'))
         } catch (e) {
-          console.error(TAG, JOB_TAG, chalk.red('🚨 Failed to print job: ' + e.stack))
+          console.error(
+            TAG,
+            JOB_TAG,
+            chalk.red('🚨 Failed to print job: ' + e.stack),
+            e.response?.data?.toString('utf-8')
+          )
           job.updateStatus({
             status: 'failed',
             message: 'Falha ao imprimir: ' + e.message,

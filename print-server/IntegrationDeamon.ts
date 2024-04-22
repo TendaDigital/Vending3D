@@ -32,7 +32,10 @@ export default class IntegrationDeamon {
   }
 
   async setCursor(cursor: object) {
-    await Integration.updateOne({ name: this.config.name }, { $set: { cursor, lastSyncAt: new Date() } })
+    await Integration.updateOne(
+      { name: this.config.name },
+      { $set: { cursor, lastSyncAt: cursor ? new Date() : undefined } }
+    )
   }
 
   private syncing = false
@@ -45,7 +48,9 @@ export default class IntegrationDeamon {
       // Save Tasks
       for (const task of results.tasks) {
         if (await Task.findOne({ refId: task.id })) continue
-        await Task.create({ refId: task.id, file: task.file, queue: this.config.queue })
+        const taskObj = { refId: task.id, file: task.file, queue: this.config.queue }
+        console.log(taskObj)
+        await Task.create(taskObj)
       }
 
       console.log('Synced', results.tasks.length, 'tasks', 'cursor:', results.cursor)
@@ -58,6 +63,8 @@ export default class IntegrationDeamon {
   private running = false
   async start() {
     if (this.running) throw new Error('Deamon is already running')
+    console.log('Starting deamon')
+    await this.setCursor(null)
     try {
       this.running = true
       let lastSync = 0

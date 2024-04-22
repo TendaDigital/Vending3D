@@ -165,14 +165,18 @@ export default class MarlinServer extends EventEmitter {
     }
 
     // Only packets starting with `:` are responses
-    if (!data.toLowerCase().startsWith('ok') && !data.toLowerCase().endsWith('ok')) {
+    if (!data.toLowerCase().startsWith('ok') && !data.toLowerCase().startsWith('error')) {
       return
     }
     const promise = this.promiseQueue.shift()
 
     if (!promise) return
 
-    promise.resolve(data)
+    if (data.toLowerCase().startsWith('error')) {
+      promise.reject(new Error(data))
+    } else {
+      promise.resolve(data)
+    }
   }
 
   execute(command) {

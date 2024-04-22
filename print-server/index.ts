@@ -207,8 +207,9 @@ async function startRESTServer(app) {
       return res.redirect(task.fileURL)
     }
 
-    if (task.fileURL.startsWith('data:')) {
-      return task.fileURL.replace(/^data:/, '')
+    if (task.file.startsWith('data:')) {
+      res.send(task.file.replace(/^data:/, ''))
+      return
     }
 
     // Return to static asset if exists

@@ -6,7 +6,7 @@ export default class EstandeDigital_Leads implements IntegrationProdider {
     if (cursor?.key !== options.participationId) {
       cursor = undefined
     }
-    let after = cursor?.after ?? undefined
+    let after = cursor?.after ?? options.after ?? undefined
     const result = await Axios.request({
       url: options.url,
       method: 'GET',
@@ -45,7 +45,7 @@ export default class EstandeDigital_Leads implements IntegrationProdider {
         // Map to Task
         .map((lead) => ({
           id: lead.eventRef,
-          file: `data:JO\nJ${lead.eventRef}\nJS150\nJS110\nJD`,
+          file: `data:JB\nJO\nJ${lead.eventRef}\nJS150\nJS110\nJD`,
         })),
     }
   }
