@@ -45,7 +45,8 @@ export default class EstandeDigital_Leads implements IntegrationProdider {
         // Map to Task
         .map((lead) => ({
           id: lead.eventRef,
-          file: `data:JB\nJO\nJ${lead.eventRef}\nJS150\nJS110\nJD`,
+          file: ['data:JO', 'JS110', 'JC', 'JS150', 'JR ON', `J${lead.eventRef}`, 'JR OFF', 'JS110', 'JD'].join('\n'),
+          // `data:JB\nJO\nJ${lead.eventRef}\nJS150\nJS110\nJD`,
         })),
     }
   }
