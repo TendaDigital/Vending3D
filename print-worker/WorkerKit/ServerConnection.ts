@@ -7,6 +7,7 @@ import { PromiseWithTimeout } from './Util/PromiseWithTimeout'
 import prettyBytes from 'pretty-bytes'
 import axios from 'axios'
 
+const TAG = '[ServerConnection]'
 export class ServerConnection {
   config: ServerConfig
   socket: Socket
@@ -19,6 +20,10 @@ export class ServerConnection {
       name: printerConfig.name,
       queue: printerConfig.queue,
     })
+  }
+
+  debug(...args: any[]) {
+    console.log(chalk.gray(TAG), ...args)
   }
 
   constructor(config: ServerConfig, connectionQuery: Record<string, string> = {}, uri = config.url) {
@@ -34,13 +39,13 @@ export class ServerConnection {
   connect() {
     if (this.#connecting == null) {
       // Create socket connection with server
-      console.log(this.uri, this.connectionQuery)
+      // this.debug('Connecting to Server URL:', chalk.yellow(this.uri), this.connectionQuery)
       this.socket = io(this.uri, {
         query: this.connectionQuery,
       })
       this.#connecting = new Promise((resolve, reject) => {
         this.socket.on('*', (event, data) => {
-          console.log(chalk.grey(' ? Event: ' + event), data)
+          this.debug(chalk.grey(' ? Event: ' + event), data)
         })
         this.socket.once('error', (msg) => {
           console.error(chalk.red(' ! Error connecting to pool: ' + msg))
@@ -48,8 +53,8 @@ export class ServerConnection {
           this.socket.disconnect()
         })
         this.socket.once('register', () => {
-          console.log(chalk.grey(' ? Connected to pool'))
-          setTimeout(resolve, 500)
+          // this.debug(chalk.grey(' ? Connected to pool'))
+          setTimeout(resolve, 100)
         })
       })
     }

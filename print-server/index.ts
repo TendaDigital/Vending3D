@@ -147,7 +147,9 @@ async function startRESTServer(app) {
     console.log('new print', file)
 
     // If no slashess in file, assume it's a local file
-    if (file.indexOf('/') === -1) {
+    if (file.startsWith('data:')) {
+      // Do nothing
+    } else if (file.indexOf('/') === -1) {
       if (!file.includes('.')) {
         file = file + '.gcode'
       }

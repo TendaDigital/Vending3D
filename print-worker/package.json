@@ -19,7 +19,8 @@
     "pretty-bytes": "^6.1.0",
     "serialport": "^10.5.0",
     "socket.io-client": "^4.6.1",
-    "string-template": "^1.0.0"
+    "string-template": "^1.0.0",
+    "usb": "^2.9.0"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",

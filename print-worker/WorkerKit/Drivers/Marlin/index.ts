@@ -62,7 +62,7 @@ export namespace MarlinDriver {
       const gcode = new GcodeParser(fileContent, this.config?.marlin?.config ?? {})
 
       // let line = 0
-      this.#ready = true
+      this.#ready = false
       for await (const line of gcode) {
         if (line === null) continue
         yield {

@@ -34,6 +34,14 @@
         "model": "barcode",
         "port": "/dev/tty.usbmodemC7FD1AA1122F1"
       }
+    },
+    {
+      "queue": "scanner",
+      "name": "scanner:a",
+      "driver": "opticon",
+      "serialport": {
+        "path": "/dev/ttyS0"
+      }
     }
   ]
 }

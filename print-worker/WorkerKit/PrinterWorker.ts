@@ -32,20 +32,22 @@ export default class PrinterWorker {
       console.log(TAG, chalk.green('Printer name:  '), chalk.white(this.printer.config.name))
       console.log(TAG, chalk.green('Printer queue: '), chalk.white(this.printer.config.queue))
       console.log(TAG, chalk.green('Printer driver:'), chalk.white(this.printer.config.driver))
-      console.log(TAG, chalk.grey('Connecting to printer'))
+      console.log(TAG, chalk.yellow('Connecting to printer'))
       await PromiseWithTimeout(this.printer.connect(), 10000, new Error('Connection with printer timed out'))
+      console.log(TAG, chalk.green(`Connection with printer stablished`))
 
       // Connect to server
-      console.log(TAG, chalk.grey('Connecting to server'), chalk.white(this.server.config.url))
+      console.log(TAG, chalk.yellow('Connecting to server'), chalk.white(this.server.config.url))
       await PromiseWithTimeout(this.server.connect(), 7000, new Error('Connection with server timed out'))
-      console.log(TAG, chalk.yellow(`Connection stablished`))
+      console.log(TAG, chalk.green(`Connection with server stablished`))
 
       let newJob = true
+      let emptyJobCount = 0
+      let lastPrinterMessage = null
       while (this.#running) {
         // Wait for printer to be ready
         if (newJob) console.log(TAG, chalk.white('Waiting printer to be ready...'))
         // await this.server.setPrinterStatus('waiting', {})
-        let lastPrinterMessage = null
         for await (const message of this.printer.waitToBeReady()) {
           if (message.message && lastPrinterMessage !== message.message) {
             console.log(TAG, chalk.grey(`⌛️ Printer message: ${chalk.yellow(message.message)}`))
@@ -55,18 +57,27 @@ export default class PrinterWorker {
         }
         if (newJob) console.log(TAG, chalk.green('ready.'))
 
+        if (newJob) console.log(TAG, chalk.green('Printer is ready'))
+
         // Wait for job
-        if (lastPrinterMessage) console.log(TAG, chalk.grey('Waiting for a new job to be available...'))
+        if (newJob && lastPrinterMessage) console.log(TAG, chalk.grey('Waiting for a new job to be available...'))
         await this.server.setPrinterStatus('idle', {
           message: 'Aguardando novo trabalho...',
         })
         const job = await this.server.waitForJob(0)
 
-        if (!job) {
-          newJob = false
-          continue
-        } else {
+        if (job) {
           newJob = true
+          emptyJobCount = 0
+          process.stdout.write('\n')
+        } else {
+          newJob = false
+          emptyJobCount++
+
+          if (emptyJobCount % 200 == 0) process.stdout.write('\n')
+          if (emptyJobCount % 5 == 0) process.stdout.write('.')
+
+          continue
         }
 
         // Build job tag

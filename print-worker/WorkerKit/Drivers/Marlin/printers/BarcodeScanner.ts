@@ -14,10 +14,16 @@ export default class BarcodeScanner extends PrinterPrusa {
     })
   }
 
+  private detatched = false
   async *waitForButtonPress(msg?: string) {
     yield
-    // Void
     await this.ready()
+    if (!this.detatched) {
+      console.log('detaching...')
+      await this.sendCommand('JS110')
+      await this.sendCommand('JD')
+      this.detatched = true
+    }
   }
 
   // Resolves promise once connected
@@ -26,6 +32,7 @@ export default class BarcodeScanner extends PrinterPrusa {
   }
 
   async sendCommand(command: string) {
+    this.detatched = false
     await this.channel.execute(command)
   }
 }
